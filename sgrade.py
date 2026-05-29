@@ -491,20 +491,12 @@ if eval_btn:
                         raise last_err
 
                     raw = response.text
-                    # Strip markdown fences then extract JSON object
-                    _txt = raw.strip()
-                    if _txt.startswith("```"):
-                        _txt = _txt.split("```", 2)[-1] if _txt.count("```") >= 2 else _txt
-                        if _txt.startswith("json"):
-                            _txt = _txt[4:]
-                        _txt = _txt.rsplit("```", 1)[0]
-                    _txt = _txt.strip()
-                    # Find outermost { }
-                    _s = _txt.find("{")
-                    _e = _txt.rfind("}")
-                    if _s == -1 or _e == -1:
-                        raise json.JSONDecodeError("No JSON object found", _txt, 0)
-                    result = json.loads(_txt[_s:_e+1])
+                    # Extract JSON using regex — works with or without ```json fences
+                    import re as _re
+                    _match = _re.search(r'\{[\s\S]+\}', raw)
+                    if not _match:
+                        raise json.JSONDecodeError("No JSON found", raw, 0)
+                    result = json.loads(_match.group())
 
                     # ── Render Results ─────────────────────────────────────────
                     factors = result.get("factors", [])
