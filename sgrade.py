@@ -359,68 +359,78 @@ if "main_page" not in st.session_state:
     st.session_state.main_page = "evaluate"
 p = st.session_state.main_page
 
-# Toàn bộ nav trong 1 markdown duy nhất
-def nav_style(key):
-    if p == key:
-        return "background:#F26522;color:white;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif"
-    return "background:white;color:#6b7280;border:1px solid #e8e8e8;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif"
+# Nav CSS
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+header[data-testid="stHeader"] { display:none !important; }
+#sgrade-nav {
+    background: white;
+    border-bottom: 1px solid #e8e8e8;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    margin: -6rem -4rem 1rem -4rem;
+    font-family: 'Inter', sans-serif;
+}
+#sgrade-nav .logo { display:flex; align-items:center; gap:8px; }
+#sgrade-nav .sc { color:#F26522; font-weight:800; font-size:15px; }
+#sgrade-nav .sep { color:#9ca3af; font-size:14px; }
+#sgrade-nav .name { color:#1f2937; font-weight:600; font-size:14px; }
+#sgrade-nav .btns { display:flex; gap:8px; }
+#sgrade-nav button {
+    padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600;
+    cursor:pointer; border:none; background:#f3f4f6; color:#6b7280;
+    font-family:'Inter',sans-serif; transition:opacity 0.15s;
+}
+#sgrade-nav button:hover { opacity:0.85; }
+#sgrade-nav button.active { background:#F26522; color:white; }
+/* Ẩn hoàn toàn row hidden buttons */
+div[data-testid="stVerticalBlock"] > div:has(div[data-testid="stHorizontalBlock"]:has(button[kind="secondary"])):first-of-type {
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 st.markdown(f"""
-<div style="background:white;border-bottom:1px solid #e8e8e8;padding:0 2rem;
-            height:56px;display:flex;align-items:center;justify-content:space-between;
-            margin:-6rem -4rem 0.5rem -4rem">
-  <div style="display:flex;align-items:center;gap:8px">
-    <span style="color:#F26522;font-weight:800;font-size:15px">SCOMMERCE</span>
-    <span style="color:#9ca3af">|</span>
-    <span style="color:#1f2937;font-weight:600;font-size:14px">S-Grade SCOMMERCE</span>
+<div id="sgrade-nav">
+  <div class="logo">
+    <span class="sc">SCOMMERCE</span>
+    <span class="sep">|</span>
+    <span class="name">S-Grade SCOMMERCE</span>
   </div>
-  <div style="display:flex;gap:6px">
-    <button style="{nav_style('evaluate')}" onclick="document.getElementById('btn-evaluate').click()">Đánh giá S-Grade</button>
-    <button style="{nav_style('lookup')}" onclick="document.getElementById('btn-lookup').click()">Tra cứu S-Grade</button>
-    <button style="{nav_style('benefits')}" onclick="document.getElementById('btn-benefits').click()">Phúc lợi theo S-Grade</button>
+  <div class="btns">
+    <button class="{'active' if p=='evaluate' else ''}"
+      onclick="window.parent.document.querySelector('button[data-testid=\"baseButton-secondary\"][aria-label=\"nav_e\"]') && window.parent.document.querySelector('button[data-testid=\"baseButton-secondary\"][aria-label=\"nav_e\"]').click()">
+      Đánh giá S-Grade</button>
+    <button class="{'active' if p=='lookup' else ''}"
+      onclick="window.parent.document.querySelector('button[aria-label=\"nav_l\"]') && window.parent.document.querySelector('button[aria-label=\"nav_l\"]').click()">
+      Tra cứu S-Grade</button>
+    <button class="{'active' if p=='benefits' else ''}"
+      onclick="window.parent.document.querySelector('button[aria-label=\"nav_b\"]') && window.parent.document.querySelector('button[aria-label=\"nav_b\"]').click()">
+      Phúc lợi theo S-Grade</button>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-# 3 nút Streamlit ẩn hoàn toàn — chỉ dùng để trigger rerun
-st.markdown("""<style>
-div[data-testid="stVerticalBlock"] > div:nth-child(2) { 
-    position:absolute; opacity:0; pointer-events:none; height:0; overflow:hidden;
-}
-</style>""", unsafe_allow_html=True)
-
+# Hidden functional buttons
 _c1, _c2, _c3 = st.columns(3)
 with _c1:
-    clicked_eval = st.button("e", key="nb_eval")
+    if st.button("Đánh giá S-Grade", key="nb_eval", help="nav_e"):
+        st.session_state.main_page = "evaluate"; st.rerun()
 with _c2:
-    clicked_look = st.button("l", key="nb_look")
+    if st.button("Tra cứu S-Grade", key="nb_look", help="nav_l"):
+        st.session_state.main_page = "lookup"; st.rerun()
 with _c3:
-    clicked_bene = st.button("b", key="nb_bene")
-
-if clicked_eval:
-    st.session_state.main_page = "evaluate"; st.rerun()
-if clicked_look:
-    st.session_state.main_page = "lookup"; st.rerun()
-if clicked_bene:
-    st.session_state.main_page = "benefits"; st.rerun()
-
-# JS gán id cho 3 nút ẩn để HTML nav có thể click vào
-st.markdown("""<script>
-(function() {
-    function assignIds() {
-        var btns = window.parent.document.querySelectorAll('button[kind="secondary"], button[data-testid="baseButton-secondary"]');
-        var labels = ['e','l','b'];
-        var ids = ['btn-evaluate','btn-lookup','btn-benefits'];
-        var matched = 0;
-        btns.forEach(function(btn) {
-            var idx = labels.indexOf(btn.innerText.trim());
-            if (idx >= 0) { btn.id = ids[idx]; matched++; }
-        });
-        if (matched < 3) setTimeout(assignIds, 200);
-    }
-    assignIds();
-})();
-</script>""", unsafe_allow_html=True)
+    if st.button("Phúc lợi theo S-Grade", key="nb_bene", help="nav_b"):
+        st.session_state.main_page = "benefits"; st.rerun()
 
 main_page = st.session_state.main_page
 
