@@ -2,6 +2,7 @@ import streamlit as st
 from google import genai
 from google.genai import types
 import json, io, csv, re, time
+import streamlit.components.v1 as components
 from datetime import datetime
 
 st.set_page_config(page_title="S-Grade SCOMMERCE", page_icon="📋", layout="wide", initial_sidebar_state="collapsed")
@@ -228,7 +229,15 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .compare-pct-bar { height:8px; border-radius:4px; background:#F26522; margin-top:6px; }
 .stButton>button { border-radius:999px !important; font-family:'Inter',sans-serif !important; font-weight:600 !important; font-size:14px !important; }
 div[data-testid="column"]:first-child .stButton>button { background:#F26522 !important; color:white !important; border:none !important; }
-.topnav { position:sticky !important; top:0 !important; z-index:999 !important; }
+/* Sticky: target Streamlit's main block first child */
+[data-testid="stVerticalBlockBorderWrapper"]:first-of-type,
+div[data-testid="stVerticalBlock"] > div:first-child [data-testid="stHorizontalBlock"] {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 999 !important;
+    background: white !important;
+}
+.topnav { background:white; border-bottom:1px solid #e8e8e8; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -349,32 +358,65 @@ def get_jd_content(uploaded_file, jd_text_input):
 if "main_page" not in st.session_state:
     st.session_state.main_page = "evaluate"
 
-# Nav bar HTML (visual only)
 p = st.session_state.main_page
-def active(key): return "background:#F26522;color:white;border:none;" if p==key else "background:white;color:#6b7280;border:1px solid #e8e8e8;"
 
-st.markdown(f"""
-<div class="topnav">
-  <div class="topnav-logo">
-    <span class="sc">SCOMMERCE</span><span class="sep">|</span><span>S-Grade SCOMMERCE</span>
-  </div>
-</div>
+# Toàn bộ nav bar trong 1 row duy nhất — logo trái, 3 nút phải
+logo_col, _, btn1, btn2, btn3 = st.columns([3, 1.5, 1.6, 1.4, 2])
+
+with logo_col:
+    st.markdown("""
+    <div style="background:white;margin:-1rem -1rem 0;padding:0.75rem 1.5rem;border-bottom:1px solid #e8e8e8;
+                display:flex;align-items:center;height:56px">
+      <span style="color:#F26522;font-weight:800;font-size:15px">SCOMMERCE</span>
+      <span style="color:#9ca3af;margin:0 8px">|</span>
+      <span style="color:#1f2937;font-weight:600;font-size:14px">S-Grade SCOMMERCE</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+with _:
+    st.markdown('<div style="background:white;margin:-1rem 0 0;height:56px;border-bottom:1px solid #e8e8e8"></div>', unsafe_allow_html=True)
+
+with btn1:
+    st.markdown('<div style="background:white;margin:-1rem 0 0;padding-top:10px;border-bottom:1px solid #e8e8e8;height:56px">', unsafe_allow_html=True)
+    if st.button("Đánh giá S-Grade", key="nb_eval",
+                 type="primary" if p=="evaluate" else "secondary",
+                 use_container_width=True):
+        st.session_state.main_page = "evaluate"; st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with btn2:
+    st.markdown('<div style="background:white;margin:-1rem 0 0;padding-top:10px;border-bottom:1px solid #e8e8e8;height:56px">', unsafe_allow_html=True)
+    if st.button("Tra cứu S-Grade", key="nb_look",
+                 type="primary" if p=="lookup" else "secondary",
+                 use_container_width=True):
+        st.session_state.main_page = "lookup"; st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with btn3:
+    st.markdown('<div style="background:white;margin:-1rem 0 0;padding-top:10px;padding-right:1.5rem;border-bottom:1px solid #e8e8e8;height:56px">', unsafe_allow_html=True)
+    if st.button("Phúc lợi theo S-Grade", key="nb_bene",
+                 type="primary" if p=="benefits" else "secondary",
+                 use_container_width=True):
+        st.session_state.main_page = "benefits"; st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Sticky: ghim toàn bộ row nav
+st.markdown("""
+<style>
+div[data-testid="stVerticalBlock"] > div:first-child {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 999 !important;
+    background: white !important;
+}
+thead tr {
+    position: sticky !important;
+    top: 60px !important;
+    z-index: 10 !important;
+    background: #F26522 !important;
+}
+</style>
 """, unsafe_allow_html=True)
-
-# Nav buttons using Streamlit columns (functional)
-_, nc1, nc2, nc3, _r = st.columns([3, 1.8, 1.8, 2.2, 0.1])
-with nc1:
-    if st.button("Đánh giá S-Grade", use_container_width=True, type="primary" if p=="evaluate" else "secondary"):
-        st.session_state.main_page = "evaluate"
-        st.rerun()
-with nc2:
-    if st.button("Tra cứu S-Grade", use_container_width=True, type="primary" if p=="lookup" else "secondary"):
-        st.session_state.main_page = "lookup"
-        st.rerun()
-with nc3:
-    if st.button("Phúc lợi theo S-Grade", use_container_width=True, type="primary" if p=="benefits" else "secondary"):
-        st.session_state.main_page = "benefits"
-        st.rerun()
 
 main_page = st.session_state.main_page
 
