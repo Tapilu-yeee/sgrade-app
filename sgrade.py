@@ -2,7 +2,6 @@ import streamlit as st
 from google import genai
 from google.genai import types
 import json, io, csv, re, time
-import streamlit.components.v1 as components
 from datetime import datetime
 
 st.set_page_config(page_title="S-Grade SCOMMERCE", page_icon="📋", layout="wide", initial_sidebar_state="collapsed")
@@ -229,15 +228,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .compare-pct-bar { height:8px; border-radius:4px; background:#F26522; margin-top:6px; }
 .stButton>button { border-radius:999px !important; font-family:'Inter',sans-serif !important; font-weight:600 !important; font-size:14px !important; }
 div[data-testid="column"]:first-child .stButton>button { background:#F26522 !important; color:white !important; border:none !important; }
-/* Sticky: target Streamlit's main block first child */
-[data-testid="stVerticalBlockBorderWrapper"]:first-of-type,
-div[data-testid="stVerticalBlock"] > div:first-child [data-testid="stHorizontalBlock"] {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 999 !important;
-    background: white !important;
-}
-.topnav { background:white; border-bottom:1px solid #e8e8e8; }
+.topnav { position:sticky !important; top:0 !important; z-index:999 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -357,80 +348,33 @@ def get_jd_content(uploaded_file, jd_text_input):
 # ── Nav ──────────────────────────────────────────────────────────────────────────
 if "main_page" not in st.session_state:
     st.session_state.main_page = "evaluate"
-p = st.session_state.main_page
 
-# Nav CSS
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-header[data-testid="stHeader"] { display:none !important; }
-#sgrade-nav {
-    background: white;
-    border-bottom: 1px solid #e8e8e8;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-    margin: -6rem -4rem 1rem -4rem;
-    font-family: 'Inter', sans-serif;
-}
-#sgrade-nav .logo { display:flex; align-items:center; gap:8px; }
-#sgrade-nav .sc { color:#F26522; font-weight:800; font-size:15px; }
-#sgrade-nav .sep { color:#9ca3af; font-size:14px; }
-#sgrade-nav .name { color:#1f2937; font-weight:600; font-size:14px; }
-#sgrade-nav .btns { display:flex; gap:8px; }
-#sgrade-nav button {
-    padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600;
-    cursor:pointer; border:none; background:#f3f4f6; color:#6b7280;
-    font-family:'Inter',sans-serif; transition:opacity 0.15s;
-}
-#sgrade-nav button:hover { opacity:0.85; }
-#sgrade-nav button.active { background:#F26522; color:white; }
-/* Ẩn hoàn toàn row hidden buttons */
-div[data-testid="stVerticalBlock"] > div:has(div[data-testid="stHorizontalBlock"]:has(button[kind="secondary"])):first-of-type {
-    visibility: hidden !important;
-    height: 0 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-</style>
-""", unsafe_allow_html=True)
+# Nav bar HTML (visual only)
+p = st.session_state.main_page
+def active(key): return "background:#F26522;color:white;border:none;" if p==key else "background:white;color:#6b7280;border:1px solid #e8e8e8;"
 
 st.markdown(f"""
-<div id="sgrade-nav">
-  <div class="logo">
-    <span class="sc">SCOMMERCE</span>
-    <span class="sep">|</span>
-    <span class="name">S-Grade SCOMMERCE</span>
-  </div>
-  <div class="btns">
-    <button class="{'active' if p=='evaluate' else ''}"
-      onclick="window.parent.document.querySelector('button[data-testid=\"baseButton-secondary\"][aria-label=\"nav_e\"]') && window.parent.document.querySelector('button[data-testid=\"baseButton-secondary\"][aria-label=\"nav_e\"]').click()">
-      Đánh giá S-Grade</button>
-    <button class="{'active' if p=='lookup' else ''}"
-      onclick="window.parent.document.querySelector('button[aria-label=\"nav_l\"]') && window.parent.document.querySelector('button[aria-label=\"nav_l\"]').click()">
-      Tra cứu S-Grade</button>
-    <button class="{'active' if p=='benefits' else ''}"
-      onclick="window.parent.document.querySelector('button[aria-label=\"nav_b\"]') && window.parent.document.querySelector('button[aria-label=\"nav_b\"]').click()">
-      Phúc lợi theo S-Grade</button>
+<div class="topnav">
+  <div class="topnav-logo">
+    <span class="sc">SCOMMERCE</span><span class="sep">|</span><span>S-Grade SCOMMERCE</span>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Hidden functional buttons
-_c1, _c2, _c3 = st.columns(3)
-with _c1:
-    if st.button("Đánh giá S-Grade", key="nb_eval", help="nav_e"):
-        st.session_state.main_page = "evaluate"; st.rerun()
-with _c2:
-    if st.button("Tra cứu S-Grade", key="nb_look", help="nav_l"):
-        st.session_state.main_page = "lookup"; st.rerun()
-with _c3:
-    if st.button("Phúc lợi theo S-Grade", key="nb_bene", help="nav_b"):
-        st.session_state.main_page = "benefits"; st.rerun()
+# Nav buttons using Streamlit columns (functional)
+_, nc1, nc2, nc3, _r = st.columns([3, 1.8, 1.8, 2.2, 0.1])
+with nc1:
+    if st.button("Đánh giá S-Grade", use_container_width=True, type="primary" if p=="evaluate" else "secondary"):
+        st.session_state.main_page = "evaluate"
+        st.rerun()
+with nc2:
+    if st.button("Tra cứu S-Grade", use_container_width=True, type="primary" if p=="lookup" else "secondary"):
+        st.session_state.main_page = "lookup"
+        st.rerun()
+with nc3:
+    if st.button("Phúc lợi theo S-Grade", use_container_width=True, type="primary" if p=="benefits" else "secondary"):
+        st.session_state.main_page = "benefits"
+        st.rerun()
 
 main_page = st.session_state.main_page
 
