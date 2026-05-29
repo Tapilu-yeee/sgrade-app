@@ -2,7 +2,6 @@ import streamlit as st
 from google import genai
 from google.genai import types
 import json, io, csv, re, time
-import streamlit.components.v1 as components
 from datetime import datetime
 
 st.set_page_config(page_title="S-Grade SCOMMERCE", page_icon="📋", layout="wide", initial_sidebar_state="collapsed")
@@ -229,15 +228,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .compare-pct-bar { height:8px; border-radius:4px; background:#F26522; margin-top:6px; }
 .stButton>button { border-radius:999px !important; font-family:'Inter',sans-serif !important; font-weight:600 !important; font-size:14px !important; }
 div[data-testid="column"]:first-child .stButton>button { background:#F26522 !important; color:white !important; border:none !important; }
-/* Sticky: target Streamlit's main block first child */
-[data-testid="stVerticalBlockBorderWrapper"]:first-of-type,
-div[data-testid="stVerticalBlock"] > div:first-child [data-testid="stHorizontalBlock"] {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 999 !important;
-    background: white !important;
-}
-.topnav { background:white; border-bottom:1px solid #e8e8e8; }
+.topnav { position:sticky !important; top:0 !important; z-index:999 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -358,10 +349,11 @@ def get_jd_content(uploaded_file, jd_text_input):
 if "main_page" not in st.session_state:
     st.session_state.main_page = "evaluate"
 
+# Nav bar HTML (visual only)
 p = st.session_state.main_page
+def active(key): return "background:#F26522;color:white;border:none;" if p==key else "background:white;color:#6b7280;border:1px solid #e8e8e8;"
 
-# Logo bar
-st.markdown("""
+st.markdown(f"""
 <div class="topnav">
   <div class="topnav-logo">
     <span class="sc">SCOMMERCE</span><span class="sep">|</span><span>S-Grade SCOMMERCE</span>
@@ -369,51 +361,20 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Nav buttons — visible, styled, functional
-st.markdown("""
-<style>
-/* Ẩn label text của button, giữ button hoạt động */
-div[data-testid="stHorizontalBlock"]:nth-of-type(1) { margin-top:-8px !important; }
-</style>
-""", unsafe_allow_html=True)
-
-nc1, nc2, nc3, _ = st.columns([1.6, 1.4, 2, 4])
+# Nav buttons using Streamlit columns (functional)
+_, nc1, nc2, nc3, _r = st.columns([3, 1.8, 1.8, 2.2, 0.1])
 with nc1:
-    if st.button("Đánh giá S-Grade", key="nb_eval",
-                 type="primary" if p=="evaluate" else "secondary",
-                 use_container_width=True):
-        st.session_state.main_page = "evaluate"; st.rerun()
+    if st.button("Đánh giá S-Grade", use_container_width=True, type="primary" if p=="evaluate" else "secondary"):
+        st.session_state.main_page = "evaluate"
+        st.rerun()
 with nc2:
-    if st.button("Tra cứu S-Grade", key="nb_look",
-                 type="primary" if p=="lookup" else "secondary",
-                 use_container_width=True):
-        st.session_state.main_page = "lookup"; st.rerun()
+    if st.button("Tra cứu S-Grade", use_container_width=True, type="primary" if p=="lookup" else "secondary"):
+        st.session_state.main_page = "lookup"
+        st.rerun()
 with nc3:
-    if st.button("Phúc lợi theo S-Grade", key="nb_bene",
-                 type="primary" if p=="benefits" else "secondary",
-                 use_container_width=True):
-        st.session_state.main_page = "benefits"; st.rerun()
-
-# Sticky: inject CSS that pins the topnav + the button row
-st.markdown("""
-<style>
-/* Pin topnav div */
-div[data-testid="stVerticalBlock"] > div:has(> div[data-testid="stMarkdownContainer"] > div > .topnav) {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 999 !important;
-    background: #0e1117 !important;
-}
-/* Pin the button row right below */
-div[data-testid="stVerticalBlock"] > div:has(> div[data-testid="stHorizontalBlock"]) {
-    position: sticky !important;
-    top: 56px !important;
-    z-index: 998 !important;
-    background: #0e1117 !important;
-    padding-bottom: 6px !important;
-}
-</style>
-""", unsafe_allow_html=True)
+    if st.button("Phúc lợi theo S-Grade", use_container_width=True, type="primary" if p=="benefits" else "secondary"):
+        st.session_state.main_page = "benefits"
+        st.rerun()
 
 main_page = st.session_state.main_page
 
