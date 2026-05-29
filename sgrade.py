@@ -228,6 +228,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .compare-pct-bar { height:8px; border-radius:4px; background:#F26522; margin-top:6px; }
 .stButton>button { border-radius:999px !important; font-family:'Inter',sans-serif !important; font-weight:600 !important; font-size:14px !important; }
 div[data-testid="column"]:first-child .stButton>button { background:#F26522 !important; color:white !important; border:none !important; }
+.topnav { position:sticky !important; top:0 !important; z-index:999 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -821,7 +822,103 @@ elif main_page == "benefits":
     <div class="hero-banner" style="margin-bottom:1.5rem">
       <div class="hero-sub">Chính sách đãi ngộ</div>
       <div class="hero-title" style="font-size:48px">PHÚC LỢI<br>THEO S-GRADE</div>
-      <div class="hero-tagline">Thông tin phúc lợi theo từng cấp bậc</div>
+      <div class="hero-tagline">Grab for Work · Bảo hiểm sức khỏe · Khám sức khỏe</div>
     </div>
     """, unsafe_allow_html=True)
-    st.info("🚧 Tính năng đang được cập nhật. Vui lòng liên hệ HR team để biết thêm chi tiết.")
+
+    ben1, ben2, ben3 = st.tabs(["🚗  Grab for Work", "🏥  Bảo hiểm sức khỏe", "🩺  Khám sức khỏe"])
+
+    PROG_COLORS = {
+        "Chương trình 5": ("#5b21b6", "#ede9fe"),
+        "Chương trình 4": ("#185fa5", "#e6f1fb"),
+        "Chương trình 3": ("#1a7a4a", "#f0faf5"),
+        "Chương trình 2": ("#854f0b", "#faeeda"),
+        "Chương trình 1": ("#6b7280", "#f3f4f6"),
+    }
+    def prog_badge(p):
+        tc, bg = PROG_COLORS.get(p, ("#6b7280","#f3f4f6"))
+        return '<span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:' + bg + ';color:' + tc + '">' + p + '</span>'
+
+    # TAB 1: GRAB FOR WORK
+    with ben1:
+        st.markdown("<br>", unsafe_allow_html=True)
+        grab_data = [
+            ("S13","Không giới hạn","Không giới hạn","Không giới hạn"),
+            ("S12","Không giới hạn","Không giới hạn","Không giới hạn"),
+            ("S11","Không giới hạn","Không giới hạn","Không giới hạn"),
+            ("S10","Không giới hạn","Không giới hạn","Không giới hạn"),
+            ("S9","5.000.000 đ","3.000.000 đ","3.000.000 đ"),
+            ("S8","5.000.000 đ","3.000.000 đ","3.000.000 đ"),
+            ("S7","3.000.000 đ","2.000.000 đ","2.000.000 đ"),
+            ("S6","1.000.000 đ","1.000.000 đ","1.000.000 đ"),
+            ("S5","1.000.000 đ","1.000.000 đ","1.000.000 đ"),
+            ("S4","1.000.000 đ","1.000.000 đ","—"),
+            ("S3","500.000 đ","500.000 đ","—"),
+        ]
+        def grab_cell(v):
+            if v == "Không giới hạn":
+                return '<td style="padding:10px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1a7a4a;font-weight:600;font-size:13px">∞ Không giới hạn</td>'
+            elif v == "—":
+                return '<td style="padding:10px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#9ca3af;font-size:13px">—</td>'
+            return '<td style="padding:10px 14px;text-align:center;border-bottom:1px solid #f0f0f0;color:#1f2937;font-weight:500;font-size:13px">' + v + '</td>'
+
+        g_rows = ""
+        for rank, kh, spkt, other in grab_data:
+            tc, bg = grade_color(rank)
+            g_rows += '<tr><td style="padding:10px 14px;text-align:center;border-bottom:1px solid #f0f0f0"><span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:' + bg + ';color:' + tc + ';font-weight:700;font-size:12px">' + rank + '</span></td>' + grab_cell(kh) + grab_cell(spkt) + grab_cell(other) + '</tr>'
+
+        st.markdown('<div style="background:white;border-radius:12px;border:1px solid #e8e8e8;overflow:hidden"><div style="background:#1f2937;padding:1rem 1.5rem"><span style="color:white;font-weight:600;font-size:15px">🚗 Chính sách Grab for Work — Hạn mức theo cấp bậc và khối</span></div><div style="padding:0.75rem 1.5rem;font-size:13px;color:#6b7280">Dựa theo từng cấp bậc của từng Khối sẽ được xác định mức chính sách cụ thể</div><table style="width:100%;border-collapse:collapse;background:white"><thead><tr style="background:#f3f4f6"><th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb">Cấp bậc</th><th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb">Khối Khách Hàng (trực tiếp)</th><th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb">Khối Sản Phẩm & Công Nghệ</th><th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb">Các Khối Còn Lại</th></tr></thead><tbody>' + g_rows + '</tbody></table></div>', unsafe_allow_html=True)
+
+    # TAB 2: BẢO HIỂM SỨC KHỎE
+    with ben2:
+        st.markdown("<br>", unsafe_allow_html=True)
+        ghn_ins = [
+            ("S13","Chương trình 5","5"),("S12","Chương trình 5","5"),
+            ("S11","Chương trình 5","4"),("S10","Chương trình 4","3"),
+            ("S09","Chương trình 4","3"),("S08","Chương trình 4","2"),
+            ("S07","Chương trình 4","2"),("S06","Chương trình 3","1"),
+            ("S05","Chương trình 3","1"),("S04","Chương trình 2","0"),
+            ("S03","Chương trình 2","0"),("S02","Chương trình 1","0"),
+            ("S01","Chương trình 1","0"),
+        ]
+        rows1 = ""
+        for rank, prog, rel in ghn_ins:
+            tc, bg = grade_color(rank)
+            rel_html = '<span style="color:#1a7a4a;font-weight:600">👥 ' + rel + ' người</span>' if rel != "0" else '<span style="color:#9ca3af">—</span>'
+            rows1 += '<tr style="border-bottom:1px solid #f0f0f0;background:white"><td style="padding:9px 16px;text-align:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:' + bg + ';color:' + tc + ';font-weight:700;font-size:12px">' + rank + '</span></td><td style="padding:9px 16px;text-align:center">' + prog_badge(prog) + '</td><td style="padding:9px 16px;text-align:center;font-size:13px">' + rel_html + '</td></tr>'
+
+        aha_ins = [
+            ("S12","G09","Chương trình 5","3"),("S09","G08","Chương trình 5","3"),
+            ("S08","G07","Chương trình 4","3"),("S07","G06","Chương trình 4","2"),
+            ("S06","G05","Chương trình 4","1"),("S04","G04","Chương trình 3","0"),
+            ("S03","G03","Chương trình 3","0"),("S02","G02","Chương trình 2","0"),
+            ("S01","G01","Chương trình 2","0"),
+        ]
+        rows2 = ""
+        for rank, ggrade, prog, rel in aha_ins:
+            tc, bg = grade_color(rank)
+            rel_html = '<span style="color:#1a7a4a;font-weight:600">👥 ' + rel + ' người</span>' if rel != "0" else '<span style="color:#9ca3af">—</span>'
+            rows2 += '<tr style="border-bottom:1px solid #f0f0f0;background:white"><td style="padding:9px 16px;text-align:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:' + bg + ';color:' + tc + ';font-weight:700;font-size:12px">' + rank + '</span></td><td style="padding:9px 16px;text-align:center;font-size:13px;color:#6b7280;font-weight:500">' + ggrade + '</td><td style="padding:9px 16px;text-align:center">' + prog_badge(prog) + '</td><td style="padding:9px 16px;text-align:center;font-size:13px">' + rel_html + '</td></tr>'
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown('<div style="background:white;border-radius:12px;border:1px solid #e8e8e8;overflow:hidden"><div style="background:#1f2937;padding:0.875rem 1.25rem"><span style="color:white;font-weight:600;font-size:14px">🏢 SCommerce / GHN / Nặng / Logistics</span></div><table style="width:100%;border-collapse:collapse;background:white"><thead><tr style="background:#f3f4f6"><th style="padding:9px 16px;text-align:center;font-size:12px;font-weight:600;color:#374151;border-bottom:1.5px solid #e5e7eb">S-Grade</th><th style="padding:9px 16px;text-align:center;font-size:12px;font-weight:600;color:#374151;border-bottom:1.5px solid #e5e7eb">Chương trình</th><th style="padding:9px 16px;text-align:center;font-size:12px;font-weight:600;color:#374151;border-bottom:1.5px solid #e5e7eb">Người thân CT chi trả</th></tr></thead><tbody>' + rows1 + '</tbody></table></div>', unsafe_allow_html=True)
+        with c2:
+            st.markdown('<div style="background:white;border-radius:12px;border:1px solid #e8e8e8;overflow:hidden"><div style="background:#1f2937;padding:0.875rem 1.25rem"><span style="color:white;font-weight:600;font-size:14px">🛵 Ahamove</span></div><table style="width:100%;border-collapse:collapse;background:white"><thead><tr style="background:#f3f4f6"><th style="padding:9px 16px;text-align:center;font-size:12px;font-weight:600;color:#374151;border-bottom:1.5px solid #e5e7eb">S-Grade</th><th style="padding:9px 16px;text-align:center;font-size:12px;font-weight:600;color:#374151;border-bottom:1.5px solid #e5e7eb">G-Grade</th><th style="padding:9px 16px;text-align:center;font-size:12px;font-weight:600;color:#374151;border-bottom:1.5px solid #e5e7eb">Chương trình</th><th style="padding:9px 16px;text-align:center;font-size:12px;font-weight:600;color:#374151;border-bottom:1.5px solid #e5e7eb">Người thân</th></tr></thead><tbody>' + rows2 + '</tbody></table></div>', unsafe_allow_html=True)
+
+    # TAB 3: KHÁM SỨC KHỎE
+    with ben3:
+        st.markdown("<br>", unsafe_allow_html=True)
+        health_data = [
+            ("Chương trình 5", "SMT — 4 người thân đi kèm", "S11 – S13", "G9", "4 người"),
+            ("Chương trình 4", "S.Director + 3 người thân<br>Director + 1 người thân<br>Senior Manager / Tech Leaders<br>Senior Lead Engineer 1&amp;2 / Lead Engineer 1&amp;2", "S7 – S10", "G6 – G8", "S10: 3 người<br>S9/G8: 2 người<br>S8/G7: 1 người<br>S7: 0 người"),
+            ("Chương trình 3", "Mid manager", "S5 – S6", "G3 – G5", "0"),
+            ("Chương trình 2", "Nhóm Văn phòng: Level Executive trở lên<br>Nhóm Kho (KTC+KHL+FFM): NV ký HĐLĐ &amp; CTV ≥3 tháng<br>Giao Hàng Nặng: NV ký HĐLĐ &amp; CTV ≥3 tháng", "S1 – S4", "G1 – G2", "0"),
+            ("Chương trình 1", "Tài xế xe tải ký HĐLĐ với GHN, thâm niên >3 tháng tính đến 30/04/2026", "Tài xế xe tải", "—", "0"),
+        ]
+        rows3 = ""
+        for prog, target, ghn, aha, rel in health_data:
+            rel_color = "#1a7a4a" if rel != "0" else "#9ca3af"
+            rows3 += '<tr style="border-bottom:1px solid #f0f0f0;background:white;vertical-align:top"><td style="padding:12px 14px">' + prog_badge(prog) + '</td><td style="padding:12px 14px;font-size:12px;color:#6b7280;line-height:1.7">' + target + '</td><td style="padding:12px 14px;text-align:center;font-size:13px;font-weight:600;color:#F26522">' + ghn + '</td><td style="padding:12px 14px;text-align:center;font-size:13px;font-weight:600;color:#185fa5">' + aha + '</td><td style="padding:12px 14px;text-align:center;font-size:12px;color:' + rel_color + ';line-height:1.6">' + rel + '</td></tr>'
+
+        st.markdown('<div style="background:white;border-radius:12px;border:1px solid #e8e8e8;overflow:hidden"><div style="background:#1f2937;padding:1rem 1.5rem"><span style="color:white;font-weight:600;font-size:15px">🩺 Chương trình Khám sức khỏe 2026</span></div><table style="width:100%;border-collapse:collapse;background:white"><thead><tr style="background:#f3f4f6"><th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb">Chương trình</th><th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb">Đối tượng</th><th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb">Nhân viên GHN</th><th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb">Nhân viên Ahamove</th><th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb">Người thân</th></tr></thead><tbody>' + rows3 + '</tbody></table></div>', unsafe_allow_html=True)
