@@ -359,42 +359,68 @@ if "main_page" not in st.session_state:
     st.session_state.main_page = "evaluate"
 p = st.session_state.main_page
 
-# Logo + 3 nút trong 1 row dùng st.columns
-logo_col, b1_col, b2_col, b3_col = st.columns([3.5, 1.6, 1.4, 2])
+# Toàn bộ nav trong 1 markdown duy nhất
+def nav_style(key):
+    if p == key:
+        return "background:#F26522;color:white;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif"
+    return "background:white;color:#6b7280;border:1px solid #e8e8e8;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif"
 
-with logo_col:
-    st.markdown("""
-    <div style="background:white;height:52px;display:flex;align-items:center;
-                margin:-1rem -1rem 0;padding:0 1.5rem;border-bottom:1px solid #e8e8e8;">
-      <span style="color:#F26522;font-weight:800;font-size:15px">SCOMMERCE</span>
-      <span style="color:#9ca3af;margin:0 8px;font-size:14px">|</span>
-      <span style="color:#1f2937;font-weight:600;font-size:14px">S-Grade SCOMMERCE</span>
-    </div>
-    """, unsafe_allow_html=True)
+st.markdown(f"""
+<div style="background:white;border-bottom:1px solid #e8e8e8;padding:0 2rem;
+            height:56px;display:flex;align-items:center;justify-content:space-between;
+            margin:-6rem -4rem 0.5rem -4rem">
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="color:#F26522;font-weight:800;font-size:15px">SCOMMERCE</span>
+    <span style="color:#9ca3af">|</span>
+    <span style="color:#1f2937;font-weight:600;font-size:14px">S-Grade SCOMMERCE</span>
+  </div>
+  <div style="display:flex;gap:6px">
+    <button style="{nav_style('evaluate')}" onclick="document.getElementById('btn-evaluate').click()">Đánh giá S-Grade</button>
+    <button style="{nav_style('lookup')}" onclick="document.getElementById('btn-lookup').click()">Tra cứu S-Grade</button>
+    <button style="{nav_style('benefits')}" onclick="document.getElementById('btn-benefits').click()">Phúc lợi theo S-Grade</button>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
-with b1_col:
-    st.markdown('<div style="background:white;height:52px;display:flex;align-items:center;justify-content:flex-end;margin:-1rem -1rem 0;padding:0 4px;border-bottom:1px solid #e8e8e8;">', unsafe_allow_html=True)
-    if st.button("Đánh giá S-Grade", key="nb_eval",
-                 type="primary" if p=="evaluate" else "secondary",
-                 use_container_width=True):
-        st.session_state.main_page = "evaluate"; st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+# 3 nút Streamlit ẩn hoàn toàn — chỉ dùng để trigger rerun
+st.markdown("""<style>
+div[data-testid="stVerticalBlock"] > div:nth-child(2) { 
+    position:absolute; opacity:0; pointer-events:none; height:0; overflow:hidden;
+}
+</style>""", unsafe_allow_html=True)
 
-with b2_col:
-    st.markdown('<div style="background:white;height:52px;display:flex;align-items:center;margin:-1rem -1rem 0;padding:0 4px;border-bottom:1px solid #e8e8e8;">', unsafe_allow_html=True)
-    if st.button("Tra cứu S-Grade", key="nb_look",
-                 type="primary" if p=="lookup" else "secondary",
-                 use_container_width=True):
-        st.session_state.main_page = "lookup"; st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+_c1, _c2, _c3 = st.columns(3)
+with _c1:
+    clicked_eval = st.button("e", key="nb_eval")
+with _c2:
+    clicked_look = st.button("l", key="nb_look")
+with _c3:
+    clicked_bene = st.button("b", key="nb_bene")
 
-with b3_col:
-    st.markdown('<div style="background:white;height:52px;display:flex;align-items:center;margin:-1rem -1rem 0;padding:0 4px;padding-right:1rem;border-bottom:1px solid #e8e8e8;">', unsafe_allow_html=True)
-    if st.button("Phúc lợi theo S-Grade", key="nb_bene",
-                 type="primary" if p=="benefits" else "secondary",
-                 use_container_width=True):
-        st.session_state.main_page = "benefits"; st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+if clicked_eval:
+    st.session_state.main_page = "evaluate"; st.rerun()
+if clicked_look:
+    st.session_state.main_page = "lookup"; st.rerun()
+if clicked_bene:
+    st.session_state.main_page = "benefits"; st.rerun()
+
+# JS gán id cho 3 nút ẩn để HTML nav có thể click vào
+st.markdown("""<script>
+(function() {
+    function assignIds() {
+        var btns = window.parent.document.querySelectorAll('button[kind="secondary"], button[data-testid="baseButton-secondary"]');
+        var labels = ['e','l','b'];
+        var ids = ['btn-evaluate','btn-lookup','btn-benefits'];
+        var matched = 0;
+        btns.forEach(function(btn) {
+            var idx = labels.indexOf(btn.innerText.trim());
+            if (idx >= 0) { btn.id = ids[idx]; matched++; }
+        });
+        if (matched < 3) setTimeout(assignIds, 200);
+    }
+    assignIds();
+})();
+</script>""", unsafe_allow_html=True)
 
 main_page = st.session_state.main_page
 
