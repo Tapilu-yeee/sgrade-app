@@ -12,6 +12,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+# VERSION: v5-retry-json-fix
 
 # ── PwC System Prompt (ẩn trong code) ─────────────────────────────────────────
 PWC_SYSTEM_PROMPT = """<context>
@@ -490,12 +491,20 @@ if eval_btn:
                         raise last_err
 
                     raw = response.text
-                    # Robust JSON extraction — handles ```json blocks and extra text
-                    import re as _re
-                    json_match = _re.search(r'\{[\s\S]*\}', raw)
-                    if not json_match:
-                        raise json.JSONDecodeError("No JSON found", raw, 0)
-                    result = json.loads(json_match.group())
+                    # Strip markdown fences then extract JSON object
+                    _txt = raw.strip()
+                    if _txt.startswith("```"):
+                        _txt = _txt.split("```", 2)[-1] if _txt.count("```") >= 2 else _txt
+                        if _txt.startswith("json"):
+                            _txt = _txt[4:]
+                        _txt = _txt.rsplit("```", 1)[0]
+                    _txt = _txt.strip()
+                    # Find outermost { }
+                    _s = _txt.find("{")
+                    _e = _txt.rfind("}")
+                    if _s == -1 or _e == -1:
+                        raise json.JSONDecodeError("No JSON object found", _txt, 0)
+                    result = json.loads(_txt[_s:_e+1])
 
                     # ── Render Results ─────────────────────────────────────────
                     factors = result.get("factors", [])
