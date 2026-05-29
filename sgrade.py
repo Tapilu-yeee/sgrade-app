@@ -2,6 +2,7 @@ import streamlit as st
 from google import genai
 from google.genai import types
 import json, io, csv, re, time
+import streamlit.components.v1 as components
 from datetime import datetime
 
 st.set_page_config(page_title="S-Grade SCOMMERCE", page_icon="📋", layout="wide", initial_sidebar_state="collapsed")
@@ -357,32 +358,116 @@ def get_jd_content(uploaded_file, jd_text_input):
 if "main_page" not in st.session_state:
     st.session_state.main_page = "evaluate"
 
-# Nav bar HTML (visual only)
 p = st.session_state.main_page
-def active(key): return "background:#F26522;color:white;border:none;" if p==key else "background:white;color:#6b7280;border:1px solid #e8e8e8;"
 
-st.markdown(f"""
-<div class="topnav">
-  <div class="topnav-logo">
-    <span class="sc">SCOMMERCE</span><span class="sep">|</span><span>S-Grade SCOMMERCE</span>
+def nav_style(key):
+    if p == key:
+        return "background:#F26522;color:white;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif"
+    return "background:white;color:#6b7280;border:1px solid #e8e8e8;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif"
+
+# Sticky nav via components.html — chạy trong iframe riêng, không bị scroll ảnh hưởng
+nav_html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* {{ margin:0; padding:0; box-sizing:border-box; }}
+body {{ font-family:'Inter',sans-serif; background:white; }}
+.nav {{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: white;
+    border-bottom: 1px solid #e8e8e8;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    z-index: 9999;
+}}
+.logo {{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:#1f2937; }}
+.logo .sc {{ color:#F26522; font-weight:800; }}
+.logo .sep {{ color:#9ca3af; }}
+.nav-btns {{ display:flex; gap:6px; }}
+button {{
+    padding:7px 16px; border-radius:6px; font-size:13px;
+    font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;
+    transition: all 0.15s;
+}}
+button:hover {{ opacity:0.85; }}
+.btn-active {{ background:#F26522; color:white; border:none; }}
+.btn-inactive {{ background:white; color:#6b7280; border:1px solid #e8e8e8; }}
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="logo">
+    <span class="sc">SCOMMERCE</span>
+    <span class="sep">|</span>
+    <span>S-Grade SCOMMERCE</span>
+  </div>
+  <div class="nav-btns">
+    <button class="{'btn-active' if p=='evaluate' else 'btn-inactive'}"
+      onclick="window.parent.postMessage({{type:'nav',page:'evaluate'}},'*')">
+      Đánh giá S-Grade
+    </button>
+    <button class="{'btn-active' if p=='lookup' else 'btn-inactive'}"
+      onclick="window.parent.postMessage({{type:'nav',page:'lookup'}},'*')">
+      Tra cứu S-Grade
+    </button>
+    <button class="{'btn-active' if p=='benefits' else 'btn-inactive'}"
+      onclick="window.parent.postMessage({{type:'nav',page:'benefits'}},'*')">
+      Phúc lợi theo S-Grade
+    </button>
   </div>
 </div>
-""", unsafe_allow_html=True)
+</body>
+</html>
+"""
 
-# Nav buttons using Streamlit columns (functional)
-_, nc1, nc2, nc3, _r = st.columns([3, 1.8, 1.8, 2.2, 0.1])
-with nc1:
-    if st.button("Đánh giá S-Grade", use_container_width=True, type="primary" if p=="evaluate" else "secondary"):
+components.html(nav_html, height=56, scrolling=False)
+
+# Hidden st.buttons to handle navigation triggered by postMessage
+# We use a workaround: query_params to pass nav state
+qp = st.query_params
+if "nav" in qp and qp["nav"] != p:
+    st.session_state.main_page = qp["nav"]
+    st.query_params.clear()
+    st.rerun()
+
+# Functional nav buttons (hidden visually, triggered by JS above)
+nav_cols = st.columns([1,1,1])
+with nav_cols[0]:
+    if st.button("nav_evaluate", key="nb_eval", label_visibility="collapsed"):
         st.session_state.main_page = "evaluate"
         st.rerun()
-with nc2:
-    if st.button("Tra cứu S-Grade", use_container_width=True, type="primary" if p=="lookup" else "secondary"):
+with nav_cols[1]:
+    if st.button("nav_lookup", key="nb_look", label_visibility="collapsed"):
         st.session_state.main_page = "lookup"
         st.rerun()
-with nc3:
-    if st.button("Phúc lợi theo S-Grade", use_container_width=True, type="primary" if p=="benefits" else "secondary"):
+with nav_cols[2]:
+    if st.button("nav_benefits", key="nb_bene", label_visibility="collapsed"):
         st.session_state.main_page = "benefits"
         st.rerun()
+
+# Inject JS to listen for postMessage and click the right hidden button
+st.markdown(f"""
+<script>
+window.addEventListener('message', function(e) {{
+    if (e.data && e.data.type === 'nav') {{
+        const page = e.data.page;
+        const map = {{evaluate: 0, lookup: 1, benefits: 2}};
+        const btns = window.parent.document.querySelectorAll('[data-testid="stButton"] button');
+        const navBtns = Array.from(btns).filter(b => b.textContent.startsWith('nav_'));
+        if (navBtns[map[page]]) navBtns[map[page]].click();
+    }}
+}});
+</script>
+""", unsafe_allow_html=True)
+
+# Add top margin so content doesn't hide under sticky nav
+st.markdown('<div style="height:8px"></div>', unsafe_allow_html=True)
 
 main_page = st.session_state.main_page
 
