@@ -359,31 +359,42 @@ if "main_page" not in st.session_state:
     st.session_state.main_page = "evaluate"
 p = st.session_state.main_page
 
-st.markdown("""
-<div class="topnav">
-  <div class="topnav-logo">
-    <span class="sc">SCOMMERCE</span><span class="sep">|</span><span>S-Grade SCOMMERCE</span>
-  </div>
-  <div style="display:flex;gap:6px" id="nav-btns-placeholder"></div>
-</div>
-""", unsafe_allow_html=True)
+# Logo + 3 nút trong 1 row dùng st.columns
+logo_col, b1_col, b2_col, b3_col = st.columns([3.5, 1.6, 1.4, 2])
 
-nc1, nc2, nc3, _ = st.columns([1.6, 1.4, 2, 4])
-with nc1:
+with logo_col:
+    st.markdown("""
+    <div style="background:white;height:52px;display:flex;align-items:center;
+                margin:-1rem -1rem 0;padding:0 1.5rem;border-bottom:1px solid #e8e8e8;">
+      <span style="color:#F26522;font-weight:800;font-size:15px">SCOMMERCE</span>
+      <span style="color:#9ca3af;margin:0 8px;font-size:14px">|</span>
+      <span style="color:#1f2937;font-weight:600;font-size:14px">S-Grade SCOMMERCE</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+with b1_col:
+    st.markdown('<div style="background:white;height:52px;display:flex;align-items:center;justify-content:flex-end;margin:-1rem -1rem 0;padding:0 4px;border-bottom:1px solid #e8e8e8;">', unsafe_allow_html=True)
     if st.button("Đánh giá S-Grade", key="nb_eval",
                  type="primary" if p=="evaluate" else "secondary",
                  use_container_width=True):
         st.session_state.main_page = "evaluate"; st.rerun()
-with nc2:
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with b2_col:
+    st.markdown('<div style="background:white;height:52px;display:flex;align-items:center;margin:-1rem -1rem 0;padding:0 4px;border-bottom:1px solid #e8e8e8;">', unsafe_allow_html=True)
     if st.button("Tra cứu S-Grade", key="nb_look",
                  type="primary" if p=="lookup" else "secondary",
                  use_container_width=True):
         st.session_state.main_page = "lookup"; st.rerun()
-with nc3:
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with b3_col:
+    st.markdown('<div style="background:white;height:52px;display:flex;align-items:center;margin:-1rem -1rem 0;padding:0 4px;padding-right:1rem;border-bottom:1px solid #e8e8e8;">', unsafe_allow_html=True)
     if st.button("Phúc lợi theo S-Grade", key="nb_bene",
                  type="primary" if p=="benefits" else "secondary",
                  use_container_width=True):
         st.session_state.main_page = "benefits"; st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 main_page = st.session_state.main_page
 
