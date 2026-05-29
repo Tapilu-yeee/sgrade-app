@@ -462,7 +462,7 @@ if eval_btn:
                 try:
                     client = genai.Client(api_key=api_key)
                     response = client.models.generate_content(
-                        model="gemini-2.0-flash",
+                        model="gemini-2.5-flash",
                         contents=f"Tên vị trí: {job_title}\n\nNội dung JD:\n{jd_content}",
                         config=types.GenerateContentConfig(
                             system_instruction=PWC_SYSTEM_PROMPT,
