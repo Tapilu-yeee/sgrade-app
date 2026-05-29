@@ -571,10 +571,10 @@ if eval_btn:
                     for i, f in enumerate(factors):
                         tc, bg = grade_color(f.get("grade",""))
                         rows_html += f"""
-                        <tr style="border-bottom:1px solid #e8e8e8">
-                          <td style="padding:12px 14px;font-weight:600;font-size:13px;vertical-align:top;width:15%">{i+1}. {f.get("name","")}</td>
-                          <td style="padding:12px 14px;font-size:13px;vertical-align:top;width:28%">{f.get("reason","")}</td>
-                          <td style="padding:12px 14px;font-size:13px;font-style:italic;color:#555;vertical-align:top;width:42%">{f.get("evidence","")}</td>
+                        <tr style="border-bottom:1px solid #e8e8e8;background:white">
+                          <td style="padding:12px 14px;font-weight:600;font-size:13px;vertical-align:top;width:15%;color:#1f2937">{i+1}. {f.get("name","")}</td>
+                          <td style="padding:12px 14px;font-size:13px;vertical-align:top;width:28%;color:#1f2937">{f.get("reason","")}</td>
+                          <td style="padding:12px 14px;font-size:13px;font-style:italic;color:#4b5563;vertical-align:top;width:42%">{f.get("evidence","")}</td>
                           <td style="padding:12px 14px;text-align:center;vertical-align:top;width:10%">
                             <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:13px">{f.get("grade","")}</span>
                           </td>
@@ -585,13 +585,13 @@ if eval_btn:
                       <div style="background:#1f2937;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center">
                         <span style="color:white;font-weight:600;font-size:15px">Kết quả đánh giá: {job_title}</span>
                       </div>
-                      <table style="width:100%;border-collapse:collapse;font-family:Inter,sans-serif">
+                      <table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif;background:white">
                         <thead>
-                          <tr style="background:#f5f5f5;border-bottom:2px solid #e8e8e8">
-                            <th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#6b7280">Yếu tố</th>
-                            <th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#6b7280">Lý do</th>
-                            <th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#6b7280">Dẫn chứng</th>
-                            <th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#6b7280">Mức</th>
+                          <tr style="background:#f3f4f6;border-bottom:2px solid #e5e7eb">
+                            <th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#374151">Yếu tố</th>
+                            <th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#374151">Lý do</th>
+                            <th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#374151">Dẫn chứng</th>
+                            <th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#374151">Mức</th>
                           </tr>
                         </thead>
                         <tbody>{rows_html}</tbody>
