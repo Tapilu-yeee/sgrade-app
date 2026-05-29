@@ -597,43 +597,42 @@ with tab3:
     if not JE_DATABASE:
         st.info("📭 Chưa có dữ liệu. Liên hệ admin để cập nhật file je_data.json.")
     else:
-        # Filter: tên + S-Grade (bỏ Nguồn)
+        # Filter: tên vị trí (dropdown) + S-Grade
+        all_sgrades = sorted(set(d["s_grade"] for d in JE_DATABASE if d["s_grade"]))
+
         fc1, fc2 = st.columns([3, 1.5])
         with fc1:
-            search_q = st.text_input("🔍 Tìm theo tên vị trí", placeholder="e.g. Regional Director, Manager...")
+            # 336 records — dùng tên + số thứ tự để phân biệt trùng tên
+            all_labels = [
+                f"{d['title']}  |  {d['s_grade']}  |  {d['total_score']} điểm"
+                for d in JE_DATABASE
+            ]
+            selected_label = st.selectbox("Chọn vị trí", ["-- Chọn vị trí --"] + all_labels)
         with fc2:
-            all_sgrades = sorted(set(d["s_grade"] for d in JE_DATABASE if d["s_grade"]))
             sg_filter = st.selectbox("Lọc S-Grade", ["Tất cả"] + all_sgrades)
 
-        # Chỉ hiển thị khi đã filter
-        user_has_filtered = search_q.strip() or sg_filter != "Tất cả"
+        # Chỉ hiển thị khi đã chọn
+        user_has_filtered = selected_label != "-- Chọn vị trí --" or sg_filter != "Tất cả"
 
         if not user_has_filtered:
             st.markdown("""<div style="background:#f9f9f9;border-radius:12px;padding:2.5rem;text-align:center;
               color:#9ca3af;border:1px dashed #e8e8e8;margin-top:1rem">
               <div style="font-size:28px;margin-bottom:0.5rem">🔍</div>
-              <div style="font-size:14px">Nhập tên vị trí hoặc chọn S-Grade để bắt đầu tra cứu</div>
+              <div style="font-size:14px">Chọn vị trí hoặc S-Grade để bắt đầu tra cứu</div>
             </div>""", unsafe_allow_html=True)
         else:
-            # Apply filters
-            filtered = JE_DATABASE
-            if search_q.strip():
-                filtered = [d for d in filtered if search_q.strip().lower() in d["title"].lower()]
-            if sg_filter != "Tất cả":
-                filtered = [d for d in filtered if d["s_grade"] == sg_filter]
-
-            if not filtered:
-                st.warning("Không tìm thấy vị trí nào phù hợp.")
+            # Nếu chọn theo S-Grade thì lọc list
+            if sg_filter != "Tất cả" and selected_label == "-- Chọn vị trí --":
+                filtered = [d for d in JE_DATABASE if d["s_grade"] == sg_filter]
+                st.markdown(f"<div style='font-size:13px;color:#9ca3af;margin:0.5rem 0 1rem'>Tìm thấy <strong>{len(filtered)}</strong> vị trí S-Grade {sg_filter}</div>", unsafe_allow_html=True)
+                sub_labels = [f"{d['title']}  |  {d['s_grade']}  |  {d['total_score']} điểm" for d in filtered]
+                selected_label = st.selectbox("Chọn vị trí cụ thể", sub_labels, label_visibility="collapsed")
+                sel_item = filtered[sub_labels.index(selected_label)]
             else:
-                st.markdown(f"<div style='font-size:13px;color:#9ca3af;margin:0.5rem 0 1rem'>Tìm thấy <strong>{len(filtered)}</strong> vị trí</div>", unsafe_allow_html=True)
+                idx = all_labels.index(selected_label) if selected_label in all_labels else 0
+                sel_item = JE_DATABASE[idx]
 
-                # Dropdown: chỉ tên vị trí
-                titles_list = [d["title"] for d in filtered]
-                selected_label = st.selectbox("Chọn vị trí", titles_list, label_visibility="collapsed")
-
-                if selected_label:
-                    sel_item = filtered[titles_list.index(selected_label)]
-
+                if sel_item:
                     # Badges: S-Grade + Tổng điểm
                     st.markdown(f"""<div style="display:flex;gap:10px;margin:1rem 0 0.5rem;flex-wrap:wrap">
                       <div style="background:#fff4ee;border-radius:8px;padding:8px 18px;border:1px solid #fcd4b8">
