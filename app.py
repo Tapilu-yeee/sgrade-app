@@ -461,15 +461,33 @@ if eval_btn:
             with st.spinner("🤖 AI đang phân tích 12 yếu tố theo phương pháp PwC..."):
                 try:
                     client = genai.Client(api_key=api_key)
-                    response = client.models.generate_content(
-                        model="gemini-2.5-flash",
-                        contents=f"Tên vị trí: {job_title}\n\nNội dung JD:\n{jd_content}",
-                        config=types.GenerateContentConfig(
-                            system_instruction=PWC_SYSTEM_PROMPT,
-                            max_output_tokens=4000,
-                            temperature=0.2,
-                        ),
-                    )
+
+                    # Auto-retry up to 3 times on 503 overload
+                    import time as _time
+                    last_err = None
+                    response = None
+                    for attempt in range(3):
+                        try:
+                            response = client.models.generate_content(
+                                model="gemini-2.5-flash",
+                                contents=f"Tên vị trí: {job_title}\n\nNội dung JD:\n{jd_content}",
+                                config=types.GenerateContentConfig(
+                                    system_instruction=PWC_SYSTEM_PROMPT,
+                                    max_output_tokens=4000,
+                                    temperature=0.2,
+                                ),
+                            )
+                            break
+                        except Exception as _e:
+                            last_err = _e
+                            if "503" in str(_e) or "UNAVAILABLE" in str(_e):
+                                wait = (attempt + 1) * 5
+                                st.toast(f"Server đang bận, thử lại sau {wait}s... ({attempt+1}/3)")
+                                _time.sleep(wait)
+                            else:
+                                raise _e
+                    if response is None:
+                        raise last_err
 
                     raw = response.text
                     # Robust JSON extraction — handles ```json blocks and extra text
