@@ -591,91 +591,61 @@ Nội dung JD (tóm tắt): {item['jd'][:800]}"""
                             st.markdown("Bấm **Phân tích so sánh với AI** để nhận phân tích chi tiết và giải thích tương đồng.")
 
 # ════════════════════════════════════════════════════════════════════════════════
-# TAB 3: TRA CỨU S-GRADE (dữ liệu ẩn từ JE database)
+# TAB 3: TRA CỨU S-GRADE
 # ════════════════════════════════════════════════════════════════════════════════
 with tab3:
     if not JE_DATABASE:
-        st.info("📭 Chưa có dữ liệu JE database. Liên hệ admin để cập nhật file je_data.json.")
+        st.info("📭 Chưa có dữ liệu. Liên hệ admin để cập nhật file je_data.json.")
     else:
-        st.markdown(f"**{len(JE_DATABASE)} vị trí** đã được đánh giá và lưu trữ")
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        # Search & filter
-        fcol1, fcol2, fcol3 = st.columns([3, 1.5, 1.5])
-        with fcol1:
+        # Filter controls
+        fc1, fc2, fc3 = st.columns([3, 1.5, 1.5])
+        with fc1:
             search_q = st.text_input("🔍 Tìm theo tên vị trí", placeholder="e.g. Regional Director, Manager...")
-        with fcol2:
-            all_sgrades = sorted(list(set(d["s_grade"] for d in JE_DATABASE if d["s_grade"])))
+        with fc2:
+            all_sgrades = sorted(set(d["s_grade"] for d in JE_DATABASE if d["s_grade"]))
             sg_filter = st.selectbox("Lọc S-Grade", ["Tất cả"] + all_sgrades)
-        with fcol3:
+        with fc3:
             src_filter = st.selectbox("Nguồn", ["Tất cả", "JE_27.05.2025", "JE_21.11.2024"])
 
-        # Filter data
+        # Apply filters
         filtered = JE_DATABASE
         if search_q.strip():
-            q = search_q.strip().lower()
-            filtered = [d for d in filtered if q in d["title"].lower()]
+            filtered = [d for d in filtered if search_q.strip().lower() in d["title"].lower()]
         if sg_filter != "Tất cả":
             filtered = [d for d in filtered if d["s_grade"] == sg_filter]
         if src_filter != "Tất cả":
             filtered = [d for d in filtered if d.get("source","") == src_filter]
 
-        st.markdown(f"<div style='font-size:13px;color:#9ca3af;margin-bottom:0.75rem'>Hiển thị {len(filtered)} / {len(JE_DATABASE)} vị trí</div>", unsafe_allow_html=True)
-
         if not filtered:
             st.warning("Không tìm thấy vị trí nào phù hợp.")
         else:
-            # Summary table
-            table_rows = ""
-            for item in filtered:
-                sg = item.get("s_grade","")
-                score = item.get("total_score",0)
-                source = item.get("source","")
-                source_badge = f'<span style="font-size:11px;background:#e6f1fb;color:#185fa5;padding:2px 6px;border-radius:4px">{source[-10:]}</span>'
-                # Grade chips for first 4 factors
-                chips = ""
-                for f in item.get("factors",[])[:4]:
-                    tc, bg = grade_color(f.get("grade",""))
-                    chips += f'<span style="font-size:11px;background:{bg};color:{tc};padding:1px 6px;border-radius:3px;margin-right:2px">{f["name"][:6]}: {f["grade"]}</span>'
-                table_rows += f"""<tr style="border-bottom:1px solid #f0f0f0;background:white" onclick="">
-                  <td style="padding:10px 12px;font-weight:500;font-size:13px;color:#1f2937;vertical-align:top">{item["title"]}</td>
-                  <td style="padding:10px 12px;text-align:center;vertical-align:top">{source_badge}</td>
-                  <td style="padding:10px 12px;text-align:center;vertical-align:top">
-                    <span style="font-weight:700;font-size:14px;color:#F26522">{sg}</span>
-                  </td>
-                  <td style="padding:10px 12px;text-align:center;font-size:13px;color:#6b7280;vertical-align:top">{score}</td>
-                  <td style="padding:10px 12px;vertical-align:top">{chips}</td>
-                </tr>"""
+            st.markdown(f"<div style='font-size:13px;color:#9ca3af;margin:0.5rem 0 1rem'>Tìm thấy <strong>{len(filtered)}</strong> vị trí</div>", unsafe_allow_html=True)
 
-            st.markdown(f"""<div style="overflow-x:auto;background:white;border-radius:12px;border:1px solid #e8e8e8">
-              <table style="width:100%;border-collapse:collapse;background:white">
-                <thead><tr style="background:#f3f4f6;border-bottom:2px solid #e5e7eb">
-                  <th style="padding:10px 12px;text-align:left;font-size:13px;font-weight:600;color:#374151">Tên vị trí</th>
-                  <th style="padding:10px 12px;text-align:center;font-size:13px;font-weight:600;color:#374151">Nguồn</th>
-                  <th style="padding:10px 12px;text-align:center;font-size:13px;font-weight:600;color:#374151">S-Grade</th>
-                  <th style="padding:10px 12px;text-align:center;font-size:13px;font-weight:600;color:#374151">Tổng điểm</th>
-                  <th style="padding:10px 12px;text-align:left;font-size:13px;font-weight:600;color:#374151">4 yếu tố đầu</th>
-                </tr></thead>
-                <tbody>{table_rows}</tbody>
-              </table></div>""", unsafe_allow_html=True)
+            # Dropdown to pick position
+            titles_list = [
+                f"{d['title']}  |  {d['s_grade']}  |  {d['total_score']} điểm  |  {d.get('source','')[-10:]}"
+                for d in filtered
+            ]
+            selected_label = st.selectbox("Chọn vị trí để xem chi tiết", titles_list, label_visibility="collapsed")
 
-            # Detail expander
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown("**Xem chi tiết một vị trí:**")
-            titles_list = [f"{d['title']} ({d['s_grade']}) - {d.get('source','')[-10:]}" for d in filtered]
-            selected_title = st.selectbox("Chọn vị trí", titles_list, label_visibility="collapsed")
-            if selected_title:
-                sel_idx = titles_list.index(selected_title)
-                sel_item = filtered[sel_idx]
-                render_result_table(sel_item.get("factors",[]), sel_item["title"])
-                st.markdown(f"""<div style="display:flex;gap:1rem;margin-top:0.75rem">
-                  <div style="background:#f3f4f6;border-radius:8px;padding:0.75rem 1.25rem;font-size:14px">
-                    <span style="color:#6b7280">Tổng điểm:</span> <strong style="color:#F26522">{sel_item['total_score']}</strong>
+            if selected_label:
+                sel_item = filtered[titles_list.index(selected_label)]
+
+                # Score + Grade badges
+                st.markdown(f"""<div style="display:flex;gap:10px;margin:1rem 0 0.5rem;flex-wrap:wrap">
+                  <div style="background:#fff4ee;border-radius:8px;padding:8px 18px;font-size:14px;border:1px solid #fcd4b8">
+                    <span style="color:#9ca3af;font-size:12px">S-Grade</span><br>
+                    <strong style="color:#F26522;font-size:20px">{sel_item['s_grade']}</strong>
                   </div>
-                  <div style="background:#f3f4f6;border-radius:8px;padding:0.75rem 1.25rem;font-size:14px">
-                    <span style="color:#6b7280">S-Grade:</span> <strong style="color:#F26522">{sel_item['s_grade']}</strong>
+                  <div style="background:#f3f4f6;border-radius:8px;padding:8px 18px;font-size:14px;border:1px solid #e5e7eb">
+                    <span style="color:#9ca3af;font-size:12px">Tổng điểm</span><br>
+                    <strong style="color:#1f2937;font-size:20px">{sel_item['total_score']}</strong>
                   </div>
-                  <div style="background:#f3f4f6;border-radius:8px;padding:0.75rem 1.25rem;font-size:14px">
-                    <span style="color:#6b7280">Nguồn:</span> <strong style="color:#1f2937">{sel_item.get('source','')}</strong>
+                  <div style="background:#f3f4f6;border-radius:8px;padding:8px 18px;font-size:14px;border:1px solid #e5e7eb">
+                    <span style="color:#9ca3af;font-size:12px">Nguồn dữ liệu</span><br>
+                    <strong style="color:#1f2937;font-size:14px">{sel_item.get('source','')}</strong>
                   </div>
                 </div>""", unsafe_allow_html=True)
+
+                # Full 12-factor table
+                render_result_table(sel_item.get("factors", []), sel_item["title"])
