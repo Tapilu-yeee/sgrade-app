@@ -472,57 +472,77 @@ if eval_btn:
                     )
 
                     raw = response.text
-                    clean = raw.replace("```json", "").replace("```", "").strip()
-                    result = json.loads(clean)
+                    # Robust JSON extraction — handles ```json blocks and extra text
+                    import re as _re
+                    json_match = _re.search(r'\{[\s\S]*\}', raw)
+                    if not json_match:
+                        raise json.JSONDecodeError("No JSON found", raw, 0)
+                    result = json.loads(json_match.group())
 
                     # ── Render Results ─────────────────────────────────────────
-                    st.markdown(f"""
-                    <div class="result-table-wrap">
-                      <div class="result-table-header">
-                        <h3>Kết quả đánh giá PwC — 12 yếu tố</h3>
-                        <div class="job-badge">{job_title}</div>
-                      </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-                    if result.get("summary"):
-                        st.markdown(f"""
-                        <div class="summary-box">
-                          <h4>Nhận xét tổng quan</h4>
-                          <p>{result['summary']}</p>
-                        </div>
-                        """, unsafe_allow_html=True)
-
-                    # Table
                     factors = result.get("factors", [])
-                    if factors:
-                        table_data = {
-                            "Yếu tố": [f["name"] for f in factors],
-                            "Mức xếp loại": [f["grade"] for f in factors],
-                            "Lý do": [f["reason"] for f in factors],
-                            "Dẫn chứng từ JD": [f["evidence"] for f in factors],
-                        }
-                        st.dataframe(
-                            table_data,
-                            use_container_width=True,
-                            hide_index=True,
-                            column_config={
-                                "Yếu tố": st.column_config.TextColumn(width="medium"),
-                                "Mức xếp loại": st.column_config.TextColumn(width="small"),
-                                "Lý do": st.column_config.TextColumn(width="large"),
-                                "Dẫn chứng từ JD": st.column_config.TextColumn(width="large"),
-                            }
-                        )
+                    similar = result.get("similar_jobs", [])
+                    summary = result.get("summary", "")
+
+                    # Grade badge color mapping
+                    def grade_color(g):
+                        g = str(g).upper()
+                        if g.startswith("A"): return "#1a7a4a", "#f0faf5"
+                        if g.startswith("B"): return "#185fa5", "#e6f1fb"
+                        if g.startswith("C"): return "#854f0b", "#faeeda"
+                        if g.startswith("D"): return "#993556", "#fbeaf0"
+                        if g.startswith("E"): return "#993c1d", "#faece7"
+                        return "#444441", "#f1efe8"
+
+                    # Build HTML table like reference image
+                    rows_html = ""
+                    for i, f in enumerate(factors):
+                        tc, bg = grade_color(f.get("grade",""))
+                        rows_html += f"""
+                        <tr style="border-bottom:1px solid #e8e8e8">
+                          <td style="padding:12px 14px;font-weight:600;font-size:13px;vertical-align:top;width:15%">{i+1}. {f.get("name","")}</td>
+                          <td style="padding:12px 14px;font-size:13px;vertical-align:top;width:28%">{f.get("reason","")}</td>
+                          <td style="padding:12px 14px;font-size:13px;font-style:italic;color:#555;vertical-align:top;width:42%">{f.get("evidence","")}</td>
+                          <td style="padding:12px 14px;text-align:center;vertical-align:top;width:10%">
+                            <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:13px">{f.get("grade","")}</span>
+                          </td>
+                        </tr>"""
+
+                    table_html = f"""
+                    <div style="background:white;border-radius:12px;overflow:hidden;border:1px solid #e8e8e8;margin-top:1.5rem">
+                      <div style="background:#1f2937;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center">
+                        <span style="color:white;font-weight:600;font-size:15px">Kết quả đánh giá: {job_title}</span>
+                      </div>
+                      <table style="width:100%;border-collapse:collapse;font-family:Inter,sans-serif">
+                        <thead>
+                          <tr style="background:#f5f5f5;border-bottom:2px solid #e8e8e8">
+                            <th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#6b7280">Yếu tố</th>
+                            <th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#6b7280">Lý do</th>
+                            <th style="padding:10px 14px;text-align:left;font-size:13px;font-weight:600;color:#6b7280">Dẫn chứng</th>
+                            <th style="padding:10px 14px;text-align:center;font-size:13px;font-weight:600;color:#6b7280">Mức</th>
+                          </tr>
+                        </thead>
+                        <tbody>{rows_html}</tbody>
+                      </table>
+                    </div>"""
+
+                    st.markdown(table_html, unsafe_allow_html=True)
+
+                    if summary:
+                        st.markdown(f"""
+                        <div class="summary-box" style="margin-top:1rem">
+                          <h4>Nhận xét tổng quan</h4>
+                          <p>{summary}</p>
+                        </div>""", unsafe_allow_html=True)
 
                     # Similar jobs
-                    similar = result.get("similar_jobs", [])
                     if similar:
                         st.markdown("#### Các JD có phạm vi tương đồng")
                         for j in similar:
                             st.markdown(f"""
                             <div class="similar-item">
-                              <span class="sim-pct">{j.get('similarity', 0)}%</span>
-                              <span><strong>{j.get('title','')}</strong> — {j.get('reason','')}</span>
+                              <span class="sim-pct">{j.get("similarity", 0)}%</span>
+                              <span><strong>{j.get("title","")}</strong> — {j.get("reason","")}</span>
                             </div>
                             """, unsafe_allow_html=True)
 
