@@ -348,27 +348,32 @@ def get_jd_content(uploaded_file, jd_text_input):
 if "main_page" not in st.session_state:
     st.session_state.main_page = "evaluate"
 
-q = st.query_params
-if "page" in q:
-    st.session_state.main_page = q["page"]
-
-def nav_btn(label, key):
-    is_active = st.session_state.main_page == key
-    style = "background:#F26522;color:white;border:none;" if is_active else "background:transparent;color:#6b7280;border:1px solid #e8e8e8;"
-    return f'''<button onclick="window.location.href='?page={key}'" style="{style}padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">{label}</button>'''
+# Nav bar HTML (visual only)
+p = st.session_state.main_page
+def active(key): return "background:#F26522;color:white;border:none;" if p==key else "background:white;color:#6b7280;border:1px solid #e8e8e8;"
 
 st.markdown(f"""
 <div class="topnav">
   <div class="topnav-logo">
     <span class="sc">SCOMMERCE</span><span class="sep">|</span><span>S-Grade SCOMMERCE</span>
   </div>
-  <div style="display:flex;gap:6px">
-    {nav_btn("Đánh giá S-Grade", "evaluate")}
-    {nav_btn("Tra cứu S-Grade", "lookup")}
-    {nav_btn("Phúc lợi theo S-Grade", "benefits")}
-  </div>
 </div>
 """, unsafe_allow_html=True)
+
+# Nav buttons using Streamlit columns (functional)
+_, nc1, nc2, nc3, _r = st.columns([3, 1.8, 1.8, 2.2, 0.1])
+with nc1:
+    if st.button("Đánh giá S-Grade", use_container_width=True, type="primary" if p=="evaluate" else "secondary"):
+        st.session_state.main_page = "evaluate"
+        st.rerun()
+with nc2:
+    if st.button("Tra cứu S-Grade", use_container_width=True, type="primary" if p=="lookup" else "secondary"):
+        st.session_state.main_page = "lookup"
+        st.rerun()
+with nc3:
+    if st.button("Phúc lợi theo S-Grade", use_container_width=True, type="primary" if p=="benefits" else "secondary"):
+        st.session_state.main_page = "benefits"
+        st.rerun()
 
 main_page = st.session_state.main_page
 
