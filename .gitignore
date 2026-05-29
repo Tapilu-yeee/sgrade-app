@@ -1,0 +1,10 @@
+# Bảo vệ API key - KHÔNG bao giờ commit file này
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
