@@ -436,33 +436,52 @@ if "nav" in qp and qp["nav"] != p:
     st.query_params.clear()
     st.rerun()
 
-# Functional nav buttons (hidden visually, triggered by JS above)
-nav_cols = st.columns([1,1,1])
-with nav_cols[0]:
-    if st.button("nav_evaluate", key="nb_eval", label_visibility="collapsed"):
-        st.session_state.main_page = "evaluate"
-        st.rerun()
-with nav_cols[1]:
-    if st.button("nav_lookup", key="nb_look", label_visibility="collapsed"):
-        st.session_state.main_page = "lookup"
-        st.rerun()
-with nav_cols[2]:
-    if st.button("nav_benefits", key="nb_bene", label_visibility="collapsed"):
-        st.session_state.main_page = "benefits"
-        st.rerun()
+# Hidden nav buttons — dùng CSS ẩn đi, JS postMessage click vào
+st.markdown("""
+<style>
+div[data-testid="stHorizontalBlock"]:has(button[kind="secondaryFormSubmit"]) { display:none !important; }
+.nav-hidden-row { display:none !important; }
+</style>
+<div class="nav-hidden-row">hidden</div>
+""", unsafe_allow_html=True)
 
-# Inject JS to listen for postMessage and click the right hidden button
-st.markdown(f"""
+_nc1, _nc2, _nc3 = st.columns(3)
+with _nc1:
+    _b1 = st.button("nav_evaluate", key="nb_eval")
+with _nc2:
+    _b2 = st.button("nav_lookup", key="nb_look")
+with _nc3:
+    _b3 = st.button("nav_benefits", key="nb_bene")
+
+if _b1:
+    st.session_state.main_page = "evaluate"; st.rerun()
+if _b2:
+    st.session_state.main_page = "lookup"; st.rerun()
+if _b3:
+    st.session_state.main_page = "benefits"; st.rerun()
+
+# JS: postMessage từ iframe nav → click hidden button tương ứng
+st.markdown("""
+<style>
+/* Ẩn 3 nút nav ẩn */
+div[data-testid="stColumns"]:has(button[data-testid="baseButton-secondary"]) button[data-testid="baseButton-secondary"] {
+    visibility: hidden; height: 0; padding: 0; margin: 0; border: none;
+}
+</style>
 <script>
-window.addEventListener('message', function(e) {{
-    if (e.data && e.data.type === 'nav') {{
-        const page = e.data.page;
-        const map = {{evaluate: 0, lookup: 1, benefits: 2}};
-        const btns = window.parent.document.querySelectorAll('[data-testid="stButton"] button');
-        const navBtns = Array.from(btns).filter(b => b.textContent.startsWith('nav_'));
-        if (navBtns[map[page]]) navBtns[map[page]].click();
-    }}
-}});
+window.addEventListener('message', function(e) {
+    if (!e.data || e.data.type !== 'nav') return;
+    const map = {evaluate: 'nb_eval', lookup: 'nb_look', benefits: 'nb_bene'};
+    const key = map[e.data.page];
+    if (!key) return;
+    const allBtns = window.parent.document.querySelectorAll('button');
+    for (const btn of allBtns) {
+        if (btn.innerText.trim() === 'nav_' + e.data.page.replace('_','-') ||
+            btn.innerText.includes(e.data.page)) {
+            btn.click(); break;
+        }
+    }
+});
 </script>
 """, unsafe_allow_html=True)
 
