@@ -562,11 +562,4 @@ if eval_btn:
                         st.text(raw)
                 except Exception as e:
                     err_msg = str(e)
-                    if "API_KEY_INVALID" in err_msg:
-                        st.error("❌ GEMINI_API_KEY không hợp lệ. Kiểm tra lại trong Secrets.")
-                    elif "429" in err_msg and "quota" in err_msg.lower():
-                        st.error("⏳ Đã đạt giới hạn miễn phí hôm nay (1,500 req/ngày). Thử lại ngày mai.")
-                    elif "404" in err_msg or "not found" in err_msg.lower():
-                        st.error(f"❌ Lỗi model không tìm thấy: {err_msg}")
-                    else:
-                        st.error(f"Có lỗi xảy ra: {err_msg}")
+                    st.error(f"🔴 Lỗi chi tiết: {err_msg}")
