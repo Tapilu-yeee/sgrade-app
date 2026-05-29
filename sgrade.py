@@ -6,7 +6,7 @@ from datetime import datetime
 
 st.set_page_config(page_title="S-Grade SCOMMERCE", page_icon="📋", layout="wide", initial_sidebar_state="collapsed")
 
-# ── Load JE Database (nhúng từ file ẩn) ────────────────────────────────────────
+# ── Load databases ──────────────────────────────────────────────────────────────
 @st.cache_data
 def load_je_database():
     import os
@@ -16,7 +16,17 @@ def load_je_database():
             return json.load(f)
     return []
 
+@st.cache_data
+def load_positions():
+    import os
+    db_path = os.path.join(os.path.dirname(__file__), "sgrade_positions.json")
+    if os.path.exists(db_path):
+        with open(db_path, encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
 JE_DATABASE = load_je_database()
+POSITIONS = load_positions()
 
 # ── Session state init ──────────────────────────────────────────────────────────
 if "history" not in st.session_state:
@@ -335,314 +345,478 @@ def get_jd_content(uploaded_file, jd_text_input):
     return None
 
 # ── Nav ──────────────────────────────────────────────────────────────────────────
-st.markdown("""
+if "main_page" not in st.session_state:
+    st.session_state.main_page = "evaluate"
+
+q = st.query_params
+if "page" in q:
+    st.session_state.main_page = q["page"]
+
+def nav_btn(label, key):
+    is_active = st.session_state.main_page == key
+    style = "background:#F26522;color:white;border:none;" if is_active else "background:transparent;color:#6b7280;border:1px solid #e8e8e8;"
+    return f'''<button onclick="window.location.href='?page={key}'" style="{style}padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">{label}</button>'''
+
+st.markdown(f"""
 <div class="topnav">
   <div class="topnav-logo">
     <span class="sc">SCOMMERCE</span><span class="sep">|</span><span>S-Grade SCOMMERCE</span>
   </div>
+  <div style="display:flex;gap:6px">
+    {nav_btn("Đánh giá S-Grade", "evaluate")}
+    {nav_btn("Tra cứu S-Grade", "lookup")}
+    {nav_btn("Phúc lợi theo S-Grade", "benefits")}
+  </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ── Hero ─────────────────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="hero-banner">
-  <div class="hero-sub">Chào mừng bạn đến với</div>
-  <div class="hero-title">S-Grade<br>SCOMMERCE</div>
-  <div class="hero-tagline">Đánh giá mô tả công việc theo 12 yếu tố PwC</div>
-</div>
-""", unsafe_allow_html=True)
+main_page = st.session_state.main_page
 
-# ── Main Tabs ────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3 = st.tabs(["⚡  Đánh giá JD", "📂  Lịch sử & So sánh", "🗂  Tra cứu S-Grade"])
+# ════════════ PAGE ROUTER ══════════════════════════════════════════════════════
 
-# ════════════════════════════════════════════════════════════════════════════════
-# TAB 1: ĐÁNH GIÁ
-# ════════════════════════════════════════════════════════════════════════════════
-with tab1:
-    job_title = st.text_input("**Nhập tên vị trí công việc**", placeholder="e.g., Deputy Sorting Centers Manager")
-    st.markdown("**Tải lên JD (.docx, .txt)**")
-    uploaded_file = st.file_uploader("upload", type=["txt","docx","doc"], label_visibility="collapsed")
-    st.markdown("<div style='text-align:center;color:#9ca3af;font-size:13px;margin:0.75rem 0'>— hoặc —</div>", unsafe_allow_html=True)
-    jd_text_input = st.text_area("**Nhập nội dung JD trực tiếp**", placeholder="Paste nội dung mô tả công việc vào đây...", height=160)
+# ── PAGE: ĐÁNH GIÁ S-GRADE ──────────────────────────────────────────────────────
+if main_page == "evaluate":
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([2, 1.5, 6])
-    with c1:
-        eval_btn = st.button("⚡  Đánh giá JD", use_container_width=True)
-    with c2:
-        clear_btn = st.button("Xóa nội dung", use_container_width=True)
-    if clear_btn:
-        st.rerun()
-
-    if eval_btn:
-        if not job_title.strip():
-            st.error("⚠️ Vui lòng nhập tên vị trí công việc.")
-        else:
-            jd_content = get_jd_content(uploaded_file, jd_text_input)
-            if not jd_content:
-                st.error("⚠️ Vui lòng tải lên file JD hoặc nhập nội dung JD.")
+    # ── Hero ─────────────────────────────────────────────────────────────────────────
+    st.markdown("""
+    <div class="hero-banner">
+      <div class="hero-sub">Chào mừng bạn đến với</div>
+      <div class="hero-title">S-Grade<br>SCOMMERCE</div>
+      <div class="hero-tagline">Đánh giá mô tả công việc theo 12 yếu tố PwC</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ── Main Tabs ────────────────────────────────────────────────────────────────────
+    tab1, tab2, tab3 = st.tabs(["⚡  Đánh giá JD", "📂  Lịch sử & So sánh", "🗂  Tra cứu S-Grade"])
+    
+    # ════════════════════════════════════════════════════════════════════════════════
+    # TAB 1: ĐÁNH GIÁ
+    # ════════════════════════════════════════════════════════════════════════════════
+    with tab1:
+        job_title = st.text_input("**Nhập tên vị trí công việc**", placeholder="e.g., Deputy Sorting Centers Manager")
+        st.markdown("**Tải lên JD (.docx, .txt)**")
+        uploaded_file = st.file_uploader("upload", type=["txt","docx","doc"], label_visibility="collapsed")
+        st.markdown("<div style='text-align:center;color:#9ca3af;font-size:13px;margin:0.75rem 0'>— hoặc —</div>", unsafe_allow_html=True)
+        jd_text_input = st.text_area("**Nhập nội dung JD trực tiếp**", placeholder="Paste nội dung mô tả công việc vào đây...", height=160)
+    
+        st.markdown("<br>", unsafe_allow_html=True)
+        c1, c2, c3 = st.columns([2, 1.5, 6])
+        with c1:
+            eval_btn = st.button("⚡  Đánh giá JD", use_container_width=True)
+        with c2:
+            clear_btn = st.button("Xóa nội dung", use_container_width=True)
+        if clear_btn:
+            st.rerun()
+    
+        if eval_btn:
+            if not job_title.strip():
+                st.error("⚠️ Vui lòng nhập tên vị trí công việc.")
             else:
-                try:
-                    api_key = st.secrets["GEMINI_API_KEY"]
-                except Exception:
-                    st.error("❌ Chưa cấu hình GEMINI_API_KEY trong Streamlit Secrets.")
-                    st.stop()
-
-                with st.spinner("🤖 AI đang phân tích 12 yếu tố theo phương pháp PwC..."):
+                jd_content = get_jd_content(uploaded_file, jd_text_input)
+                if not jd_content:
+                    st.error("⚠️ Vui lòng tải lên file JD hoặc nhập nội dung JD.")
+                else:
                     try:
-                        raw = call_gemini(api_key, PWC_SYSTEM_PROMPT, f"Tên vị trí: {job_title}\n\nNội dung JD:\n{jd_content}")
-                        result = fix_json(raw)
-                        factors = result.get("factors", [])
-                        similar = result.get("similar_jobs", [])
+                        api_key = st.secrets["GEMINI_API_KEY"]
+                    except Exception:
+                        st.error("❌ Chưa cấu hình GEMINI_API_KEY trong Streamlit Secrets.")
+                        st.stop()
+    
+                    with st.spinner("🤖 AI đang phân tích 12 yếu tố theo phương pháp PwC..."):
+                        try:
+                            raw = call_gemini(api_key, PWC_SYSTEM_PROMPT, f"Tên vị trí: {job_title}\n\nNội dung JD:\n{jd_content}")
+                            result = fix_json(raw)
+                            factors = result.get("factors", [])
+                            similar = result.get("similar_jobs", [])
+                            summary = result.get("summary", "")
+    
+                            # ── Lưu vào lịch sử ───────────────────────────────────
+                            st.session_state.history.append({
+                                "title": job_title,
+                                "date": datetime.now().strftime("%d/%m/%Y %H:%M"),
+                                "jd": jd_content[:2000],
+                                "result": result,
+                            })
+    
+                            # ── Render bảng kết quả ────────────────────────────────
+                            render_result_table(factors, job_title)
+    
+                            if summary:
+                                st.markdown(f"""<div class="summary-box" style="margin-top:1rem">
+                                  <h4>Nhận xét tổng quan</h4><p>{summary}</p></div>""", unsafe_allow_html=True)
+    
+                            if similar:
+                                st.markdown("#### Các JD có phạm vi tương đồng")
+                                for j in similar:
+                                    st.markdown(f"""<div class="similar-item">
+                                      <span class="sim-pct">{j.get("similarity",0)}%</span>
+                                      <span><strong>{j.get("title","")}</strong> — {j.get("reason","")}</span>
+                                    </div>""", unsafe_allow_html=True)
+    
+                            # ── Export ─────────────────────────────────────────────
+                            st.markdown("<br>", unsafe_allow_html=True)
+                            e1, e2 = st.columns(2)
+                            csv_buf = io.StringIO()
+                            writer = csv.writer(csv_buf)
+                            writer.writerow(["Vị trí","Yếu tố","Mức","Lý do","Dẫn chứng"])
+                            for f in factors:
+                                writer.writerow([job_title, f["name"], f["grade"], f["reason"], f["evidence"]])
+                            with e1:
+                                st.download_button("📥 Xuất CSV", "\ufeff"+csv_buf.getvalue(),
+                                    f"sgrade_{job_title.replace(' ','_')}.csv", "text/csv", use_container_width=True)
+                            with e2:
+                                st.download_button("📄 Xuất JSON", json.dumps(result, ensure_ascii=False, indent=2),
+                                    f"sgrade_{job_title.replace(' ','_')}.json", "application/json", use_container_width=True)
+    
+                            st.success(f"✅ Đã lưu vào lịch sử! Xem tại tab **Lịch sử & So sánh**.")
+    
+                        except json.JSONDecodeError:
+                            st.error("AI trả về định dạng không hợp lệ. Vui lòng thử lại.")
+                            with st.expander("Raw output"):
+                                st.text(raw)
+                        except Exception as e:
+                            st.error(f"🔴 Lỗi: {str(e)}")
+    
+    # ════════════════════════════════════════════════════════════════════════════════
+    # TAB 2: LỊCH SỬ & SO SÁNH
+    # ════════════════════════════════════════════════════════════════════════════════
+    with tab2:
+        history = st.session_state.history
+    
+        if not history:
+            st.info("📭 Chưa có vị trí nào được đánh giá. Hãy đánh giá một JD ở tab trước để bắt đầu!")
+        else:
+            # ── Layout: cột trái = danh sách, cột phải = chi tiết + so sánh ──────
+            left_col, right_col = st.columns([1, 2.2], gap="medium")
+    
+            with left_col:
+                st.markdown(f"**{len(history)} vị trí đã đánh giá**")
+                st.markdown("<br>", unsafe_allow_html=True)
+    
+                for i, item in enumerate(reversed(history)):
+                    idx = len(history) - 1 - i
+                    factors = item["result"].get("factors", [])
+                    chips_html = ""
+                    for f in factors[:6]:
+                        tc, bg = grade_color(f.get("grade",""))
+                        chips_html += f'<span class="chip" style="background:{bg};color:{tc}">{f.get("name","")[:8]}: {f.get("grade","")}</span>'
+    
+                    if st.button(f"📄 {item['title']}", key=f"hist_{idx}", use_container_width=True):
+                        st.session_state.selected_history = idx
+    
+                    st.markdown(f"""<div style="font-size:11px;color:#9ca3af;margin:-8px 0 8px 0">{item['date']}</div>
+                    <div class="grade-chips">{chips_html}</div>
+                    <div style="margin-bottom:12px"></div>""", unsafe_allow_html=True)
+    
+            with right_col:
+                sel = st.session_state.selected_history
+    
+                if sel is None:
+                    st.markdown("""<div style="background:#f9f9f9;border-radius:12px;padding:3rem;text-align:center;color:#9ca3af;border:1px dashed #e8e8e8">
+                      <div style="font-size:32px;margin-bottom:0.5rem">👈</div>
+                      <div style="font-size:14px">Chọn một vị trí bên trái để xem chi tiết và so sánh</div>
+                    </div>""", unsafe_allow_html=True)
+                else:
+                    item = history[sel]
+                    result = item["result"]
+                    factors = result.get("factors", [])
+    
+                    detail_tab, compare_tab = st.tabs(["📋 Chi tiết 12 yếu tố", "🔍 So sánh tương đồng"])
+    
+                    # ── Chi tiết ──────────────────────────────────────────────────
+                    with detail_tab:
+                        render_result_table(factors, item["title"])
                         summary = result.get("summary", "")
-
-                        # ── Lưu vào lịch sử ───────────────────────────────────
-                        st.session_state.history.append({
-                            "title": job_title,
-                            "date": datetime.now().strftime("%d/%m/%Y %H:%M"),
-                            "jd": jd_content[:2000],
-                            "result": result,
-                        })
-
-                        # ── Render bảng kết quả ────────────────────────────────
-                        render_result_table(factors, job_title)
-
                         if summary:
                             st.markdown(f"""<div class="summary-box" style="margin-top:1rem">
                               <h4>Nhận xét tổng quan</h4><p>{summary}</p></div>""", unsafe_allow_html=True)
-
-                        if similar:
-                            st.markdown("#### Các JD có phạm vi tương đồng")
-                            for j in similar:
-                                st.markdown(f"""<div class="similar-item">
-                                  <span class="sim-pct">{j.get("similarity",0)}%</span>
-                                  <span><strong>{j.get("title","")}</strong> — {j.get("reason","")}</span>
-                                </div>""", unsafe_allow_html=True)
-
-                        # ── Export ─────────────────────────────────────────────
-                        st.markdown("<br>", unsafe_allow_html=True)
-                        e1, e2 = st.columns(2)
-                        csv_buf = io.StringIO()
-                        writer = csv.writer(csv_buf)
-                        writer.writerow(["Vị trí","Yếu tố","Mức","Lý do","Dẫn chứng"])
-                        for f in factors:
-                            writer.writerow([job_title, f["name"], f["grade"], f["reason"], f["evidence"]])
-                        with e1:
-                            st.download_button("📥 Xuất CSV", "\ufeff"+csv_buf.getvalue(),
-                                f"sgrade_{job_title.replace(' ','_')}.csv", "text/csv", use_container_width=True)
-                        with e2:
-                            st.download_button("📄 Xuất JSON", json.dumps(result, ensure_ascii=False, indent=2),
-                                f"sgrade_{job_title.replace(' ','_')}.json", "application/json", use_container_width=True)
-
-                        st.success(f"✅ Đã lưu vào lịch sử! Xem tại tab **Lịch sử & So sánh**.")
-
-                    except json.JSONDecodeError:
-                        st.error("AI trả về định dạng không hợp lệ. Vui lòng thử lại.")
-                        with st.expander("Raw output"):
-                            st.text(raw)
-                    except Exception as e:
-                        st.error(f"🔴 Lỗi: {str(e)}")
-
-# ════════════════════════════════════════════════════════════════════════════════
-# TAB 2: LỊCH SỬ & SO SÁNH
-# ════════════════════════════════════════════════════════════════════════════════
-with tab2:
-    history = st.session_state.history
-
-    if not history:
-        st.info("📭 Chưa có vị trí nào được đánh giá. Hãy đánh giá một JD ở tab trước để bắt đầu!")
-    else:
-        # ── Layout: cột trái = danh sách, cột phải = chi tiết + so sánh ──────
-        left_col, right_col = st.columns([1, 2.2], gap="medium")
-
-        with left_col:
-            st.markdown(f"**{len(history)} vị trí đã đánh giá**")
-            st.markdown("<br>", unsafe_allow_html=True)
-
-            for i, item in enumerate(reversed(history)):
-                idx = len(history) - 1 - i
-                factors = item["result"].get("factors", [])
-                chips_html = ""
-                for f in factors[:6]:
-                    tc, bg = grade_color(f.get("grade",""))
-                    chips_html += f'<span class="chip" style="background:{bg};color:{tc}">{f.get("name","")[:8]}: {f.get("grade","")}</span>'
-
-                if st.button(f"📄 {item['title']}", key=f"hist_{idx}", use_container_width=True):
-                    st.session_state.selected_history = idx
-
-                st.markdown(f"""<div style="font-size:11px;color:#9ca3af;margin:-8px 0 8px 0">{item['date']}</div>
-                <div class="grade-chips">{chips_html}</div>
-                <div style="margin-bottom:12px"></div>""", unsafe_allow_html=True)
-
-        with right_col:
-            sel = st.session_state.selected_history
-
-            if sel is None:
-                st.markdown("""<div style="background:#f9f9f9;border-radius:12px;padding:3rem;text-align:center;color:#9ca3af;border:1px dashed #e8e8e8">
-                  <div style="font-size:32px;margin-bottom:0.5rem">👈</div>
-                  <div style="font-size:14px">Chọn một vị trí bên trái để xem chi tiết và so sánh</div>
+    
+                    # ── So sánh ───────────────────────────────────────────────────
+                    with compare_tab:
+                        if len(history) < 2:
+                            st.info("Cần ít nhất 2 vị trí để so sánh. Hãy đánh giá thêm JD!")
+                        else:
+                            other_items = [h for i2, h in enumerate(history) if i2 != sel]
+    
+                            if st.button("🔍 Phân tích so sánh với AI", key="run_compare", use_container_width=False):
+                                try:
+                                    api_key = st.secrets["GEMINI_API_KEY"]
+                                except Exception:
+                                    st.error("❌ Chưa cấu hình GEMINI_API_KEY.")
+                                    st.stop()
+    
+                                # Build context
+                                current_summary = f"""Vị trí cần so sánh: {item['title']}
+    Kết quả đánh giá: {json.dumps([{"name": f["name"], "grade": f["grade"]} for f in factors], ensure_ascii=False)}
+    Tóm tắt: {result.get("summary", "")}
+    Nội dung JD (tóm tắt): {item['jd'][:800]}"""
+    
+                                history_summary = "\n\n".join([
+                                    f"Vị trí: {h['title']}\nGrades: {json.dumps([{'name': f['name'], 'grade': f['grade']} for f in h['result'].get('factors', [])], ensure_ascii=False)}\nTóm tắt: {h['result'].get('summary', '')}"
+                                    for h in other_items
+                                ])
+    
+                                user_content = f"{current_summary}\n\n---DANH SÁCH VỊ TRÍ TRONG LỊCH SỬ---\n{history_summary}"
+    
+                                with st.spinner("🤖 AI đang phân tích tương đồng..."):
+                                    try:
+                                        raw = call_gemini(api_key, COMPARE_PROMPT, user_content, max_tokens=4096)
+                                        cmp_result = fix_json(raw)
+                                        comparisons = cmp_result.get("comparisons", [])
+                                        insight = cmp_result.get("overall_insight", "")
+    
+                                        if insight:
+                                            st.markdown(f"""<div class="summary-box">
+                                              <h4>Nhận xét tổng quan</h4><p>{insight}</p></div>""", unsafe_allow_html=True)
+    
+                                        comparisons_sorted = sorted(comparisons, key=lambda x: x.get("similarity_score", 0), reverse=True)
+                                        for cmp in comparisons_sorted:
+                                            score = cmp.get("similarity_score", 0)
+                                            tc, bg = grade_color("E" if score >= 80 else "B" if score >= 60 else "A")
+                                            matching = ", ".join(cmp.get("matching_factors", []))
+                                            differing = ", ".join(cmp.get("differing_factors", []))
+    
+                                            st.markdown(f"""
+                                            <div class="compare-card">
+                                              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                                                <span style="font-weight:600;font-size:14px;color:#1f2937">{cmp.get("title","")}</span>
+                                                <span style="display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:14px">{score}%</span>
+                                              </div>
+                                              <div style="background:#e8e8e8;height:6px;border-radius:3px;margin-bottom:10px">
+                                                <div style="background:#F26522;height:6px;border-radius:3px;width:{score}%"></div>
+                                              </div>
+                                              <p style="font-size:13px;color:#374151;line-height:1.6;margin-bottom:8px">{cmp.get("explanation","")}</p>
+                                              {"<div style='font-size:12px;color:#1a7a4a;margin-top:4px'>✅ Tương đồng: " + matching + "</div>" if matching else ""}
+                                              {"<div style='font-size:12px;color:#993c1d;margin-top:2px'>⚠️ Khác biệt: " + differing + "</div>" if differing else ""}
+                                            </div>""", unsafe_allow_html=True)
+    
+                                    except Exception as e:
+                                        st.error(f"🔴 Lỗi so sánh: {str(e)}")
+                            else:
+                                # Show static grade comparison table
+                                st.markdown(f"**So sánh grade nhanh:** {item['title']} vs các vị trí đã đánh giá")
+                                factor_names = [f["name"] for f in factors]
+                                cur_grades = {f["name"]: f["grade"] for f in factors}
+    
+                                rows_html = ""
+                                for fname in factor_names:
+                                    row = f"<td style='padding:7px 10px;font-size:12px;font-weight:500;color:#1f2937;background:white'>{fname}</td>"
+                                    tc, bg = grade_color(cur_grades.get(fname,""))
+                                    row += f"<td style='padding:7px 10px;text-align:center;background:white'><span style='display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:11px'>{cur_grades.get(fname,'')}</span></td>"
+                                    for h in other_items[:4]:
+                                        h_grades = {f2["name"]: f2["grade"] for f2 in h["result"].get("factors",[])}
+                                        g = h_grades.get(fname, "—")
+                                        tc2, bg2 = grade_color(g) if g != "—" else ("#9ca3af","#f5f5f5")
+                                        row += f"<td style='padding:7px 10px;text-align:center;background:white'><span style='display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{bg2};color:{tc2};font-weight:700;font-size:11px'>{g}</span></td>"
+                                    rows_html += f"<tr style='border-bottom:1px solid #f0f0f0'>{row}</tr>"
+    
+                                headers = "<th style='padding:7px 10px;text-align:left;font-size:12px;font-weight:600;color:#6b7280'>Yếu tố</th>"
+                                headers += f"<th style='padding:7px 10px;text-align:center;font-size:12px;font-weight:600;color:#F26522'>{item['title'][:20]}</th>"
+                                for h in other_items[:4]:
+                                    headers += f"<th style='padding:7px 10px;text-align:center;font-size:12px;font-weight:600;color:#6b7280'>{h['title'][:20]}</th>"
+    
+                                st.markdown(f"""<div style="overflow-x:auto;background:white;border-radius:10px;border:1px solid #e8e8e8;margin-top:0.5rem">
+                                  <table style="width:100%;border-collapse:collapse;background:white">
+                                    <thead><tr style="background:#f9f9f9">{headers}</tr></thead>
+                                    <tbody>{rows_html}</tbody>
+                                  </table></div>""", unsafe_allow_html=True)
+    
+                                st.markdown("<br>", unsafe_allow_html=True)
+                                st.markdown("Bấm **Phân tích so sánh với AI** để nhận phân tích chi tiết và giải thích tương đồng.")
+    
+    # ════════════════════════════════════════════════════════════════════════════════
+    # TAB 3: TRA CỨU S-GRADE
+    # ════════════════════════════════════════════════════════════════════════════════
+    with tab3:
+        if not JE_DATABASE:
+            st.info("📭 Chưa có dữ liệu. Liên hệ admin để cập nhật file je_data.json.")
+        else:
+            # Filter: tên vị trí (dropdown) + S-Grade
+            all_sgrades = sorted(set(d["s_grade"] for d in JE_DATABASE if d["s_grade"]))
+    
+            fc1, fc2 = st.columns([3, 1.5])
+            with fc1:
+                # 336 records — dùng tên + số thứ tự để phân biệt trùng tên
+                all_labels = [
+                    f"{d['title']}  |  {d['s_grade']}  |  {d['total_score']} điểm"
+                    for d in JE_DATABASE
+                ]
+                selected_label = st.selectbox("Chọn vị trí", ["-- Chọn vị trí --"] + all_labels)
+            with fc2:
+                sg_filter = st.selectbox("Lọc S-Grade", ["Tất cả"] + all_sgrades)
+    
+            # Chỉ hiển thị khi đã chọn
+            user_has_filtered = selected_label != "-- Chọn vị trí --" or sg_filter != "Tất cả"
+    
+            if not user_has_filtered:
+                st.markdown("""<div style="background:#f9f9f9;border-radius:12px;padding:2.5rem;text-align:center;
+                  color:#9ca3af;border:1px dashed #e8e8e8;margin-top:1rem">
+                  <div style="font-size:28px;margin-bottom:0.5rem">🔍</div>
+                  <div style="font-size:14px">Chọn vị trí hoặc S-Grade để bắt đầu tra cứu</div>
                 </div>""", unsafe_allow_html=True)
             else:
-                item = history[sel]
-                result = item["result"]
-                factors = result.get("factors", [])
+                # Nếu chọn theo S-Grade thì lọc list
+                if sg_filter != "Tất cả" and selected_label == "-- Chọn vị trí --":
+                    filtered = [d for d in JE_DATABASE if d["s_grade"] == sg_filter]
+                    st.markdown(f"<div style='font-size:13px;color:#9ca3af;margin:0.5rem 0 1rem'>Tìm thấy <strong>{len(filtered)}</strong> vị trí S-Grade {sg_filter}</div>", unsafe_allow_html=True)
+                    sub_labels = [f"{d['title']}  |  {d['s_grade']}  |  {d['total_score']} điểm" for d in filtered]
+                    selected_label = st.selectbox("Chọn vị trí cụ thể", sub_labels, label_visibility="collapsed")
+                    sel_item = filtered[sub_labels.index(selected_label)]
+                else:
+                    idx = all_labels.index(selected_label) if selected_label in all_labels else 0
+                    sel_item = JE_DATABASE[idx]
+    
+                    if sel_item:
+                        # Badges: S-Grade + Tổng điểm
+                        st.markdown(f"""<div style="display:flex;gap:10px;margin:1rem 0 0.5rem;flex-wrap:wrap">
+                          <div style="background:#fff4ee;border-radius:8px;padding:8px 18px;border:1px solid #fcd4b8">
+                            <span style="color:#9ca3af;font-size:12px">S-Grade</span><br>
+                            <strong style="color:#F26522;font-size:20px">{sel_item['s_grade']}</strong>
+                          </div>
+                          <div style="background:#f3f4f6;border-radius:8px;padding:8px 18px;border:1px solid #e5e7eb">
+                            <span style="color:#9ca3af;font-size:12px">Tổng điểm</span><br>
+                            <strong style="color:#1f2937;font-size:20px">{sel_item['total_score']}</strong>
+                          </div>
+                        </div>""", unsafe_allow_html=True)
+    
+                        render_result_table(sel_item.get("factors", []), sel_item["title"])
+    
 
-                detail_tab, compare_tab = st.tabs(["📋 Chi tiết 12 yếu tố", "🔍 So sánh tương đồng"])
+# ── PAGE: TRA CỨU S-GRADE ───────────────────────────────────────────────────────
+elif main_page == "lookup":
+    st.markdown("""
+    <div class="hero-banner" style="margin-bottom:1.5rem">
+      <div class="hero-sub">Danh sách vị trí</div>
+      <div class="hero-title" style="font-size:48px">TRA CỨU<br>S-GRADE</div>
+      <div class="hero-tagline">491 vị trí — GHN Express, Logistics, Gido, SCOMMERCE</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-                # ── Chi tiết ──────────────────────────────────────────────────
-                with detail_tab:
-                    render_result_table(factors, item["title"])
-                    summary = result.get("summary", "")
-                    if summary:
-                        st.markdown(f"""<div class="summary-box" style="margin-top:1rem">
-                          <h4>Nhận xét tổng quan</h4><p>{summary}</p></div>""", unsafe_allow_html=True)
-
-                # ── So sánh ───────────────────────────────────────────────────
-                with compare_tab:
-                    if len(history) < 2:
-                        st.info("Cần ít nhất 2 vị trí để so sánh. Hãy đánh giá thêm JD!")
-                    else:
-                        other_items = [h for i2, h in enumerate(history) if i2 != sel]
-
-                        if st.button("🔍 Phân tích so sánh với AI", key="run_compare", use_container_width=False):
-                            try:
-                                api_key = st.secrets["GEMINI_API_KEY"]
-                            except Exception:
-                                st.error("❌ Chưa cấu hình GEMINI_API_KEY.")
-                                st.stop()
-
-                            # Build context
-                            current_summary = f"""Vị trí cần so sánh: {item['title']}
-Kết quả đánh giá: {json.dumps([{"name": f["name"], "grade": f["grade"]} for f in factors], ensure_ascii=False)}
-Tóm tắt: {result.get("summary", "")}
-Nội dung JD (tóm tắt): {item['jd'][:800]}"""
-
-                            history_summary = "\n\n".join([
-                                f"Vị trí: {h['title']}\nGrades: {json.dumps([{'name': f['name'], 'grade': f['grade']} for f in h['result'].get('factors', [])], ensure_ascii=False)}\nTóm tắt: {h['result'].get('summary', '')}"
-                                for h in other_items
-                            ])
-
-                            user_content = f"{current_summary}\n\n---DANH SÁCH VỊ TRÍ TRONG LỊCH SỬ---\n{history_summary}"
-
-                            with st.spinner("🤖 AI đang phân tích tương đồng..."):
-                                try:
-                                    raw = call_gemini(api_key, COMPARE_PROMPT, user_content, max_tokens=4096)
-                                    cmp_result = fix_json(raw)
-                                    comparisons = cmp_result.get("comparisons", [])
-                                    insight = cmp_result.get("overall_insight", "")
-
-                                    if insight:
-                                        st.markdown(f"""<div class="summary-box">
-                                          <h4>Nhận xét tổng quan</h4><p>{insight}</p></div>""", unsafe_allow_html=True)
-
-                                    comparisons_sorted = sorted(comparisons, key=lambda x: x.get("similarity_score", 0), reverse=True)
-                                    for cmp in comparisons_sorted:
-                                        score = cmp.get("similarity_score", 0)
-                                        tc, bg = grade_color("E" if score >= 80 else "B" if score >= 60 else "A")
-                                        matching = ", ".join(cmp.get("matching_factors", []))
-                                        differing = ", ".join(cmp.get("differing_factors", []))
-
-                                        st.markdown(f"""
-                                        <div class="compare-card">
-                                          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-                                            <span style="font-weight:600;font-size:14px;color:#1f2937">{cmp.get("title","")}</span>
-                                            <span style="display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:14px">{score}%</span>
-                                          </div>
-                                          <div style="background:#e8e8e8;height:6px;border-radius:3px;margin-bottom:10px">
-                                            <div style="background:#F26522;height:6px;border-radius:3px;width:{score}%"></div>
-                                          </div>
-                                          <p style="font-size:13px;color:#374151;line-height:1.6;margin-bottom:8px">{cmp.get("explanation","")}</p>
-                                          {"<div style='font-size:12px;color:#1a7a4a;margin-top:4px'>✅ Tương đồng: " + matching + "</div>" if matching else ""}
-                                          {"<div style='font-size:12px;color:#993c1d;margin-top:2px'>⚠️ Khác biệt: " + differing + "</div>" if differing else ""}
-                                        </div>""", unsafe_allow_html=True)
-
-                                except Exception as e:
-                                    st.error(f"🔴 Lỗi so sánh: {str(e)}")
-                        else:
-                            # Show static grade comparison table
-                            st.markdown(f"**So sánh grade nhanh:** {item['title']} vs các vị trí đã đánh giá")
-                            factor_names = [f["name"] for f in factors]
-                            cur_grades = {f["name"]: f["grade"] for f in factors}
-
-                            rows_html = ""
-                            for fname in factor_names:
-                                row = f"<td style='padding:7px 10px;font-size:12px;font-weight:500;color:#1f2937;background:white'>{fname}</td>"
-                                tc, bg = grade_color(cur_grades.get(fname,""))
-                                row += f"<td style='padding:7px 10px;text-align:center;background:white'><span style='display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:11px'>{cur_grades.get(fname,'')}</span></td>"
-                                for h in other_items[:4]:
-                                    h_grades = {f2["name"]: f2["grade"] for f2 in h["result"].get("factors",[])}
-                                    g = h_grades.get(fname, "—")
-                                    tc2, bg2 = grade_color(g) if g != "—" else ("#9ca3af","#f5f5f5")
-                                    row += f"<td style='padding:7px 10px;text-align:center;background:white'><span style='display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{bg2};color:{tc2};font-weight:700;font-size:11px'>{g}</span></td>"
-                                rows_html += f"<tr style='border-bottom:1px solid #f0f0f0'>{row}</tr>"
-
-                            headers = "<th style='padding:7px 10px;text-align:left;font-size:12px;font-weight:600;color:#6b7280'>Yếu tố</th>"
-                            headers += f"<th style='padding:7px 10px;text-align:center;font-size:12px;font-weight:600;color:#F26522'>{item['title'][:20]}</th>"
-                            for h in other_items[:4]:
-                                headers += f"<th style='padding:7px 10px;text-align:center;font-size:12px;font-weight:600;color:#6b7280'>{h['title'][:20]}</th>"
-
-                            st.markdown(f"""<div style="overflow-x:auto;background:white;border-radius:10px;border:1px solid #e8e8e8;margin-top:0.5rem">
-                              <table style="width:100%;border-collapse:collapse;background:white">
-                                <thead><tr style="background:#f9f9f9">{headers}</tr></thead>
-                                <tbody>{rows_html}</tbody>
-                              </table></div>""", unsafe_allow_html=True)
-
-                            st.markdown("<br>", unsafe_allow_html=True)
-                            st.markdown("Bấm **Phân tích so sánh với AI** để nhận phân tích chi tiết và giải thích tương đồng.")
-
-# ════════════════════════════════════════════════════════════════════════════════
-# TAB 3: TRA CỨU S-GRADE
-# ════════════════════════════════════════════════════════════════════════════════
-with tab3:
-    if not JE_DATABASE:
-        st.info("📭 Chưa có dữ liệu. Liên hệ admin để cập nhật file je_data.json.")
+    if not POSITIONS:
+        st.warning("Chưa có dữ liệu. Liên hệ admin để cập nhật file sgrade_positions.json.")
     else:
-        # Filter: tên vị trí (dropdown) + S-Grade
-        all_sgrades = sorted(set(d["s_grade"] for d in JE_DATABASE if d["s_grade"]))
+        # Filter state
+        if "filter_open" not in st.session_state:
+            st.session_state.filter_open = False
+        if "f_search" not in st.session_state:
+            st.session_state.f_search = ""
+        if "f_rank" not in st.session_state:
+            st.session_state.f_rank = "Tất cả"
+        if "f_company" not in st.session_state:
+            st.session_state.f_company = "Tất cả"
+        if "f_block" not in st.session_state:
+            st.session_state.f_block = "Tất cả"
+        if "f_dept" not in st.session_state:
+            st.session_state.f_dept = "Tất cả"
 
-        fc1, fc2 = st.columns([3, 1.5])
-        with fc1:
-            # 336 records — dùng tên + số thứ tự để phân biệt trùng tên
-            all_labels = [
-                f"{d['title']}  |  {d['s_grade']}  |  {d['total_score']} điểm"
-                for d in JE_DATABASE
-            ]
-            selected_label = st.selectbox("Chọn vị trí", ["-- Chọn vị trí --"] + all_labels)
-        with fc2:
-            sg_filter = st.selectbox("Lọc S-Grade", ["Tất cả"] + all_sgrades)
+        # Filter bar
+        fcol1, fcol2 = st.columns([6, 1])
+        with fcol1:
+            active_filters = sum([
+                st.session_state.f_rank != "Tất cả",
+                st.session_state.f_company != "Tất cả",
+                st.session_state.f_block != "Tất cả",
+                st.session_state.f_dept != "Tất cả",
+                bool(st.session_state.f_search),
+            ])
+            badge = f" ({active_filters})" if active_filters else ""
+            st.markdown(f"<div style='font-size:13px;color:#9ca3af;padding-top:8px'>{len(POSITIONS)} vị trí trong hệ thống</div>", unsafe_allow_html=True)
+        with fcol2:
+            if st.button(f"🔽 Bộ lọc{badge}", use_container_width=True):
+                st.session_state.filter_open = not st.session_state.filter_open
 
-        # Chỉ hiển thị khi đã chọn
-        user_has_filtered = selected_label != "-- Chọn vị trí --" or sg_filter != "Tất cả"
+        # Filter panel
+        if st.session_state.filter_open:
+            st.markdown("<div style='background:white;border:1px solid #e8e8e8;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem'>", unsafe_allow_html=True)
+            st.markdown("**Lọc hiển thị**")
+            st.session_state.f_search = st.text_input("Tìm mã/tên vị trí", value=st.session_state.f_search, placeholder="Nhập mã/tên vị trí...")
 
-        if not user_has_filtered:
-            st.markdown("""<div style="background:#f9f9f9;border-radius:12px;padding:2.5rem;text-align:center;
-              color:#9ca3af;border:1px dashed #e8e8e8;margin-top:1rem">
-              <div style="font-size:28px;margin-bottom:0.5rem">🔍</div>
-              <div style="font-size:14px">Chọn vị trí hoặc S-Grade để bắt đầu tra cứu</div>
-            </div>""", unsafe_allow_html=True)
-        else:
-            # Nếu chọn theo S-Grade thì lọc list
-            if sg_filter != "Tất cả" and selected_label == "-- Chọn vị trí --":
-                filtered = [d for d in JE_DATABASE if d["s_grade"] == sg_filter]
-                st.markdown(f"<div style='font-size:13px;color:#9ca3af;margin:0.5rem 0 1rem'>Tìm thấy <strong>{len(filtered)}</strong> vị trí S-Grade {sg_filter}</div>", unsafe_allow_html=True)
-                sub_labels = [f"{d['title']}  |  {d['s_grade']}  |  {d['total_score']} điểm" for d in filtered]
-                selected_label = st.selectbox("Chọn vị trí cụ thể", sub_labels, label_visibility="collapsed")
-                sel_item = filtered[sub_labels.index(selected_label)]
-            else:
-                idx = all_labels.index(selected_label) if selected_label in all_labels else 0
-                sel_item = JE_DATABASE[idx]
+            p1, p2 = st.columns(2)
+            ranks_list = ["Tất cả"] + sorted(set(d["rank"] for d in POSITIONS if d["rank"]))
+            companies_list = ["Tất cả"] + sorted(set(d["company"] for d in POSITIONS if d["company"]))
+            blocks_list = ["Tất cả"] + sorted(set(d["block"] for d in POSITIONS if d["block"]))
+            depts_list = ["Tất cả"] + sorted(set(d["department"] for d in POSITIONS if d["department"]))
 
-                if sel_item:
-                    # Badges: S-Grade + Tổng điểm
-                    st.markdown(f"""<div style="display:flex;gap:10px;margin:1rem 0 0.5rem;flex-wrap:wrap">
-                      <div style="background:#fff4ee;border-radius:8px;padding:8px 18px;border:1px solid #fcd4b8">
-                        <span style="color:#9ca3af;font-size:12px">S-Grade</span><br>
-                        <strong style="color:#F26522;font-size:20px">{sel_item['s_grade']}</strong>
-                      </div>
-                      <div style="background:#f3f4f6;border-radius:8px;padding:8px 18px;border:1px solid #e5e7eb">
-                        <span style="color:#9ca3af;font-size:12px">Tổng điểm</span><br>
-                        <strong style="color:#1f2937;font-size:20px">{sel_item['total_score']}</strong>
-                      </div>
-                    </div>""", unsafe_allow_html=True)
+            with p1:
+                st.session_state.f_rank = st.selectbox("Cấp bậc", ranks_list, index=ranks_list.index(st.session_state.f_rank) if st.session_state.f_rank in ranks_list else 0)
+                st.session_state.f_block = st.selectbox("Khối", blocks_list, index=blocks_list.index(st.session_state.f_block) if st.session_state.f_block in blocks_list else 0)
+            with p2:
+                st.session_state.f_company = st.selectbox("Công ty", companies_list, index=companies_list.index(st.session_state.f_company) if st.session_state.f_company in companies_list else 0)
+                st.session_state.f_dept = st.selectbox("Phòng ban", depts_list, index=depts_list.index(st.session_state.f_dept) if st.session_state.f_dept in depts_list else 0)
 
-                    render_result_table(sel_item.get("factors", []), sel_item["title"])
+            bc1, bc2 = st.columns([1,1])
+            with bc1:
+                if st.button("Xóa bộ lọc", use_container_width=True):
+                    st.session_state.f_search = ""
+                    st.session_state.f_rank = "Tất cả"
+                    st.session_state.f_company = "Tất cả"
+                    st.session_state.f_block = "Tất cả"
+                    st.session_state.f_dept = "Tất cả"
+                    st.rerun()
+            with bc2:
+                if st.button("Áp dụng", use_container_width=True):
+                    st.session_state.filter_open = False
+                    st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        # Apply filters
+        filtered = POSITIONS
+        if st.session_state.f_search:
+            q2 = st.session_state.f_search.lower()
+            filtered = [d for d in filtered if q2 in d["positionName"].lower() or q2 in d["vietnameseName"].lower()]
+        if st.session_state.f_rank != "Tất cả":
+            filtered = [d for d in filtered if d["rank"] == st.session_state.f_rank]
+        if st.session_state.f_company != "Tất cả":
+            filtered = [d for d in filtered if d["company"] == st.session_state.f_company]
+        if st.session_state.f_block != "Tất cả":
+            filtered = [d for d in filtered if d["block"] == st.session_state.f_block]
+        if st.session_state.f_dept != "Tất cả":
+            filtered = [d for d in filtered if d["department"] == st.session_state.f_dept]
+
+        st.markdown(f"<div style='font-size:13px;color:#9ca3af;margin:0.5rem 0 0.75rem'>Hiển thị <strong>{len(filtered)}</strong> / {len(POSITIONS)} vị trí</div>", unsafe_allow_html=True)
+
+        # Table
+        if filtered:
+            rows_html = ""
+            for d in filtered:
+                rank = d.get("rank","")
+                tc, bg = grade_color(rank)
+                ptype = d.get("positionType","")
+                type_color = "#185fa5" if ptype == "Indirect" else "#1a7a4a"
+                type_bg = "#e6f1fb" if ptype == "Indirect" else "#f0faf5"
+                rows_html += f"""<tr style="border-bottom:1px solid #f0f0f0;background:white">
+                  <td style="padding:10px 14px;font-weight:500;font-size:13px;color:#1f2937">{d.get("positionName","")}</td>
+                  <td style="padding:10px 14px;font-size:13px;color:#6b7280">{d.get("vietnameseName","")}</td>
+                  <td style="padding:10px 14px;text-align:center">
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:12px">{rank}</span>
+                  </td>
+                  <td style="padding:10px 14px;font-size:13px;color:#6b7280">{d.get("block","")}</td>
+                  <td style="padding:10px 14px;font-size:13px;color:#6b7280">{d.get("department","")}</td>
+                  <td style="padding:10px 14px;text-align:center">
+                    <span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;background:{type_bg};color:{type_color}">{ptype}</span>
+                  </td>
+                </tr>"""
+
+            st.markdown(f"""<div style="overflow-x:auto;background:white;border-radius:12px;border:1px solid #e8e8e8">
+              <table style="width:100%;border-collapse:collapse;background:white">
+                <thead><tr style="background:#F26522">
+                  <th style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:white">Tên vị trí</th>
+                  <th style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:white">Tên tiếng Việt</th>
+                  <th style="padding:12px 14px;text-align:center;font-size:13px;font-weight:700;color:white">Cấp bậc</th>
+                  <th style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:white">Khối</th>
+                  <th style="padding:12px 14px;text-align:left;font-size:13px;font-weight:700;color:white">Phòng ban</th>
+                  <th style="padding:12px 14px;text-align:center;font-size:13px;font-weight:700;color:white">Loại vị trí</th>
+                </tr></thead>
+                <tbody>{rows_html}</tbody>
+              </table></div>""", unsafe_allow_html=True)
+
+# ── PAGE: PHÚC LỢI THEO S-GRADE ─────────────────────────────────────────────────
+elif main_page == "benefits":
+    st.markdown("""
+    <div class="hero-banner" style="margin-bottom:1.5rem">
+      <div class="hero-sub">Chính sách đãi ngộ</div>
+      <div class="hero-title" style="font-size:48px">PHÚC LỢI<br>THEO S-GRADE</div>
+      <div class="hero-tagline">Thông tin phúc lợi theo từng cấp bậc</div>
+    </div>
+    """, unsafe_allow_html=True)
+    st.info("🚧 Tính năng đang được cập nhật. Vui lòng liên hệ HR team để biết thêm chi tiết.")
