@@ -241,10 +241,10 @@ Trả về JSON thuần túy (không markdown):
 # ── CSS ─────────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600&display=swap');
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+html, body, [class*="css"] { font-family: 'Plus Jakarta Sans', sans-serif; }
 #MainMenu, footer, header { visibility: hidden; }
-.block-container { padding-top: 0 !important; max-width: 1100px; }
+.block-container { padding-top: 0 !important; max-width: 1400px; padding-left: 2rem !important; padding-right: 2rem !important; }
 .topnav { background:white; border-bottom:1px solid #e8e8e8; padding:0 2rem; height:56px; display:flex; align-items:center; justify-content:space-between; margin:-1rem -1rem 0 -1rem; position:sticky; top:0; z-index:999; }
 .topnav-logo { font-size:15px; font-weight:600; color:#1f2937; display:flex; align-items:center; gap:8px; }
 .topnav-logo .sc { color:#F26522; font-weight:800; }
@@ -266,7 +266,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .chip { font-size:11px; font-weight:600; padding:2px 8px; border-radius:999px; }
 .compare-card { background:white; border:1px solid #e8e8e8; border-radius:10px; padding:1.25rem; margin-bottom:0.75rem; }
 .compare-pct-bar { height:8px; border-radius:4px; background:#F26522; margin-top:6px; }
-.stButton>button { border-radius:999px !important; font-family:'Inter',sans-serif !important; font-weight:600 !important; font-size:14px !important; }
+.stButton>button { border-radius:999px !important; font-family:'Plus Jakarta Sans',sans-serif !important; font-weight:600 !important; font-size:14px !important; }
 div[data-testid="column"]:first-child .stButton>button { background:#F26522 !important; color:white !important; border:none !important; }
 .topnav { position:sticky !important; top:0 !important; z-index:999 !important; }
 </style>
