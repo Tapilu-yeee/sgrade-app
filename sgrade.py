@@ -228,7 +228,15 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .compare-pct-bar { height:8px; border-radius:4px; background:#F26522; margin-top:6px; }
 .stButton>button { border-radius:999px !important; font-family:'Inter',sans-serif !important; font-weight:600 !important; font-size:14px !important; }
 div[data-testid="column"]:first-child .stButton>button { background:#F26522 !important; color:white !important; border:none !important; }
-.topnav { position:sticky !important; top:0 !important; z-index:999 !important; }
+/* Sticky: target Streamlit's main block first child */
+[data-testid="stVerticalBlockBorderWrapper"]:first-of-type,
+div[data-testid="stVerticalBlock"] > div:first-child [data-testid="stHorizontalBlock"] {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 999 !important;
+    background: white !important;
+}
+.topnav { background:white; border-bottom:1px solid #e8e8e8; }
 </style>
 """, unsafe_allow_html=True)
 
