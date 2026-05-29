@@ -597,55 +597,43 @@ with tab3:
     if not JE_DATABASE:
         st.info("📭 Chưa có dữ liệu. Liên hệ admin để cập nhật file je_data.json.")
     else:
-        # Filter controls
-        fc1, fc2, fc3 = st.columns([3, 1.5, 1.5])
-        with fc1:
-            search_q = st.text_input("🔍 Tìm theo tên vị trí", placeholder="e.g. Regional Director, Manager...")
-        with fc2:
-            all_sgrades = sorted(set(d["s_grade"] for d in JE_DATABASE if d["s_grade"]))
-            sg_filter = st.selectbox("Lọc S-Grade", ["Tất cả"] + all_sgrades)
-        with fc3:
-            src_filter = st.selectbox("Nguồn", ["Tất cả", "JE_27.05.2025", "JE_21.11.2024"])
+        # Filter controls — chỉ tìm theo tên
+        search_q = st.text_input("🔍 Tìm theo tên vị trí", placeholder="e.g. Regional Director, Manager...")
+        sg_filter = "Tất cả"  # không dùng filter S-Grade
 
-        # Apply filters
-        filtered = JE_DATABASE
-        if search_q.strip():
-            filtered = [d for d in filtered if search_q.strip().lower() in d["title"].lower()]
-        if sg_filter != "Tất cả":
-            filtered = [d for d in filtered if d["s_grade"] == sg_filter]
-        if src_filter != "Tất cả":
-            filtered = [d for d in filtered if d.get("source","") == src_filter]
+        # Chỉ hiển thị khi người dùng đã nhập
+        user_has_filtered = search_q.strip()
 
-        if not filtered:
-            st.warning("Không tìm thấy vị trí nào phù hợp.")
+        if not user_has_filtered:
+            st.markdown("""<div style="background:#f9f9f9;border-radius:12px;padding:2.5rem;text-align:center;
+              color:#9ca3af;border:1px dashed #e8e8e8;margin-top:1rem">
+              <div style="font-size:28px;margin-bottom:0.5rem">🔍</div>
+              <div style="font-size:14px">Nhập tên vị trí hoặc chọn S-Grade để bắt đầu tra cứu</div>
+            </div>""", unsafe_allow_html=True)
         else:
-            st.markdown(f"<div style='font-size:13px;color:#9ca3af;margin:0.5rem 0 1rem'>Tìm thấy <strong>{len(filtered)}</strong> vị trí</div>", unsafe_allow_html=True)
+            # Apply filter
+            filtered = [d for d in JE_DATABASE if search_q.strip().lower() in d["title"].lower()]
 
-            # Dropdown to pick position
-            titles_list = [
-                f"{d['title']}  |  {d['s_grade']}  |  {d['total_score']} điểm  |  {d.get('source','')[-10:]}"
-                for d in filtered
-            ]
-            selected_label = st.selectbox("Chọn vị trí để xem chi tiết", titles_list, label_visibility="collapsed")
+            if not filtered:
+                st.warning("Không tìm thấy vị trí nào phù hợp.")
+            else:
+                st.markdown(f"<div style='font-size:13px;color:#9ca3af;margin:0.5rem 0 1rem'>Tìm thấy <strong>{len(filtered)}</strong> vị trí</div>", unsafe_allow_html=True)
 
-            if selected_label:
-                sel_item = filtered[titles_list.index(selected_label)]
+                titles_list = [d['title'] for d in filtered]
+                selected_label = st.selectbox("Chọn vị trí", titles_list, label_visibility="collapsed")
 
-                # Score + Grade badges
-                st.markdown(f"""<div style="display:flex;gap:10px;margin:1rem 0 0.5rem;flex-wrap:wrap">
-                  <div style="background:#fff4ee;border-radius:8px;padding:8px 18px;font-size:14px;border:1px solid #fcd4b8">
-                    <span style="color:#9ca3af;font-size:12px">S-Grade</span><br>
-                    <strong style="color:#F26522;font-size:20px">{sel_item['s_grade']}</strong>
-                  </div>
-                  <div style="background:#f3f4f6;border-radius:8px;padding:8px 18px;font-size:14px;border:1px solid #e5e7eb">
-                    <span style="color:#9ca3af;font-size:12px">Tổng điểm</span><br>
-                    <strong style="color:#1f2937;font-size:20px">{sel_item['total_score']}</strong>
-                  </div>
-                  <div style="background:#f3f4f6;border-radius:8px;padding:8px 18px;font-size:14px;border:1px solid #e5e7eb">
-                    <span style="color:#9ca3af;font-size:12px">Nguồn dữ liệu</span><br>
-                    <strong style="color:#1f2937;font-size:14px">{sel_item.get('source','')}</strong>
-                  </div>
-                </div>""", unsafe_allow_html=True)
+                if selected_label:
+                    sel_item = filtered[titles_list.index(selected_label)]
 
-                # Full 12-factor table
-                render_result_table(sel_item.get("factors", []), sel_item["title"])
+                    st.markdown(f"""<div style="display:flex;gap:10px;margin:1rem 0 0.5rem;flex-wrap:wrap">
+                      <div style="background:#fff4ee;border-radius:8px;padding:8px 18px;border:1px solid #fcd4b8">
+                        <span style="color:#9ca3af;font-size:12px">S-Grade</span><br>
+                        <strong style="color:#F26522;font-size:20px">{sel_item['s_grade']}</strong>
+                      </div>
+                      <div style="background:#f3f4f6;border-radius:8px;padding:8px 18px;border:1px solid #e5e7eb">
+                        <span style="color:#9ca3af;font-size:12px">Tổng điểm</span><br>
+                        <strong style="color:#1f2937;font-size:20px">{sel_item['total_score']}</strong>
+                      </div>
+                    </div>""", unsafe_allow_html=True)
+
+                    render_result_table(sel_item.get("factors", []), sel_item["title"])
