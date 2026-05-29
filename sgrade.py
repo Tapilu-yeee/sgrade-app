@@ -357,66 +357,64 @@ def get_jd_content(uploaded_file, jd_text_input):
 # ── Nav ──────────────────────────────────────────────────────────────────────────
 if "main_page" not in st.session_state:
     st.session_state.main_page = "evaluate"
-
 p = st.session_state.main_page
 
-# Toàn bộ nav bar trong 1 row duy nhất — logo trái, 3 nút phải
-logo_col, _, btn1, btn2, btn3 = st.columns([3, 1.5, 1.6, 1.4, 2])
-
-with logo_col:
-    st.markdown("""
-    <div style="background:white;margin:-1rem -1rem 0;padding:0.75rem 1.5rem;border-bottom:1px solid #e8e8e8;
-                display:flex;align-items:center;height:56px">
-      <span style="color:#F26522;font-weight:800;font-size:15px">SCOMMERCE</span>
-      <span style="color:#9ca3af;margin:0 8px">|</span>
-      <span style="color:#1f2937;font-weight:600;font-size:14px">S-Grade SCOMMERCE</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-with _:
-    st.markdown('<div style="background:white;margin:-1rem 0 0;height:56px;border-bottom:1px solid #e8e8e8"></div>', unsafe_allow_html=True)
-
-with btn1:
-    st.markdown('<div style="background:white;margin:-1rem 0 0;padding-top:10px;border-bottom:1px solid #e8e8e8;height:56px">', unsafe_allow_html=True)
-    if st.button("Đánh giá S-Grade", key="nb_eval",
-                 type="primary" if p=="evaluate" else "secondary",
-                 use_container_width=True):
-        st.session_state.main_page = "evaluate"; st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with btn2:
-    st.markdown('<div style="background:white;margin:-1rem 0 0;padding-top:10px;border-bottom:1px solid #e8e8e8;height:56px">', unsafe_allow_html=True)
-    if st.button("Tra cứu S-Grade", key="nb_look",
-                 type="primary" if p=="lookup" else "secondary",
-                 use_container_width=True):
-        st.session_state.main_page = "lookup"; st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with btn3:
-    st.markdown('<div style="background:white;margin:-1rem 0 0;padding-top:10px;padding-right:1.5rem;border-bottom:1px solid #e8e8e8;height:56px">', unsafe_allow_html=True)
-    if st.button("Phúc lợi theo S-Grade", key="nb_bene",
-                 type="primary" if p=="benefits" else "secondary",
-                 use_container_width=True):
-        st.session_state.main_page = "benefits"; st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Sticky: ghim toàn bộ row nav
+# CSS sticky cho toàn bộ Streamlit header area
 st.markdown("""
 <style>
+/* Ẩn Streamlit default header */
+header[data-testid="stHeader"] { display:none !important; }
+/* Sticky wrapper cho nav row */
 div[data-testid="stVerticalBlock"] > div:first-child {
     position: sticky !important;
     top: 0 !important;
-    z-index: 999 !important;
-    background: white !important;
-}
-thead tr {
-    position: sticky !important;
-    top: 60px !important;
-    z-index: 10 !important;
-    background: #F26522 !important;
+    z-index: 9999 !important;
 }
 </style>
 """, unsafe_allow_html=True)
+
+# Nav HTML + 3 nút Streamlit ẩn trong cùng 1 block
+def _s(key): return "background:#F26522;color:white;border:none;" if p==key else "background:white;color:#6b7280;border:1px solid #e8e8e8;"
+
+st.markdown(f"""
+<div style="background:white;border-bottom:1px solid #e8e8e8;padding:0 1.5rem;
+            height:56px;display:flex;align-items:center;justify-content:space-between;
+            margin: -6rem -4rem 0; padding-left:2rem; padding-right:2rem;">
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="color:#F26522;font-weight:800;font-size:15px">SCOMMERCE</span>
+    <span style="color:#9ca3af">|</span>
+    <span style="color:#1f2937;font-weight:600;font-size:14px">S-Grade SCOMMERCE</span>
+  </div>
+  <div style="display:flex;gap:6px">
+    <button onclick="document.querySelector('[data-testid=stBaseButton-secondary][key=nb_eval],button.nb_eval').click()"
+      style="{_s('evaluate')}padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">
+      Đánh giá S-Grade</button>
+    <button onclick="document.querySelector('[key=nb_look]').click()"
+      style="{_s('lookup')}padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">
+      Tra cứu S-Grade</button>
+    <button onclick="document.querySelector('[key=nb_bene]').click()"
+      style="{_s('benefits')}padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif">
+      Phúc lợi theo S-Grade</button>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+# Functional buttons ẩn hoàn toàn bằng CSS height:0
+st.markdown("""<style>
+div[data-testid="stVerticalBlock"] > div:nth-child(3) {
+    height: 0 !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important;
+}
+</style>""", unsafe_allow_html=True)
+_c1, _c2, _c3 = st.columns(3)
+with _c1:
+    if st.button("Đánh giá S-Grade", key="nb_eval", use_container_width=True):
+        st.session_state.main_page = "evaluate"; st.rerun()
+with _c2:
+    if st.button("Tra cứu S-Grade", key="nb_look", use_container_width=True):
+        st.session_state.main_page = "lookup"; st.rerun()
+with _c3:
+    if st.button("Phúc lợi theo S-Grade", key="nb_bene", use_container_width=True):
+        st.session_state.main_page = "benefits"; st.rerun()
 
 main_page = st.session_state.main_page
 
