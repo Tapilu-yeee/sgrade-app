@@ -1,5 +1,6 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import json
 import io
 import csv
@@ -459,14 +460,12 @@ if eval_btn:
 
             with st.spinner("🤖 AI đang phân tích 12 yếu tố theo phương pháp PwC..."):
                 try:
-                    genai.configure(api_key=api_key)
-                    gemini = genai.GenerativeModel(
-                        model_name="gemini-1.5-flash-latest",
-                        system_instruction=PWC_SYSTEM_PROMPT,
-                    )
-                    response = gemini.generate_content(
-                        f"Tên vị trí: {job_title}\n\nNội dung JD:\n{jd_content}",
-                        generation_config=genai.GenerationConfig(
+                    client = genai.Client(api_key=api_key)
+                    response = client.models.generate_content(
+                        model="gemini-2.0-flash",
+                        contents=f"Tên vị trí: {job_title}\n\nNội dung JD:\n{jd_content}",
+                        config=types.GenerateContentConfig(
+                            system_instruction=PWC_SYSTEM_PROMPT,
                             max_output_tokens=4000,
                             temperature=0.2,
                         ),
