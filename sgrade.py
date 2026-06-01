@@ -2,32 +2,50 @@ import streamlit as st
 from google import genai
 from google.genai import types
 import json, io, csv, re, time, base64
-import urllib.request
+import urllib.request, urllib.error
 from datetime import datetime
 
 # ── GitHub History Storage ───────────────────────────────────────────────────────
+# Lịch sử đánh giá được lưu vào file history.json ngay trong repo qua GitHub API.
+# Nhờ đó dữ liệu BỀN VỮNG: còn nguyên khi tải lại trang hoặc mở ở trình duyệt khác.
+# Cần cấu hình 2 secrets trên Streamlit Cloud:  GITHUB_REPO="user/repo"  +  GITHUB_TOKEN="ghp_..."
 HISTORY_FILE = "history.json"
 
+def _gh_config():
+    return st.secrets.get("GITHUB_REPO", ""), st.secrets.get("GITHUB_TOKEN", "")
+
+def github_enabled():
+    repo, token = _gh_config()
+    return bool(repo and token)
+
 def load_history_from_github():
+    """Tải lịch sử từ GitHub. Trả về (history, sha, error). error="" nếu thành công."""
+    repo, token = _gh_config()
+    if not (repo and token):
+        return [], "", "Chưa cấu hình GITHUB_REPO / GITHUB_TOKEN"
     try:
-        repo = st.secrets.get("GITHUB_REPO", "")
-        token = st.secrets.get("GITHUB_TOKEN", "")
         url = f"https://api.github.com/repos/{repo}/contents/{HISTORY_FILE}"
         req = urllib.request.Request(url, headers={"Authorization": f"token {token}", "User-Agent": "sgrade"})
-        with urllib.request.urlopen(req, timeout=6) as r:
+        with urllib.request.urlopen(req, timeout=8) as r:
             data = json.loads(r.read())
-        decoded = base64.b64decode(data["content"].replace("\n","")).decode()
-        return json.loads(decoded), data.get("sha","")
-    except Exception:
-        return [], ""
+        decoded = base64.b64decode(data["content"].replace("\n", "")).decode()
+        return json.loads(decoded), data.get("sha", ""), ""
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return [], "", ""  # file chưa tồn tại → coi như lịch sử rỗng (lần lưu đầu sẽ tạo file)
+        return [], "", f"HTTP {e.code}: {e.reason}"
+    except Exception as e:
+        return [], "", str(e)
 
 def save_history_to_github(history, sha=""):
+    """Ghi đè history.json. Trả về (new_sha, error). error="" nếu thành công."""
+    repo, token = _gh_config()
+    if not (repo and token):
+        return "", "Chưa cấu hình GITHUB_REPO / GITHUB_TOKEN"
     try:
-        repo = st.secrets.get("GITHUB_REPO", "")
-        token = st.secrets.get("GITHUB_TOKEN", "")
         url = f"https://api.github.com/repos/{repo}/contents/{HISTORY_FILE}"
         payload = {
-            "message": "Update history",
+            "message": "Update S-Grade history",
             "content": base64.b64encode(json.dumps(history, ensure_ascii=False, indent=2).encode()).decode(),
         }
         if sha:
@@ -36,11 +54,35 @@ def save_history_to_github(history, sha=""):
             data=json.dumps(payload).encode(),
             headers={"Authorization": f"token {token}", "Content-Type": "application/json", "User-Agent": "sgrade"},
             method="PUT")
-        with urllib.request.urlopen(req, timeout=10) as r:
+        with urllib.request.urlopen(req, timeout=12) as r:
             resp = json.loads(r.read())
-            return resp.get("content", {}).get("sha", "")
-    except Exception:
-        return ""
+            return resp.get("content", {}).get("sha", ""), ""
+    except urllib.error.HTTPError as e:
+        # 409/422 = xung đột sha (file đã bị thay đổi bởi lần lưu khác)
+        return "", f"HTTP {e.code}: {e.reason}"
+    except Exception as e:
+        return "", str(e)
+
+def push_history_item(item, max_retries=4):
+    """Thêm 1 vị trí vào lịch sử một cách an toàn cho nhiều người dùng đồng thời:
+    luôn tải bản mới nhất + sha hiện tại, nối thêm item, rồi lưu. Nếu sha xung đột
+    (có người vừa lưu trước) thì tải lại và thử lại — tránh ghi đè mất dữ liệu.
+    Trả về (merged_history, new_sha, error). merged_history=None nếu thất bại."""
+    if not github_enabled():
+        return None, "", "Chưa cấu hình GITHUB_REPO / GITHUB_TOKEN"
+    last_err = ""
+    for _ in range(max_retries):
+        history, sha, err = load_history_from_github()
+        if err:
+            last_err = err
+            continue
+        merged = list(history) + [item]
+        new_sha, save_err = save_history_to_github(merged, sha)
+        if new_sha:
+            return merged, new_sha, ""
+        last_err = save_err or "Xung đột khi lưu"
+        # vòng lặp sẽ tải lại sha mới nhất rồi thử lại
+    return None, "", last_err
 
 st.set_page_config(page_title="S-Grade SCOMMERCE", page_icon="📋", layout="wide", initial_sidebar_state="collapsed")
 
@@ -68,9 +110,10 @@ POSITIONS = load_positions()
 
 # ── Session state init ──────────────────────────────────────────────────────────
 if "history" not in st.session_state:
-    _hist, _sha = load_history_from_github()
+    _hist, _sha, _err = load_history_from_github()
     st.session_state.history = _hist
     st.session_state.history_sha = _sha
+    st.session_state.history_load_err = _err
 if "selected_history" not in st.session_state:
     st.session_state.selected_history = None
 
@@ -476,20 +519,27 @@ if main_page == "evaluate":
                             similar = result.get("similar_jobs", [])
                             summary = result.get("summary", "")
     
-                            # ── Lưu vào lịch sử ───────────────────────────────────
-                            st.session_state.history.append({
+                            # ── Lưu vào lịch sử (bền vững trên GitHub) ────────────
+                            new_item = {
                                 "title": job_title,
                                 "date": datetime.now().strftime("%d/%m/%Y %H:%M"),
                                 "jd": jd_content[:2000],
                                 "result": result,
-                            })
-                            # Lưu lên GitHub
-                            _new_sha = save_history_to_github(
-                                st.session_state.history,
-                                st.session_state.get("history_sha", "")
-                            )
-                            if _new_sha:
-                                st.session_state.history_sha = _new_sha
+                            }
+                            if github_enabled():
+                                merged, new_sha, push_err = push_history_item(new_item)
+                                if merged is not None:
+                                    # Đồng bộ thành công: session_state phản ánh đúng bản trên GitHub
+                                    st.session_state.history = merged
+                                    st.session_state.history_sha = new_sha
+                                    st.session_state.save_status = ("ok", "")
+                                else:
+                                    # Lưu lỗi: vẫn giữ tạm trong phiên để không mất kết quả vừa chạy
+                                    st.session_state.history.append(new_item)
+                                    st.session_state.save_status = ("error", push_err)
+                            else:
+                                st.session_state.history.append(new_item)
+                                st.session_state.save_status = ("not_configured", "")
     
                             # ── Render bảng kết quả ────────────────────────────────
                             render_result_table(factors, job_title)
@@ -521,7 +571,13 @@ if main_page == "evaluate":
                                 st.download_button("📄 Xuất JSON", json.dumps(result, ensure_ascii=False, indent=2),
                                     f"sgrade_{job_title.replace(' ','_')}.json", "application/json", use_container_width=True)
     
-                            st.success(f"✅ Đã lưu vào lịch sử! Xem tại tab **Lịch sử & So sánh**.")
+                            _status, _detail = st.session_state.get("save_status", ("ok", ""))
+                            if _status == "ok":
+                                st.success("✅ Đã lưu vào lịch sử và đồng bộ GitHub! Kết quả sẽ còn nguyên khi tải lại trang hoặc mở ở trình duyệt khác. Xem tại tab **Lịch sử & So sánh**.")
+                            elif _status == "not_configured":
+                                st.warning("⚠️ Đã đánh giá xong nhưng **chưa cấu hình GITHUB_REPO / GITHUB_TOKEN**, nên kết quả chỉ lưu **tạm trong phiên này** và sẽ mất khi tải lại trang. Xem hướng dẫn cấu hình ở tab **Lịch sử & So sánh**.")
+                            else:
+                                st.warning(f"⚠️ Đã đánh giá xong nhưng **không lưu được lên GitHub** ({_detail}). Kết quả chỉ lưu tạm trong phiên này. Vui lòng kiểm tra GITHUB_TOKEN còn hiệu lực và có quyền ghi repo.")
     
                         except json.JSONDecodeError:
                             st.error("AI trả về định dạng không hợp lệ. Vui lòng thử lại.")
@@ -534,8 +590,43 @@ if main_page == "evaluate":
     # TAB 2: LỊCH SỬ & SO SÁNH
     # ════════════════════════════════════════════════════════════════════════════════
     with tab2:
+        # ── Thanh trạng thái lưu trữ + nút làm mới ─────────────────────────────────
+        hc1, hc2 = st.columns([6, 1.4])
+        with hc1:
+            if github_enabled():
+                st.markdown("<div style='font-size:13px;color:#1a7a4a;padding-top:8px'>🟢 Lịch sử được lưu bền vững trên GitHub — đồng bộ qua mọi trình duyệt.</div>", unsafe_allow_html=True)
+            else:
+                st.markdown("<div style='font-size:13px;color:#993c1d;padding-top:8px'>🟠 Chưa cấu hình lưu trữ — lịch sử chỉ tồn tại tạm trong phiên này.</div>", unsafe_allow_html=True)
+        with hc2:
+            if st.button("🔄 Làm mới", use_container_width=True, help="Tải lại lịch sử mới nhất từ GitHub (gồm cả kết quả từ trình duyệt/người khác)"):
+                _h, _s, _e = load_history_from_github()
+                if _e:
+                    st.session_state.history_load_err = _e
+                else:
+                    st.session_state.history = _h
+                    st.session_state.history_sha = _s
+                    st.session_state.history_load_err = ""
+                st.rerun()
+
+        if not github_enabled():
+            with st.expander("⚙️ Cách bật lưu trữ bền vững (qua reload & mọi trình duyệt)"):
+                st.markdown("""
+Lịch sử cần được lưu phía server thì mới còn nguyên khi tải lại trang hoặc mở ở trình duyệt khác. App này lưu vào file `history.json` ngay trong repo qua GitHub API. Làm 1 lần:
+
+1. **Tạo GitHub Personal Access Token**: vào *GitHub → Settings → Developer settings → Personal access tokens → Fine-grained token*. Cấp quyền **Contents: Read and write** cho đúng repo chứa app này.
+2. **Khai báo Secrets trên Streamlit Cloud**: *Manage app → Settings → Secrets*, dán vào:
+   ```toml
+   GITHUB_REPO  = "YOUR_USERNAME/sgrade-app"
+   GITHUB_TOKEN = "github_pat_..."
+   ```
+3. **Save** → app tự khởi động lại. Lần đánh giá tiếp theo sẽ tự tạo `history.json` và đồng bộ.
+""")
+
+        if st.session_state.get("history_load_err"):
+            st.warning(f"⚠️ Không tải được lịch sử từ GitHub: {st.session_state.history_load_err}")
+
         history = st.session_state.history
-    
+
         if not history:
             st.info("📭 Chưa có vị trí nào được đánh giá. Hãy đánh giá một JD ở tab trước để bắt đầu!")
         else:
