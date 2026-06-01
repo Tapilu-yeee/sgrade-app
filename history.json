@@ -488,5 +488,104 @@
       ],
       "summary": "Vị trí Network_Development Executive yêu cầu trình độ Đại học với kinh nghiệm 0-2 năm, tập trung vào các hoạt động phát triển mặt bằng. Công việc có độ phức tạp vừa phải, đòi hỏi kỹ năng làm việc thực địa, giao tiếp và quản lý hồ sơ. Phạm vi công việc là cá nhân đóng góp nhưng cần phối hợp nội bộ và bên ngoài. Môi trường làm việc kết hợp văn phòng và di chuyển, có yêu cầu thể chất nhất định."
     }
+  },
+  {
+    "title": "Senior Network Quality Specialist",
+    "date": "01/06/2026 10:52",
+    "jd": "MÔ TẢ CÔNG VIỆC\nI.    CƠ CẤU TỔ CHỨC\n\nII.    MỤC ĐÍCH VÀ TRÁCH NHIỆM\n1.  MỤC ĐÍCH CÔNG VIỆC\nVị trí này đóng góp như thế nào vào mục tiêu & chiến lược chung của tổ chức và phòng ban? Điều gì đo lường mức độ thành công của vị trí này tại tổ chức?\n-  Đảm bảo chất lượng dịch vụ vận hành mạng lưới đáp ứng cam kết SLA với khách hàng, thông qua việc chủ trì thiết kế và quản trị hệ thống OLA – SLA.\n-  Là đầu mối chuyên môn cấp cao của phòng Network Quality: xử lý các vấn đề phức tạp, chủ trì các dự án cải tiến và hướng dẫn đội ngũ Specialist.\n-  Góp phần giảm tỷ lệ vi phạm SLA, tối ưu chi phí vận hành và nâng cao trải nghiệm khách hàng thông qua các sáng kiến cải tiến chất lượng.\n-  Phát triển năng lực chuyên môn của đội Specialist thông qua coaching và chia sẻ kiến thức.\n2.  TRÁCH NHIỆM CÔNG VIỆC CHÍNH\nIII.    YÊU CẦU CÔNG VIỆC\n1.  KIẾN THỨC\n-  Tốt nghiệp Đại học trở lên chuyên ngành Kinh tế, Logistics, Chuỗi cung ứng (Supply Chain), Quản trị kinh doanh, Công nghệ thông tin hoặc các ngành có liên quan.\n-  Kiến thức chuyên sâu về ngành chuyển phát nhanh, e-commerce logistics, hiểu rõ các mắt xích vận hành: kho trung chuyển, linehaul, bưu cục, first-mile, last-mile.\n-  Kiến thức vững về SLA/OLA Management, Service Quality và phương pháp phân tích nguyên nhân gốc.\n-  Am hiểu về thiết kế dashboard và báo cáo vận hành.\n2.  KINH NGHIỆM\n-  Tối thiểu 04 năm kinh nghiệm trong lĩnh vực Logistics, Chuyển phát nhanh, E-commerce Operations.\n-  Trong đó ít nhất 01 năm làm các công việc liên quan trực tiếp đến Service Quality, SLA Management, Network Planning hoặc Operations Analytics.\n-  Đã từng tham gia hoặc dẫn dắt các dự án cải tiến vận hành là một lợi thế.\n3.  KỸ NĂNG\n-  Kỹ năng phân tích dữ liệu chuyên sâu. Thành thạo Excel (Pivot, Power Query), SQL; sử dụng tốt Power BI hoặc Tableau.\n-  Kỹ năng thiết kế dashboard và hệ thống báo cáo vận hành.\n-  Kỹ năng giải quyết vấn đề và tư duy phân tích có hệ thống.\n-  Kỹ năng giao tiếp, trình bày và làm việc với nhiều phòng ban (cross-functio",
+    "result": {
+      "factors": [
+        {
+          "name": "Trình độ học vấn",
+          "grade": "H2",
+          "reason": "Yêu cầu tốt nghiệp Đại học trở lên chuyên ngành liên quan, có kiến thức chuyên sâu về ngành và các phương pháp quản lý chất lượng.",
+          "evidence": "Tốt nghiệp Đại học trở lên chuyên ngành Kinh tế, Logistics, Chuỗi cung ứng (Supply Chain), Quản trị kinh doanh, Công nghệ thông tin hoặc các ngành có liên quan. Kiến thức chuyên sâu về ngành chuyển phát nhanh, e-commerce logistics, hiểu rõ các mắt xích vận hành: kho trung chuyển, linehaul, bưu cục, first-mile, last-mile. Kiến thức vững về SLA/OLA Management, Service Quality và phương pháp phân tích nguyên nhân gốc."
+        },
+        {
+          "name": "Kinh nghiệm",
+          "grade": "F",
+          "reason": "Yêu cầu tối thiểu 04 năm kinh nghiệm trong lĩnh vực Logistics/Chuyển phát nhanh, trong đó có ít nhất 01 năm làm về Service Quality/SLA Management.",
+          "evidence": "Tối thiểu 04 năm kinh nghiệm trong lĩnh vực Logistics, Chuyển phát nhanh, E-commerce Operations. Trong đó ít nhất 01 năm làm các công việc liên quan trực tiếp đến Service Quality, SLA Management, Network Planning hoặc Operations Analytics."
+        },
+        {
+          "name": "Mức độ phức tạp của công việc",
+          "grade": "E1",
+          "reason": "Xử lý các vấn đề phức tạp, chủ trì dự án cải tiến, tối ưu chi phí và nâng cao trải nghiệm khách hàng, yêu cầu phân tích dữ liệu chuyên sâu và tư duy hệ thống.",
+          "evidence": "Là đầu mối chuyên môn cấp cao của phòng Network Quality: xử lý các vấn đề phức tạp, chủ trì các dự án cải tiến và hướng dẫn đội ngũ Specialist. Góp phần giảm tỷ lệ vi phạm SLA, tối ưu chi phí vận hành và nâng cao trải nghiệm khách hàng thông qua các sáng kiến cải tiến chất lượng. Kỹ năng phân tích dữ liệu chuyên sâu. Thành thạo Excel (Pivot, Power Query), SQL; sử dụng tốt Power BI hoặc Tableau."
+        },
+        {
+          "name": "Phạm vi công việc",
+          "grade": "D",
+          "reason": "Quản lý một phần hoạt động của chức năng Network Quality, chủ trì các dự án cải tiến và hướng dẫn đội ngũ Specialist.",
+          "evidence": "Là đầu mối chuyên môn cấp cao của phòng Network Quality: xử lý các vấn đề phức tạp, chủ trì các dự án cải tiến và hướng dẫn đội ngũ Specialist. Phát triển năng lực chuyên môn của đội Specialist thông qua coaching và chia sẻ kiến thức."
+        },
+        {
+          "name": "Mức độ giải quyết vấn đề",
+          "grade": "E1",
+          "reason": "Giải quyết các vấn đề phức tạp, phân tích nguyên nhân gốc, đề xuất và chủ trì các sáng kiến cải tiến chất lượng.",
+          "evidence": "Xử lý các vấn đề phức tạp, chủ trì các dự án cải tiến và hướng dẫn đội ngũ Specialist. Góp phần giảm tỷ lệ vi phạm SLA, tối ưu chi phí vận hành và nâng cao trải nghiệm khách hàng thông qua các sáng kiến cải tiến chất lượng. Kiến thức vững về SLA/OLA Management, Service Quality và phương pháp phân tích nguyên nhân gốc."
+        },
+        {
+          "name": "Mức độ cần được chỉ dẫn/giám sát",
+          "grade": "E1",
+          "reason": "Là đầu mối chuyên môn cấp cao, tự lên kế hoạch cho các dự án cải tiến và hướng dẫn đội ngũ, làm việc độc lập với mục tiêu rõ ràng.",
+          "evidence": "Là đầu mối chuyên môn cấp cao của phòng Network Quality: xử lý các vấn đề phức tạp, chủ trì các dự án cải tiến và hướng dẫn đội ngũ Specialist. Đảm bảo chất lượng dịch vụ vận hành mạng lưới đáp ứng cam kết SLA với khách hàng."
+        },
+        {
+          "name": "Mức độ liên lạc khi thực hiện công việc",
+          "grade": "E3",
+          "reason": "Liên hệ rộng với nhiều phòng ban để đảm bảo SLA, chủ trì dự án và hướng dẫn đội ngũ Specialist.",
+          "evidence": "Kỹ năng giao tiếp, trình bày và làm việc với nhiều phòng ban (cross-functional). Là đầu mối chuyên môn cấp cao của phòng Network Quality: xử lý các vấn đề phức tạp, chủ trì các dự án cải tiến và hướng dẫn đội ngũ Specialist."
+        },
+        {
+          "name": "Trách nhiệm giám sát và quản lý",
+          "grade": "B3",
+          "reason": "Hướng dẫn và phát triển năng lực chuyên môn cho đội ngũ Specialist, có thể quản lý 1-2 nhân viên.",
+          "evidence": "Phát triển năng lực chuyên môn của đội Specialist thông qua coaching và chia sẻ kiến thức. Hướng dẫn đội ngũ Specialist."
+        },
+        {
+          "name": "Ảnh hưởng của các quyết định",
+          "grade": "D1",
+          "reason": "Quyết định về chất lượng dịch vụ và tối ưu chi phí vận hành có thể ảnh hưởng đến lợi nhuận và trải nghiệm khách hàng.",
+          "evidence": "Đảm bảo chất lượng dịch vụ vận hành mạng lưới đáp ứng cam kết SLA với khách hàng. Góp phần giảm tỷ lệ vi phạm SLA, tối ưu chi phí vận hành và nâng cao trải nghiệm khách hàng thông qua các sáng kiến cải tiến chất lượng."
+        },
+        {
+          "name": "Quyền hạn",
+          "grade": "A0",
+          "reason": "JD không đề cập đến quyền hạn phê duyệt tài chính hoặc ngân sách.",
+          "evidence": "JD không đề cập đến quyền hạn tài chính hoặc ngân sách."
+        },
+        {
+          "name": "Môi trường làm việc",
+          "grade": "A3",
+          "reason": "Làm việc chủ yếu trong môi trường văn phòng, có thể di chuyển đến kho/bưu cục khi cần.",
+          "evidence": "Làm việc trong môi trường văn phòng, năng động và hướng kết quả. Có thể di chuyển đến các kho trung chuyển, bưu cục để khảo sát thực tế khi cần."
+        },
+        {
+          "name": "Yêu cầu thể chất",
+          "grade": "A1",
+          "reason": "Không yêu cầu đặc biệt về thể lực, chủ yếu làm việc tại văn phòng.",
+          "evidence": "Không yêu cầu đặc biệt về thể lực và sức khỏe. Làm việc trong môi trường văn phòng."
+        }
+      ],
+      "similar_jobs": [
+        {
+          "title": "Network Quality Manager",
+          "similarity": 90,
+          "reason": "Cả hai vị trí đều tập trung vào quản lý chất lượng mạng lưới, SLA/OLA, phân tích dữ liệu và cải tiến vận hành, nhưng Manager có phạm vi trách nhiệm và quản lý lớn hơn."
+        },
+        {
+          "title": "Operations Analyst Senior",
+          "similarity": 85,
+          "reason": "Vị trí này yêu cầu kỹ năng phân tích dữ liệu, giải quyết vấn đề và hiểu biết về logistics/operations, tương tự như các yêu cầu về phân tích và cải tiến của Senior Network Quality Specialist."
+        },
+        {
+          "title": "Service Quality Specialist",
+          "similarity": 80,
+          "reason": "Tập trung vào chất lượng dịch vụ và SLA, nhưng Senior Network Quality Specialist có thêm yếu tố chuyên sâu về mạng lưới và vai trò dẫn dắt."
+        }
+      ],
+      "summary": "Vị trí Senior Network Quality Specialist đòi hỏi trình độ đại học chuyên ngành, kinh nghiệm logistics và quản lý chất lượng. Công việc phức tạp, yêu cầu phân tích sâu, giải quyết vấn đề và chủ trì cải tiến, có ảnh hưởng đến chi phí và trải nghiệm khách hàng. Phạm vi công việc là quản lý một phần chức năng, liên lạc rộng và hướng dẫn đội ngũ."
+    }
   }
 ]
