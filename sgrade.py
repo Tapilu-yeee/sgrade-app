@@ -418,142 +418,105 @@ def fix_json(raw):
     return json.loads(fixed)
 
 def render_result_table(factors, job_title, adjustments=None, show_adjust=False):
-    """Render bảng 12 yếu tố với điểm, định nghĩa mức, và cột điều chỉnh."""
     if adjustments is None:
         adjustments = {}
 
-    # Compute scores
     grades_dict = {}
     for f in factors:
         fname = f.get("name","")
-        adj_grade = adjustments.get(fname, f.get("grade",""))
-        grades_dict[fname] = adj_grade
+        grades_dict[fname] = adjustments.get(fname, f.get("grade",""))
 
     f1_score = get_grade_score("Trình độ học vấn", grades_dict.get("Trình độ học vấn",""))
     f2_score = get_grade_score("Kinh nghiệm", grades_dict.get("Kinh nghiệm",""))
-
     total_score = compute_total_score(grades_dict)
     computed_sgrade = score_to_sgrade(total_score)
 
-    # Table header
-    header_cols = "Yếu tố | Lý do | Dẫn chứng | Mức AI | Định nghĩa | Điểm"
-    if show_adjust:
-        header_cols += " | Điều chỉnh | Điểm đã chỉnh"
+    # Header
+    st.markdown(f"""<div style="background:white;border-radius:12px;overflow:hidden;border:1px solid #e8e8e8;margin-top:0.5rem">
+      <div style="background:#1f2937;padding:0.875rem 1.5rem;display:flex;justify-content:space-between;align-items:center">
+        <span style="color:white;font-weight:600;font-size:15px">Kết quả đánh giá: {html.escape(job_title)}</span>
+        <span style="color:#9ca3af;font-size:13px">Tổng điểm: <strong style="color:#F26522">{total_score}</strong> &rarr; <strong style="color:#F26522">{computed_sgrade}</strong></span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;background:white">
+        <thead><tr style="background:#f3f4f6;border-bottom:2px solid #e5e7eb">
+          <th style="padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:#374151;width:14%">Yếu tố</th>
+          <th style="padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:#374151;width:25%">Lý do</th>
+          <th style="padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:#374151;width:29%">Dẫn chứng</th>
+          <th style="padding:9px 12px;text-align:center;font-size:12px;font-weight:600;color:#374151;width:7%">Mức AI</th>
+          <th style="padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:#374151;width:18%">Định nghĩa mức</th>
+          <th style="padding:9px 12px;text-align:center;font-size:12px;font-weight:600;color:#374151;width:7%">Điểm</th>
+        </tr></thead>
+        <tbody>""", unsafe_allow_html=True)
 
-    rows_html = ""
     score_rows = []
-
     for i, f in enumerate(factors):
         fname = f.get("name","")
         ai_grade = f.get("grade","")
         adj_grade = adjustments.get(fname, ai_grade)
         is_adjusted = adj_grade != ai_grade
-
-        # Scores
         fi = FACTOR_NAMES.index(fname) if fname in FACTOR_NAMES else -1
-        ai_score = get_grade_score(fname, ai_grade, f1_score, f2_score)
         adj_score = get_grade_score(fname, adj_grade, f1_score, f2_score)
+        tc, bg = grade_color(adj_grade if is_adjusted else ai_grade)
+        desc = get_grade_desc(fname, adj_grade if is_adjusted else ai_grade)
+        short_desc = (desc[:100] + "...") if len(desc) > 100 else desc
+        score_str = f"{adj_score:.1f}" if fi >= 0 and FACTOR_TYPES[fi] == "multiplier" else f"{adj_score:.0f}"
+        adj_badge = '<span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:3px;margin-left:4px">↑ chỉnh</span>' if is_adjusted else ""
 
-        # Colors
-        tc, bg = grade_color(ai_grade)
-        atc, abg = grade_color(adj_grade) if is_adjusted else (tc, bg)
-
-        # Description
-        ai_desc = get_grade_desc(fname, ai_grade)
-        adj_desc = get_grade_desc(fname, adj_grade) if is_adjusted else ai_desc
-
-        # Truncate desc for display
-        short_desc = (adj_desc[:120] + "...") if len(adj_desc) > 120 else adj_desc
-
-        score_display = f"{adj_score:.1f}" if FACTOR_TYPES[fi] in ("multiplier",) else f"{adj_score:.0f}"
-
-        adj_badge = ""
-        if is_adjusted:
-            adj_badge = f'<span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:3px;margin-left:4px">↑ đã chỉnh</span>'
-
-        _reason = html.escape(str(f.get("reason","")))
-        _evidence = html.escape(str(f.get("evidence","")))
-        _short_desc = html.escape(short_desc)
-        rows_html += f"""<tr style="border-bottom:1px solid #e8e8e8;background:white">
-          <td style="padding:10px 12px;font-weight:600;font-size:13px;vertical-align:top;color:#1f2937;width:14%">{i+1}. {fname}</td>
-          <td style="padding:10px 12px;font-size:13px;vertical-align:top;color:#1f2937;line-height:1.6;width:26%">{_reason}</td>
-          <td style="padding:10px 12px;font-size:13px;font-style:italic;color:#4b5563;vertical-align:top;line-height:1.6;width:30%">{_evidence}</td>
-          <td style="padding:10px 12px;text-align:center;vertical-align:top;width:7%">
-            <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:13px">{ai_grade}</span>
+        # Each row as separate markdown call to avoid truncation
+        st.markdown(f"""<tr style="border-bottom:1px solid #f0f0f0;background:white">
+          <td style="padding:9px 12px;font-weight:600;font-size:13px;vertical-align:top;color:#1f2937">{i+1}. {html.escape(fname)}</td>
+          <td style="padding:9px 12px;font-size:12px;vertical-align:top;color:#374151;line-height:1.5">{html.escape(str(f.get("reason","")))}</td>
+          <td style="padding:9px 12px;font-size:12px;font-style:italic;color:#4b5563;vertical-align:top;line-height:1.5">{html.escape(str(f.get("evidence","")))}</td>
+          <td style="padding:9px 12px;text-align:center;vertical-align:top">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:12px">{html.escape(str(adj_grade if is_adjusted else ai_grade))}</span>
             {adj_badge}
           </td>
-          <td style="padding:10px 12px;font-size:11px;color:#6b7280;vertical-align:top;line-height:1.5;width:16%">{_short_desc}</td>
-          <td style="padding:10px 12px;text-align:center;font-weight:600;font-size:13px;color:#F26522;vertical-align:top;width:7%">{score_display}</td>
-        </tr>"""
+          <td style="padding:9px 12px;font-size:11px;color:#6b7280;vertical-align:top;line-height:1.4">{html.escape(short_desc)}</td>
+          <td style="padding:9px 12px;text-align:center;font-weight:600;font-size:13px;color:#F26522;vertical-align:top">{score_str}</td>
+        </tr>""", unsafe_allow_html=True)
 
-        score_rows.append((fname, ai_grade, adj_grade, ai_score, adj_score, fi))
+        score_rows.append((fname, ai_grade, adj_grade, adj_score, fi))
 
-    st.markdown(f"""<div style="background:white;border-radius:12px;overflow:hidden;border:1px solid #e8e8e8">
-      <div style="background:#1f2937;padding:0.875rem 1.5rem;display:flex;justify-content:space-between;align-items:center">
-        <span style="color:white;font-weight:600;font-size:15px">Kết quả đánh giá: {job_title}</span>
-        <span style="color:#9ca3af;font-size:13px">Tổng điểm: <strong style="color:#F26522">{total_score}</strong> → <strong style="color:#F26522">{computed_sgrade}</strong></span>
-      </div>
-      <table style="width:100%;border-collapse:collapse;background:white">
-        <thead><tr style="background:#f3f4f6;border-bottom:2px solid #e5e7eb">
-          <th style="padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:#374151">Yếu tố</th>
-          <th style="padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:#374151">Lý do</th>
-          <th style="padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:#374151">Dẫn chứng</th>
-          <th style="padding:9px 12px;text-align:center;font-size:12px;font-weight:600;color:#374151">Mức AI</th>
-          <th style="padding:9px 12px;text-align:left;font-size:12px;font-weight:600;color:#374151">Định nghĩa mức</th>
-          <th style="padding:9px 12px;text-align:center;font-size:12px;font-weight:600;color:#374151">Điểm</th>
-        </tr></thead>
-        <tbody>{rows_html}</tbody>
-      </table>
-    </div>""", unsafe_allow_html=True)
+    st.markdown("</tbody></table></div>", unsafe_allow_html=True)
 
-    # Adjustment section (only in evaluate tab, not in history view)
     if not show_adjust:
         return None
 
-    if show_adjust:
-        st.markdown("<div style='margin-top:1rem'>", unsafe_allow_html=True)
-        st.markdown("**Điều chỉnh mức chấm** — chọn lại mức nếu cần thiết, điểm sẽ tự động cập nhật:")
+    # Adjustment dropdowns
+    st.markdown("<br>**Điều chỉnh mức chấm** — chọn lại mức nếu cần, điểm tự động cập nhật:", unsafe_allow_html=True)
+    new_adjustments = dict(adjustments)
+    for fname in FACTOR_NAMES:
+        if fname not in new_adjustments:
+            f_match = next((f for f in factors if f.get("name") == fname), None)
+            if f_match:
+                new_adjustments[fname] = f_match.get("grade","")
 
-        new_adjustments = dict(adjustments)
-        cols_per_row = 3
-        factor_chunks = [score_rows[i:i+cols_per_row] for i in range(0, len(score_rows), cols_per_row)]
+    changed = False
+    chunks = [score_rows[i:i+3] for i in range(0, len(score_rows), 3)]
+    for chunk in chunks:
+        cols = st.columns(len(chunk))
+        for col, (fname, ai_grade, adj_grade, adj_score, fi) in zip(cols, chunk):
+            with col:
+                available = list(SCORING_LOOKUP.get(fname, {}).keys())
+                cur_idx = available.index(adj_grade) if adj_grade in available else 0
+                new_grade = st.selectbox(f"**{fname[:22]}**", available, index=cur_idx, key=f"adj_{job_title}_{fname}")
+                if new_grade != ai_grade:
+                    st.markdown(f'<div style="font-size:11px;color:#854f0b">AI: {ai_grade} → Bạn: {new_grade}</div>', unsafe_allow_html=True)
+                if new_grade != adj_grade:
+                    changed = True
+                new_adjustments[fname] = new_grade
 
-        changed = False
-        for chunk in factor_chunks:
-            cols = st.columns(len(chunk))
-            for col, (fname, ai_grade, adj_grade, ai_score, adj_score, fi) in zip(cols, chunk):
-                with col:
-                    available_grades = list(SCORING_LOOKUP.get(fname, {}).keys())
-                    current_idx = available_grades.index(adj_grade) if adj_grade in available_grades else 0
-                    new_grade = st.selectbox(
-                        f"**{fname[:25]}**",
-                        available_grades,
-                        index=current_idx,
-                        key=f"adj_{job_title}_{fname}"
-                    )
-                    new_score = get_grade_score(fname, new_grade,
-                        get_grade_score("Trình độ học vấn", new_adjustments.get("Trình độ học vấn", ai_grade)),
-                        get_grade_score("Kinh nghiệm", new_adjustments.get("Kinh nghiệm", ai_grade))
-                    )
-                    if new_grade != ai_grade:
-                        st.markdown(f'<div style="font-size:11px;color:#854f0b">AI: {ai_grade} → Bạn: {new_grade}</div>', unsafe_allow_html=True)
-                    if new_grade != adj_grade:
-                        changed = True
-                    new_adjustments[fname] = new_grade
+    if changed:
+        new_total = compute_total_score(new_adjustments)
+        new_sg = score_to_sgrade(new_total)
+        st.markdown(f"""<div style="background:#fff4ee;border-radius:8px;padding:0.75rem 1.25rem;margin-top:0.5rem;display:flex;gap:1rem;align-items:center">
+          <span style="font-size:14px;color:#854f0b">Điểm sau điều chỉnh:</span>
+          <strong style="font-size:20px;color:#F26522">{new_total}</strong>
+          <span style="color:#854f0b">→</span>
+          <strong style="font-size:20px;color:#F26522">{new_sg}</strong>
+        </div>""", unsafe_allow_html=True)
 
-        if changed:
-            new_total = compute_total_score(new_adjustments)
-            new_sg = score_to_sgrade(new_total)
-            st.markdown(f"""<div style="background:#fff4ee;border-radius:8px;padding:0.75rem 1.25rem;margin-top:0.5rem;display:flex;gap:1rem;align-items:center">
-              <span style="font-size:14px;color:#854f0b">Điểm sau điều chỉnh:</span>
-              <strong style="font-size:18px;color:#F26522">{new_total}</strong>
-              <span style="font-size:14px;color:#854f0b">→</span>
-              <strong style="font-size:18px;color:#F26522">{new_sg}</strong>
-            </div>""", unsafe_allow_html=True)
-
-        return new_adjustments
-
-    return None
+    return new_adjustments
 
 
 def call_gemini(api_key, system_prompt, user_content, max_tokens=8192):
