@@ -444,100 +444,126 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
     total_score = round(compute_total_score(grades_dict))
     computed_sgrade = score_to_sgrade(total_score)
 
-    new_adjustments = dict(adjustments)
-
-    # Header
-    st.markdown(f"""<div style="background:#1f2937;border-radius:12px 12px 0 0;padding:0.875rem 1.5rem;
-      display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
-      <span style="color:white;font-weight:600;font-size:15px">Kết quả đánh giá: {html.escape(job_title)}</span>
-      <span style="color:#9ca3af;font-size:13px">Tổng điểm: <strong style="color:#F26522">{total_score}</strong>
-        &rarr; <strong style="color:#F26522">{computed_sgrade}</strong></span>
-    </div>""", unsafe_allow_html=True)
-
-    # Bảng HTML (không có cột điều chỉnh — tránh truncation)
-    rows = ""
+    # Collect available grades per factor
     score_data = []
     for i, f in enumerate(normalized_factors):
         fname    = f["_norm"]
         ai_grade = f.get("grade","")
         adj_grade= adjustments.get(fname, ai_grade)
-        is_adj   = adj_grade != ai_grade
-        disp_gr  = adj_grade if is_adj else ai_grade
+        disp_gr  = adj_grade
         score    = get_grade_score(fname, disp_gr, f1, f2)
         tc, bg   = grade_color(disp_gr)
         desc     = get_grade_desc(fname, disp_gr)
         short_d  = html.escape((desc[:90]+"...") if len(desc)>90 else desc)
-        score_s  = str(round(score))
         reason   = html.escape(str(f.get("reason",""))[:280])
         evidence = html.escape(str(f.get("evidence",""))[:280])
-        grade_e  = html.escape(disp_gr)
-        badge    = '<span style="font-size:9px;background:#fef3c7;color:#92400e;padding:1px 3px;border-radius:2px;margin-left:2px">↑</span>' if is_adj else ""
-        rows += f"""<tr style="border-bottom:1px solid #f0f0f0;background:white">
-<td style="padding:9px 11px;font-size:12px;font-weight:600;color:#1f2937;vertical-align:top;width:13%">{i+1}. {html.escape(f.get("name",""))}</td>
-<td style="padding:9px 11px;font-size:12px;color:#374151;vertical-align:top;width:24%;line-height:1.5">{reason}</td>
-<td style="padding:9px 11px;font-size:12px;font-style:italic;color:#4b5563;vertical-align:top;width:29%;line-height:1.5">{evidence}</td>
-<td style="padding:9px 11px;text-align:center;vertical-align:top;width:7%"><span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:11px">{grade_e}</span>{badge}</td>
-<td style="padding:9px 11px;font-size:11px;color:#6b7280;vertical-align:top;width:20%;line-height:1.4">{short_d}</td>
-<td style="padding:9px 11px;text-align:center;font-weight:700;font-size:13px;color:#F26522;vertical-align:top;width:7%">{score_s}</td>
-</tr>"""
-        available = list(SCORING_LOOKUP.get(fname, {}).keys())
-        score_data.append((i, fname, f.get("name",""), ai_grade, adj_grade, score, available))
+        available= list(SCORING_LOOKUP.get(fname, {}).keys())
+        score_data.append({
+            "i": i, "fname": fname, "orig": f.get("name",""),
+            "ai": ai_grade, "adj": adj_grade, "score": score,
+            "tc": tc, "bg": bg, "short_d": short_d,
+            "reason": reason, "evidence": evidence,
+            "available": available
+        })
 
-    st.markdown(f"""<div style="background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid #e8e8e8;border-top:none">
+    # Header
+    st.markdown(f"""<div style="background:#1f2937;border-radius:12px 12px 0 0;padding:0.875rem 1.5rem;
+      display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
+      <span style="color:white;font-weight:600;font-size:15px">Kết quả đánh giá: {html.escape(job_title)}</span>
+      <span style="color:#9ca3af;font-size:13px">Tổng: <strong style="color:#F26522">{total_score}</strong>
+        &rarr; <strong style="color:#F26522">{computed_sgrade}</strong></span>
+    </div>""", unsafe_allow_html=True)
+
+    if not show_adjust:
+        # Simple table — no adjust column
+        rows = ""
+        for d in score_data:
+            is_adj = d["adj"] != d["ai"]
+            badge = '<span style="font-size:9px;background:#fef3c7;color:#92400e;padding:1px 3px;border-radius:2px;margin-left:2px">↑</span>' if is_adj else ""
+            rows += f"""<tr style="border-bottom:1px solid #f0f0f0;background:white">
+<td style="padding:9px 11px;font-size:12px;font-weight:600;color:#1f2937;vertical-align:top;width:13%">{d['i']+1}. {html.escape(d['orig'])}</td>
+<td style="padding:9px 11px;font-size:12px;color:#374151;vertical-align:top;width:25%;line-height:1.5">{d['reason']}</td>
+<td style="padding:9px 11px;font-size:12px;font-style:italic;color:#4b5563;vertical-align:top;width:30%;line-height:1.5">{d['evidence']}</td>
+<td style="padding:9px 11px;text-align:center;vertical-align:top;width:8%"><span style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:{d['bg']};color:{d['tc']};font-weight:700;font-size:11px">{html.escape(d['adj'])}</span>{badge}</td>
+<td style="padding:9px 11px;font-size:11px;color:#6b7280;vertical-align:top;width:17%;line-height:1.4">{d['short_d']}</td>
+<td style="padding:9px 11px;text-align:center;font-weight:700;font-size:13px;color:#F26522;vertical-align:top;width:7%">{round(d['score'])}</td>
+</tr>"""
+        st.markdown(f"""<div style="background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid #e8e8e8;border-top:none;margin-bottom:0.5rem">
 <table style="width:100%;border-collapse:collapse;background:white;table-layout:fixed">
 <thead><tr style="background:#f3f4f6;border-bottom:2px solid #e5e7eb">
 <th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:13%">Yếu tố</th>
-<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:24%">Lý do</th>
-<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:29%">Dẫn chứng</th>
-<th style="padding:8px 11px;text-align:center;font-size:11px;font-weight:600;color:#374151;width:7%">Mức</th>
-<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:20%">Định nghĩa</th>
+<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:25%">Lý do</th>
+<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:30%">Dẫn chứng</th>
+<th style="padding:8px 11px;text-align:center;font-size:11px;font-weight:600;color:#374151;width:8%">Mức</th>
+<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:17%">Định nghĩa</th>
 <th style="padding:8px 11px;text-align:center;font-size:11px;font-weight:600;color:#374151;width:7%">Điểm</th>
-</tr></thead>
-<tbody>{rows}</tbody>
-</table></div>""", unsafe_allow_html=True)
-
-    if not show_adjust:
+</tr></thead><tbody>{rows}</tbody></table></div>""", unsafe_allow_html=True)
         return None
 
-    # Điều chỉnh — dùng st.columns nhưng mỗi row riêng, key dùng index số
-    st.markdown("<div style='margin-top:1.25rem;font-size:14px;font-weight:600;color:#1f2937;margin-bottom:0.5rem'>⚙️ Điều chỉnh mức chấm</div>", unsafe_allow_html=True)
+    # ── show_adjust=True: dùng st.form để tránh reload mỗi lần chỉnh ──────────
+    # Khởi tạo session state cho form values
+    form_key = f"form_{key_prefix}"
+    if form_key not in st.session_state:
+        st.session_state[form_key] = {d["fname"]: d["adj"] for d in score_data}
 
-    for i, fname, orig_name, ai_grade, adj_grade, score, available in score_data:
-        if not available:
-            continue
-        c1, c2, c3, c4 = st.columns([2.5, 1.5, 1.5, 0.5])
-        with c1:
-            st.markdown(f'<div style="font-size:12px;font-weight:600;color:#374151;padding-top:8px">{orig_name}</div>', unsafe_allow_html=True)
-        with c2:
-            cur_idx = available.index(adj_grade) if adj_grade in available else 0
-            # Key dùng key_prefix + số index — KHÔNG dùng tên để tránh duplicate
-            ukey = f"s_{key_prefix}_{i}"
-            new_grade = st.selectbox("_", available, index=cur_idx, key=ukey, label_visibility="collapsed")
-            new_adjustments[fname] = new_grade
-        with c3:
-            new_score = get_grade_score(fname, new_grade, f1, f2)
-            color = "#F26522" if new_grade == ai_grade else "#1a7a4a"
-            label = f"AI: {ai_grade}" if new_grade == ai_grade else f"AI: {ai_grade} → {new_grade}"
-            st.markdown(f'<div style="font-size:11px;color:{color};padding-top:8px">{label} | {round(new_score)} điểm</div>', unsafe_allow_html=True)
-        with c4:
-            pass
+    # HTML table với cột Điều chỉnh inline — dùng st.columns theo từng row
+    st.markdown("""<div style="background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid #e8e8e8;border-top:none;margin-bottom:0.5rem">""", unsafe_allow_html=True)
 
-    # Tính lại điểm
-    new_grades = {f["_norm"]: new_adjustments.get(f["_norm"], f.get("grade","")) for f in normalized_factors}
+    # Header row
+    hcols = st.columns([1.5, 2.3, 2.8, 0.9, 1.7, 0.7, 1.5])
+    hdrs  = ["Yếu tố","Lý do","Dẫn chứng","Mức AI","Định nghĩa","Điểm","Điều chỉnh"]
+    HSTYLE= "background:#f3f4f6;padding:8px 10px;font-size:11px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb;white-space:nowrap"
+    for hc, ht in zip(hcols, hdrs):
+        with hc: st.markdown(f'<div style="{HSTYLE}">{ht}</div>', unsafe_allow_html=True)
+
+    # st.form — chứa tất cả selectbox, chỉ rerun khi submit
+    new_adjustments = dict(st.session_state[form_key])
+    with st.form(key=f"adjust_form_{key_prefix}", border=False):
+        RSTYLE = "background:white;padding:8px 10px;font-size:12px;border-bottom:1px solid #f0f0f0;line-height:1.4;min-height:48px"
+        for d in score_data:
+            rcols = st.columns([1.5, 2.3, 2.8, 0.9, 1.7, 0.7, 1.5])
+            with rcols[0]: st.markdown(f'<div style="{RSTYLE};font-weight:600;color:#1f2937">{d["i"]+1}. {html.escape(d["orig"])}</div>', unsafe_allow_html=True)
+            with rcols[1]: st.markdown(f'<div style="{RSTYLE};color:#374151">{d["reason"]}</div>', unsafe_allow_html=True)
+            with rcols[2]: st.markdown(f'<div style="{RSTYLE};font-style:italic;color:#4b5563">{d["evidence"]}</div>', unsafe_allow_html=True)
+            with rcols[3]:
+                tc, bg = grade_color(d["ai"])
+                st.markdown(f'<div style="{RSTYLE};text-align:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:11px">{html.escape(d["ai"])}</span></div>', unsafe_allow_html=True)
+            with rcols[4]: st.markdown(f'<div style="{RSTYLE};font-size:10px;color:#6b7280">{d["short_d"]}</div>', unsafe_allow_html=True)
+            with rcols[5]: st.markdown(f'<div style="{RSTYLE};text-align:center;font-weight:700;color:#F26522">{round(d["score"])}</div>', unsafe_allow_html=True)
+            with rcols[6]:
+                avail = d["available"]
+                if avail:
+                    cur_val = new_adjustments.get(d["fname"], d["ai"])
+                    cur_idx = avail.index(cur_val) if cur_val in avail else 0
+                    sel = st.selectbox("_", avail, index=cur_idx,
+                                       key=f"f_{key_prefix}_{d['i']}",
+                                       label_visibility="collapsed")
+                    new_adjustments[d["fname"]] = sel
+
+        submitted = st.form_submit_button("✅ Áp dụng điều chỉnh", use_container_width=True, type="primary")
+        if submitted:
+            st.session_state[form_key] = new_adjustments
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # Tính điểm theo giá trị đã submit
+    applied = st.session_state[form_key]
+    new_grades = {f["_norm"]: applied.get(f["_norm"], f.get("grade","")) for f in normalized_factors}
+    new_f1 = get_grade_score("Trình độ học vấn", new_grades.get("Trình độ học vấn",""))
+    new_f2 = get_grade_score("Kinh nghiệm", new_grades.get("Kinh nghiệm",""))
     new_total = round(compute_total_score(new_grades))
     new_sg = score_to_sgrade(new_total)
-    bg_box = "#f0faf5" if new_total == total_score else "#fff4ee"
-    border_c = "#b7e8d0" if new_total == total_score else "#fcd4b8"
-    label_c = "#1a7a4a" if new_total == total_score else "#F26522"
-    st.markdown(f"""<div style="background:{bg_box};border:1px solid {border_c};border-radius:8px;padding:0.75rem 1.5rem;margin-top:0.75rem;display:flex;gap:1.5rem;align-items:center">
-      <span style="font-size:13px;color:#6b7280">Tổng điểm sau điều chỉnh:</span>
-      <strong style="font-size:22px;color:{label_c}">{new_total}</strong>
-      <span style="color:#9ca3af">&rarr;</span>
-      <strong style="font-size:22px;color:{label_c}">{new_sg}</strong>
-      {"" if new_total == total_score else f'<span style="font-size:12px;color:#854f0b">(trước: {total_score} → {computed_sgrade})</span>'}
-    </div>""", unsafe_allow_html=True)
+    if new_total != total_score:
+        st.markdown(f"""<div style="background:#fff4ee;border:1px solid #fcd4b8;border-radius:8px;
+          padding:0.75rem 1.5rem;margin-top:0.5rem;display:flex;gap:1.5rem;align-items:center">
+          <span style="font-size:13px;color:#854f0b">Điểm sau điều chỉnh:</span>
+          <strong style="font-size:22px;color:#F26522">{new_total}</strong>
+          <span style="color:#9ca3af">&rarr;</span>
+          <strong style="font-size:22px;color:#F26522">{new_sg}</strong>
+          <span style="font-size:12px;color:#9ca3af">(trước: {total_score} → {computed_sgrade})</span>
+        </div>""", unsafe_allow_html=True)
 
-    return new_adjustments
+    return applied
 
 
 def call_gemini(api_key, system_prompt, user_content, max_tokens=8192):
