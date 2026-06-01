@@ -590,7 +590,7 @@
   },
   {
     "title": "Senior Manager Network Management",
-    "date": "01/06/2026 10:58",
+    "date": "01/06/2026 10:59",
     "jd": "MÔ TẢ CÔNG VIỆC\n\nI. CƠ CẤU TỔ CHỨC\nVị trí Network Management -  Senior Manager trực thuộc Pillar — Quản trị Hiệu suất (Performance), Báo cáo trực tiếp COO. \n\n\nTương tác chính:\nFleet Business (lộ trình xe), Capacity Planning (input dự báo sản lượng), 3PL (tuyến thuê ngoài), Cost Control (Transportation Unit Cost), đội Kỹ thuật (Automation)..\nII. MỤC ĐÍCH VÀ TRÁCH NHIỆM\n1. MỤC ĐÍCH CÔNG VIỆC\nThiết kế & tối ưu hóa luồng tuyến vận chuyển (Hub-and-Spoke, Milk-run): giảm touchpoint, tối ưu lộ trình. Cân bằng SLA và chi phí vận tải: phân loại dịch vụ, thiết kế cut-off time, quyết định consolidation vs. express routing. Quy hoạch hạ tầng & tự động hóa (Infrastructure Planning): xác định vị trí bưu cục qua heat mapping, thiết kế layout kho, lập kế hoạch đầu tư công nghệ. Ban hành & giám sát Playbook vận hành luồng tuyến: chuẩn hóa quy trình, đảm bảo tuân thủ lịch trình trên toàn mạng.\n\nThành công của vị trí này được đo bằng:\nFill-rate xe tuyến trục (Bắc–Nam) >95%, xử lý triệt để empty miles\nTransportation Unit Cost giảm, thiết lập baseline mới theo  từng quý\nSLA được đảm bảo, tối ưu lead-time mà không phá vỡ cam kết với sàn TMĐT\n2. TRÁCH NHIỆM CÔNG VIỆC CHÍNH\n\n\nMỤC TIÊU & KPIs CỐT LÕI — KỲ VỌNG CỦA COO\nFill-rate: Xe tuyến trục (Bắc–Nam) lấp đầy >95% thể tích/tải trọng, Empty miles tiệm cận 0%\nTransportation Unit Cost: Chi phí luân chuyển/kg giảm sâu, tạo đáy mới qua từng quý\nSLA Balance: Lead-time on-time đạt cam kết với sàn TMĐT, không phá vỡ SLA khi tối ưu cost\nFootprint: 100% quyết định mở/đóng bưu cục có data analysis; chuẩn hóa layout toàn quốc\nAutomation: Sorting automation rate tăng theo lộ trình, phối hợp đội Kỹ thuật đúng tiến độ\n\nIII. YÊU CẦU CÔNG VIỆC\n\nKIẾN THỨC\nTốt nghiệp Đại học trở lên, ưu tiên Operations Research, Kỹ thuật Công nghiệp, GIS, Logistics, Toán Ứng dụng\nAm hiểu sâu mô hình Hub-and-Spoke, Milk-run, Cross-docking, Bypass Hub trong logistics\nKiến thức về thuật toán tối ưu hóa tuyến đường (VRP, TSP basics) và GIS/Heatmap phân tích địa lý\nNắm vững các k",
     "result": {
       "factors": [
@@ -603,88 +603,88 @@
         {
           "name": "Kinh nghiệm",
           "grade": "H2",
-          "reason": "Yêu cầu tối thiểu 7-10 năm kinh nghiệm trong lĩnh vực Network Planning, Logistics, Supply Chain Engineering và tối thiểu 3 năm kinh nghiệm quản lý đội nhóm từ 5-10 người.",
+          "reason": "Yêu cầu tối thiểu 7-10 năm kinh nghiệm trong lĩnh vực Network Planning, Supply Chain Engineering và tối thiểu 3 năm kinh nghiệm quản lý đội nhóm 5-10 người, thể hiện kinh nghiệm chuyên môn và quản lý cấp cao.",
           "evidence": "Tối thiểu 7–10 năm kinh nghiệm trong Network Planning, Routing/Logistics, Supply Chain Engineering. Tối thiểu 3 năm kinh nghiệm ở vị trí quản lý team đội nhóm (quy mô từ 5-10 người trở lên)."
         },
         {
           "name": "Mức độ phức tạp của công việc",
           "grade": "E3",
-          "reason": "Công việc đòi hỏi thiết kế và tối ưu hóa luồng tuyến phức tạp, cân bằng nhiều yếu tố như SLA, chi phí, hạ tầng, tự động hóa, yêu cầu phân tích dữ liệu lớn và thuật toán tối ưu hóa.",
-          "evidence": "Thiết kế & tối ưu hóa luồng tuyến vận chuyển (Hub-and-Spoke, Milk-run), cân bằng SLA và chi phí vận tải, quy hoạch hạ tầng & tự động hóa, ban hành & giám sát Playbook vận hành."
+          "reason": "Công việc đòi hỏi thiết kế và tối ưu hóa luồng tuyến phức tạp, cân bằng SLA và chi phí, quy hoạch hạ tầng, ban hành và giám sát playbook vận hành, yêu cầu phân tích dữ liệu lớn và giải quyết vấn đề đa chức năng.",
+          "evidence": "Thiết kế & tối ưu hóa luồng tuyến vận chuyển, cân bằng SLA và chi phí vận tải, Quy hoạch hạ tầng & tự động hóa, Ban hành & giám sát Playbook vận hành luồng tuyến."
         },
         {
           "name": "Phạm vi công việc",
           "grade": "E",
-          "reason": "Quản lý toàn bộ mảng Network Management, chịu trách nhiệm thiết kế, tối ưu hóa và giám sát toàn bộ luồng tuyến vận chuyển trên toàn mạng lưới.",
-          "evidence": "Thiết kế & tối ưu hóa luồng tuyến vận chuyển trên toàn mạng lưới, quy hoạch hạ tầng, ban hành & giám sát Playbook vận hành luồng tuyến."
+          "reason": "Quản lý toàn bộ mảng Network Management, chịu trách nhiệm thiết kế, tối ưu hóa và giám sát toàn bộ luồng tuyến vận chuyển trên quy mô quốc gia, báo cáo trực tiếp cho COO.",
+          "evidence": "Vị trí Network Management - Senior Manager trực thuộc Pillar — Quản trị Hiệu suất (Performance), Báo cáo trực tiếp COO. Thiết kế & tối ưu hóa luồng tuyến vận chuyển trên toàn mạng."
         },
         {
           "name": "Mức độ giải quyết vấn đề",
           "grade": "E3",
-          "reason": "Giải quyết các vấn đề phức tạp liên quan đến tối ưu hóa mạng lưới, chi phí, SLA, đòi hỏi phân tích dữ liệu, thuật toán và đưa ra các quyết định có ảnh hưởng lớn đến hoạt động.",
-          "evidence": "Cân bằng SLA và chi phí vận tải, tối ưu hóa lộ trình, phân tích dữ liệu địa lý, thuật toán tối ưu hóa tuyến đường, modeling cost-benefit."
+          "reason": "Giải quyết các vấn đề phức tạp liên quan đến tối ưu hóa mạng lưới, chi phí vận tải, SLA, và quy hoạch hạ tầng, đòi hỏi phân tích dữ liệu sâu, sử dụng thuật toán tối ưu hóa và đưa ra các quyết định có ảnh hưởng lớn.",
+          "evidence": "Phân tích dữ liệu địa lý, thuật toán tối ưu hóa tuyến đường, Modeling cost-benefit cho các phương án thay đổi luồng tuyến, Quyết định cắt chuyến, sáp nhập kho."
         },
         {
           "name": "Mức độ cần được chỉ dẫn/giám sát",
           "grade": "E1",
-          "reason": "Vị trí báo cáo trực tiếp COO, chịu trách nhiệm chính trong việc thiết kế và tối ưu hóa mạng lưới, tự lên kế hoạch và ra quyết định độc lập.",
-          "evidence": "Báo cáo trực tiếp COO. Sắc bén và độc lập trong việc ra các Quyết định cắt chuyến, sáp nhập kho, không bị áp lực chính trị từ các GĐ Vùng. Dùng số liệu trao đổi tận cùng."
+          "reason": "Được giao mục tiêu rõ ràng từ COO, nhưng có quyền tự chủ cao trong việc lên kế hoạch, ra quyết định và thực hiện công việc độc lập để đạt được các KPI đã đề ra.",
+          "evidence": "Báo cáo trực tiếp COO. Sắc bén và độc lập trong việc ra các Quyết định cắt chuyến, sáp nhập kho, không bị áp lực chính trị từ các GĐ Vùng."
         },
         {
           "name": "Mức độ liên lạc khi thực hiện công việc",
           "grade": "E3",
-          "reason": "Liên lạc và làm việc với nhiều bộ phận nội bộ (Fleet, Capacity Planning, 3PL, Cost Control, Kỹ thuật) và các bên liên quan bên ngoài (Vùng, Kho, Sàn TMĐT) ở cấp độ lãnh đạo và điều phối.",
+          "reason": "Liên lạc và phối hợp với nhiều bộ phận nội bộ (Fleet Business, Capacity Planning, 3PL, Cost Control, Kỹ thuật) và các bên liên quan bên ngoài (sàn TMĐT, Vùng, Kho) ở cấp độ lãnh đạo và điều phối chiến lược.",
           "evidence": "Tương tác chính: Fleet Business, Capacity Planning, 3PL, Cost Control, đội Kỹ thuật. Làm việc với nhiều stakeholders (Vùng, Kho, Fleet, 3PL, Kỹ thuật) cùng lúc."
         },
         {
           "name": "Trách nhiệm giám sát và quản lý",
-          "grade": "C3",
-          "reason": "Yêu cầu tối thiểu 3 năm kinh nghiệm quản lý đội nhóm từ 5-10 người.",
+          "grade": "D11",
+          "reason": "Yêu cầu tối thiểu 3 năm kinh nghiệm quản lý đội nhóm từ 5-10 người, thể hiện trách nhiệm giám sát và quản lý một nhóm nhân sự chuyên môn.",
           "evidence": "Tối thiểu 3 năm kinh nghiệm ở vị trí quản lý team đội nhóm (quy mô từ 5-10 người trở lên)."
         },
         {
           "name": "Ảnh hưởng của các quyết định",
           "grade": "E1",
-          "reason": "Các quyết định về thiết kế luồng tuyến, vị trí bưu cục, đầu tư công nghệ có ảnh hưởng trực tiếp đến chi phí vận tải, SLA, hiệu quả hoạt động và vị thế cạnh tranh của công ty.",
-          "evidence": "Transportation Unit Cost giảm, thiết lập baseline mới theo từng quý. SLA được đảm bảo, tối ưu lead-time mà không phá vỡ cam kết. Quyết định mở/đóng bưu cục có data analysis."
+          "reason": "Các quyết định về thiết kế luồng tuyến, tối ưu hóa chi phí, quy hoạch hạ tầng có ảnh hưởng trực tiếp đến hiệu quả hoạt động, lợi nhuận và vị thế cạnh tranh của công ty trên thị trường logistics.",
+          "evidence": "Transportation Unit Cost giảm, thiết lập baseline mới theo từng quý. SLA được đảm bảo, tối ưu lead-time mà không phá vỡ cam kết. Quyết định cắt chuyến, sáp nhập kho."
         },
         {
           "name": "Quyền hạn",
-          "grade": "D1",
-          "reason": "Có quyền đưa ra các quyết định quan trọng về thiết kế luồng tuyến, vị trí bưu cục, đầu tư công nghệ, có thể vượt ngân sách trong phạm vi nhất định để tối ưu hiệu quả.",
-          "evidence": "Sắc bén và độc lập trong việc ra các Quyết định cắt chuyến, sáp nhập kho. 100% quyết định mở/đóng bưu cục có data analysis."
+          "grade": "C3",
+          "reason": "Có quyền đưa ra các quyết định quan trọng về luồng tuyến, hạ tầng, và vận hành, có thể ảnh hưởng đến ngân sách và hoạt động của các bộ phận liên quan, đòi hỏi sự sắc bén và độc lập trong ra quyết định.",
+          "evidence": "Sắc bén và độc lập trong việc ra các Quyết định cắt chuyến, sáp nhập kho, không bị áp lực chính trị từ các GĐ Vùng. Ban hành & giám sát Playbook vận hành luồng tuyến."
         },
         {
           "name": "Môi trường làm việc",
-          "grade": "B2",
-          "reason": "Chủ yếu làm việc tại văn phòng nhưng có kết hợp đi khảo sát thực địa kho, bưu cục và công tác liên tỉnh.",
+          "grade": "E1",
+          "reason": "Làm việc chủ yếu tại văn phòng nhưng có kết hợp đi khảo sát thực địa kho, bưu cục và công tác liên tỉnh, tiếp xúc với dữ liệu lớn và nhiều bên liên quan.",
           "evidence": "Văn phòng — trụ sở chính; kết hợp đi khảo sát thực địa kho và bưu cục. Đi công tác liên tỉnh khi cần khảo sát footprint hoặc triển khai automation tại kho mới."
         },
         {
           "name": "Yêu cầu thể chất",
           "grade": "A1",
-          "reason": "Công việc chủ yếu yêu cầu làm việc tại văn phòng, phân tích dữ liệu và ra quyết định, không đòi hỏi nhiều về thể chất.",
-          "evidence": "Văn phòng — trụ sở chính."
+          "reason": "Công việc chủ yếu yêu cầu làm việc tại văn phòng, phân tích dữ liệu và tương tác với các bên liên quan, không đòi hỏi nhiều về thể chất.",
+          "evidence": "Văn phòng — trụ sở chính; kết hợp đi khảo sát thực địa kho và bưu cục."
         }
       ],
       "similar_jobs": [
         {
-          "title": "Manager, Network Operations",
+          "title": "Head of Logistics Operations",
           "similarity": 88,
-          "reason": "Cả hai vị trí đều tập trung vào việc tối ưu hóa mạng lưới logistics, quản lý luồng tuyến, chi phí và SLA, yêu cầu kỹ năng phân tích dữ liệu và kinh nghiệm quản lý."
+          "reason": "Cả hai vị trí đều tập trung vào tối ưu hóa hoạt động logistics, quản lý mạng lưới, chi phí và SLA, yêu cầu kinh nghiệm quản lý và kiến thức chuyên sâu về chuỗi cung ứng."
         },
         {
-          "title": "Supply Chain Analyst (Network Optimization)",
+          "title": "Supply Chain Director",
           "similarity": 85,
-          "reason": "Vị trí này có sự tương đồng về yêu cầu kiến thức chuyên môn trong tối ưu hóa mạng lưới, thuật toán và phân tích dữ liệu, tuy nhiên mức độ quản lý và phạm vi trách nhiệm có thể thấp hơn."
+          "reason": "Vị trí này có phạm vi rộng hơn nhưng chia sẻ nhiều trách nhiệm về chiến lược chuỗi cung ứng, tối ưu hóa chi phí và hiệu suất, tương tự như Senior Manager Network Management ở cấp độ chiến thuật."
         },
         {
-          "title": "Logistics Manager",
-          "similarity": 80,
-          "reason": "Vị trí này có liên quan đến quản lý hoạt động logistics, nhưng Senior Manager Network Management tập trung sâu hơn vào khía cạnh thiết kế và tối ưu hóa chiến lược mạng lưới."
+          "title": "Network Planning Manager",
+          "similarity": 90,
+          "reason": "Đây là vị trí tương đồng nhất, tập trung vào thiết kế và tối ưu hóa mạng lưới logistics, yêu cầu kỹ năng phân tích, thuật toán và kinh nghiệm quản lý."
         }
       ],
-      "summary": "Vị trí Senior Manager Network Management đòi hỏi trình độ học vấn cao, kinh nghiệm dày dặn trong lĩnh vực logistics và quản lý, chịu trách nhiệm giải quyết các vấn đề phức tạp và đưa ra các quyết định chiến lược có ảnh hưởng lớn đến hiệu quả hoạt động và chi phí của toàn bộ mạng lưới vận chuyển."
+      "summary": "Vị trí Senior Manager Network Management đòi hỏi trình độ học vấn cao, kinh nghiệm dày dặn trong lĩnh vực logistics và quản lý, với công việc phức tạp, phạm vi quản lý toàn bộ mạng lưới, và ảnh hưởng lớn đến hiệu quả hoạt động và chi phí của công ty. Yêu cầu kỹ năng phân tích, giải quyết vấn đề và ra quyết định độc lập cao."
     }
   }
 ]
