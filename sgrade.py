@@ -1,7 +1,7 @@
 import streamlit as st
 from google import genai
 from google.genai import types
-import json, io, csv, re, time, base64
+import json, io, csv, re, time, base64, html
 import urllib.request, urllib.error
 from datetime import datetime
 
@@ -471,15 +471,18 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False)
         if is_adjusted:
             adj_badge = f'<span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 5px;border-radius:3px;margin-left:4px">↑ đã chỉnh</span>'
 
+        _reason = html.escape(str(f.get("reason","")))
+        _evidence = html.escape(str(f.get("evidence","")))
+        _short_desc = html.escape(short_desc)
         rows_html += f"""<tr style="border-bottom:1px solid #e8e8e8;background:white">
           <td style="padding:10px 12px;font-weight:600;font-size:13px;vertical-align:top;color:#1f2937;width:14%">{i+1}. {fname}</td>
-          <td style="padding:10px 12px;font-size:13px;vertical-align:top;color:#1f2937;line-height:1.6;width:26%">{f.get("reason","")}</td>
-          <td style="padding:10px 12px;font-size:13px;font-style:italic;color:#4b5563;vertical-align:top;line-height:1.6;width:30%">{f.get("evidence","")}</td>
+          <td style="padding:10px 12px;font-size:13px;vertical-align:top;color:#1f2937;line-height:1.6;width:26%">{_reason}</td>
+          <td style="padding:10px 12px;font-size:13px;font-style:italic;color:#4b5563;vertical-align:top;line-height:1.6;width:30%">{_evidence}</td>
           <td style="padding:10px 12px;text-align:center;vertical-align:top;width:7%">
             <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:13px">{ai_grade}</span>
             {adj_badge}
           </td>
-          <td style="padding:10px 12px;font-size:11px;color:#6b7280;vertical-align:top;line-height:1.5;width:16%">{short_desc}</td>
+          <td style="padding:10px 12px;font-size:11px;color:#6b7280;vertical-align:top;line-height:1.5;width:16%">{_short_desc}</td>
           <td style="padding:10px 12px;text-align:center;font-weight:600;font-size:13px;color:#F26522;vertical-align:top;width:7%">{score_display}</td>
         </tr>"""
 
