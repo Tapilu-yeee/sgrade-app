@@ -290,5 +290,104 @@
       ],
       "summary": "Vị trí Reconciliation & Audit Executive là công việc hỗ trợ, yêu cầu trình độ Cao đẳng/Đại học và kinh nghiệm tối thiểu 6 tháng. Công việc có độ phức tạp vừa phải, phạm vi hẹp, chủ yếu làm việc độc lập với sự chỉ dẫn của cấp trên và phối hợp với các bộ phận liên quan. Quyết định có ảnh hưởng nhỏ đến quy trình, làm việc trong môi trường văn phòng tiêu chuẩn."
     }
+  },
+  {
+    "title": "Network_Development Specialist",
+    "date": "01/06/2026 10:35",
+    "jd": "MÔ TẢ CÔNG VIỆC\nI.    CƠ CẤU TỔ CHỨC\n\nII.    MỤC ĐÍCH VÀ TRÁCH NHIỆM\n1.  MỤC ĐÍCH CÔNG VIỆC\nVị trí này đóng góp như thế nào vào mục tiêu & chiến lược chung của tổ chức và phòng ban? Điều gì đo lường mức độ thành công của vị trí này tại tổ chức?\n-  Thiết kế, duy trì và kiểm soát hệ thống quản lý danh mục mặt bằng và thông tin mạng lưới của GHN: dữ liệu, quy trình, SOP, hợp đồng thuê và coverage.\n-  Đảm bảo chất lượng, tính toàn vẹn và nhất quán của thông tin mạng lưới trên toàn hệ thống.\n-  Chuẩn hóa quy trình và nâng cao hiệu quả vận hành của phòng Network Development thông qua SOP và công cụ kiểm soát.\n2.  TRÁCH NHIỆM CÔNG VIỆC CHÍNH\nIII.    YÊU CẦU CÔNG VIỆC\n1.  KIẾN THỨC\n-  Tốt nghiệp Đại học chuyên ngành Công nghệ, Logistics, hệ thống thông tin và các ngành có liên quan.\n-  Am hiểu về thiết kế quy trình, SOP và hệ thống kiểm soát.\n-  Hiểu biết về ngành chuyển phát nhanh, logistics và mô hình mạng lưới vận hành.\n2.  KINH NGHIỆM\n-  Tối thiểu 02 năm kinh nghiệm ở các vị trí liên quan đến Business Operations/Analytics.\n-  Ưu tiên ứng viên có kinh nghiệm thiết kế và vận hành hệ thống tại các công ty chuỗi bán lẻ, F&B, logistics hoặc chuyển phát nhanh.\n-  Kinh nghiệm làm việc với dữ liệu danh mục quy mô lớn là một lợi thế mạnh.\n3.  KỸ NĂNG\n-  Kỹ năng phân tích dữ liệu chuyên sâu và kiểm soát chất lượng dữ liệu\n-  Kỹ năng thiết kế SOP, quy trình và hệ thống kiểm soát nội bộ.\n-  Kỹ năng audit, đánh giá rủi ro và lập báo cáo kiểm soát.\n-  Kỹ năng thiết kế dashboard và trực quan hóa dữ liệu.\n-  Kỹ năng giao tiếp và làm việc với nhiều phòng ban (cross-functional).\n4.  THÁI ĐỘ\n-  Tư duy hệ thống và kiểm soát, chú trọng chi tiết và độ chính xác.\n-  Chủ động phát hiện vấn đề, không chờ sự cố phát sinh.\n-  Thẳng thắn trong việc nêu các rủi ro và điểm bất cập.\n-  Kiên nhẫn, bền bỉ với công việc đòi hỏi sự tỉ mỉ và lặp lại định kỳ.\nIV.    ĐIỀU KIỆN LÀM VIỆC\n1.  MÔI TRƯỜNG LÀM VIỆC\n-  Làm việc chủ yếu tại văn phòng; thỉnh thoảng di chuyển đến địa điểm để kiểm tra, audit thực tế.\n",
+    "result": {
+      "factors": [
+        {
+          "name": "Trình độ học vấn",
+          "grade": "H2",
+          "reason": "Yêu cầu tốt nghiệp Đại học chuyên ngành Công nghệ, Logistics, hệ thống thông tin hoặc liên quan, có kiến thức chuyên ngành cụ thể.",
+          "evidence": "Tốt nghiệp Đại học chuyên ngành Công nghệ, Logistics, hệ thống thông tin và các ngành có liên quan."
+        },
+        {
+          "name": "Kinh nghiệm",
+          "grade": "F",
+          "reason": "Cần tối thiểu 02 năm kinh nghiệm ở các vị trí liên quan đến Business Operations/Analytics, ưu tiên kinh nghiệm trong ngành logistics/chuyển phát nhanh.",
+          "evidence": "Tối thiểu 02 năm kinh nghiệm ở các vị trí liên quan đến Business Operations/Analytics. Ưu tiên ứng viên có kinh nghiệm thiết kế và vận hành hệ thống tại các công ty chuỗi bán lẻ, F&B, logistics hoặc chuyển phát nhanh."
+        },
+        {
+          "name": "Mức độ phức tạp của công việc",
+          "grade": "E2",
+          "reason": "Công việc đòi hỏi phân tích dữ liệu chuyên sâu, thiết kế SOP, quy trình, hệ thống kiểm soát nội bộ, đánh giá rủi ro và làm việc với nhiều phòng ban.",
+          "evidence": "Thiết kế, duy trì và kiểm soát hệ thống quản lý danh mục mặt bằng và thông tin mạng lưới; Đảm bảo chất lượng, tính toàn vẹn và nhất quán của thông tin mạng lưới; Chuẩn hóa quy trình và nâng cao hiệu quả vận hành."
+        },
+        {
+          "name": "Phạm vi công việc",
+          "grade": "D",
+          "reason": "Quản lý một phần hoạt động của chức năng Network Development, bao gồm thiết kế, duy trì và kiểm soát hệ thống thông tin mạng lưới.",
+          "evidence": "Thiết kế, duy trì và kiểm soát hệ thống quản lý danh mục mặt bằng và thông tin mạng lưới của GHN."
+        },
+        {
+          "name": "Mức độ giải quyết vấn đề",
+          "grade": "E1",
+          "reason": "Cần phân tích dữ liệu, thiết kế quy trình và hệ thống kiểm soát để giải quyết các vấn đề liên quan đến thông tin mạng lưới và vận hành.",
+          "evidence": "Kỹ năng phân tích dữ liệu chuyên sâu, kỹ năng thiết kế SOP, quy trình và hệ thống kiểm soát nội bộ, kỹ năng audit, đánh giá rủi ro."
+        },
+        {
+          "name": "Mức độ cần được chỉ dẫn/giám sát",
+          "grade": "D2",
+          "reason": "Công việc có mục tiêu rõ ràng về thiết kế, duy trì và kiểm soát hệ thống, cho phép làm việc độc lập với sự hướng dẫn chung.",
+          "evidence": "Vị trí này đóng góp như thế nào vào mục tiêu & chiến lược chung của tổ chức và phòng ban? Điều gì đo lường mức độ thành công của vị trí này tại tổ chức?"
+        },
+        {
+          "name": "Mức độ liên lạc khi thực hiện công việc",
+          "grade": "E2",
+          "reason": "Yêu cầu làm việc và giao tiếp với nhiều phòng ban (cross-functional) để đảm bảo tính nhất quán và hiệu quả của hệ thống mạng lưới.",
+          "evidence": "Kỹ năng giao tiếp và làm việc với nhiều phòng ban (cross-functional); Cơ hội làm việc với dữ liệu danh mục mặt bằng quy mô toàn quốc và tiếp xúc với nhiều phòng ban."
+        },
+        {
+          "name": "Trách nhiệm giám sát và quản lý",
+          "grade": "A",
+          "reason": "JD không đề cập đến việc quản lý hoặc giám sát nhân viên trực tiếp.",
+          "evidence": "Không có thông tin về việc quản lý nhân sự trong mô tả công việc."
+        },
+        {
+          "name": "Ảnh hưởng của các quyết định",
+          "grade": "D1",
+          "reason": "Các quyết định về thiết kế, duy trì hệ thống mạng lưới có thể ảnh hưởng đến hiệu quả vận hành và chi phí, tiềm ẩn nguy cơ tổn thất tài chính nếu không tối ưu.",
+          "evidence": "Thiết kế, duy trì và kiểm soát hệ thống quản lý danh mục mặt bằng và thông tin mạng lưới; Chuẩn hóa quy trình và nâng cao hiệu quả vận hành."
+        },
+        {
+          "name": "Quyền hạn",
+          "grade": "A0",
+          "reason": "JD không đề cập đến quyền hạn phê duyệt tài chính hoặc ngân sách.",
+          "evidence": "Không có thông tin về quyền hạn tài chính trong mô tả công việc."
+        },
+        {
+          "name": "Môi trường làm việc",
+          "grade": "B2",
+          "reason": "Chủ yếu làm việc tại văn phòng, có thỉnh thoảng di chuyển để kiểm tra, audit thực tế.",
+          "evidence": "Làm việc chủ yếu tại văn phòng; thỉnh thoảng di chuyển đến địa điểm để kiểm tra, audit thực tế."
+        },
+        {
+          "name": "Yêu cầu thể chất",
+          "grade": "A1",
+          "reason": "Công việc chủ yếu thực hiện tại văn phòng, không yêu cầu thể lực đặc biệt.",
+          "evidence": "Không yêu cầu đặc biệt về thể lực và sức khỏe."
+        }
+      ],
+      "similar_jobs": [
+        {
+          "title": "Business Operations Specialist",
+          "similarity": 80,
+          "reason": "Cả hai vị trí đều tập trung vào tối ưu hóa quy trình, phân tích dữ liệu và kiểm soát hoạt động kinh doanh."
+        },
+        {
+          "title": "Data Analyst",
+          "similarity": 75,
+          "reason": "Vị trí này yêu cầu kỹ năng phân tích dữ liệu chuyên sâu và trực quan hóa dữ liệu, tương tự như yêu cầu của Network Development Specialist."
+        },
+        {
+          "title": "Process Improvement Specialist",
+          "similarity": 70,
+          "reason": "Cả hai vị trí đều liên quan đến việc chuẩn hóa quy trình và nâng cao hiệu quả vận hành."
+        }
+      ],
+      "summary": "Vị trí Network Development Specialist đòi hỏi trình độ Đại học, kinh nghiệm 2 năm trong lĩnh vực vận hành/phân tích, tập trung vào thiết kế, duy trì hệ thống mạng lưới và quy trình. Công việc có độ phức tạp cao, yêu cầu kỹ năng phân tích, kiểm soát và giao tiếp đa phòng ban, với ảnh hưởng đến hiệu quả vận hành chung."
+    }
   }
 ]
