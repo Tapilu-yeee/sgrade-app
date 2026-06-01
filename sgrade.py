@@ -389,7 +389,7 @@ def call_gemini(api_key, system_prompt, user_content, max_tokens=8192):
     for attempt in range(3):
         try:
             response = client.models.generate_content(
-                model="gemini-2.0-flash",
+                model="gemini-1.5-flash",
                 contents=user_content,
                 config=types.GenerateContentConfig(
                     system_instruction=system_prompt,
