@@ -134,7 +134,9 @@ def push_history_item(item, max_retries=4):
         if err:
             last_err = err
             continue
-        merged = list(history) + [item]
+        # Upsert: ghi đè nếu đã có cùng title
+        merged = [h for h in history if h.get("title") != item.get("title")]
+        merged.append(item)
         new_sha, save_err = save_history_to_github(merged, sha)
         if new_sha:
             return merged, new_sha, ""
@@ -871,7 +873,7 @@ Lịch sử cần được lưu phía server thì mới còn nguyên khi tải l
     
                     # ── Chi tiết ──────────────────────────────────────────────────
                     with detail_tab:
-                        render_result_table(factors, item["title"])
+                        render_result_table(factors, item["title"], adjustments=item.get("adjustments",{}), show_adjust=False)
                         summary = result.get("summary", "")
                         if summary:
                             st.markdown(f"""<div class="summary-box" style="margin-top:1rem">
@@ -1025,7 +1027,7 @@ Lịch sử cần được lưu phía server thì mới còn nguyên khi tải l
                           </div>
                         </div>""", unsafe_allow_html=True)
     
-                        render_result_table(sel_item.get("factors", []), sel_item["title"])
+                        render_result_table(sel_item.get("factors", []), sel_item["title"], show_adjust=False)
     
 
 # ── PAGE: TRA CỨU S-GRADE ───────────────────────────────────────────────────────
