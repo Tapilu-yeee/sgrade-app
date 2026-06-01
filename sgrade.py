@@ -1,6 +1,5 @@
 import streamlit as st
-from google import genai
-from google.genai import types
+import google.generativeai as genai_old
 import json, io, csv, re, time, base64
 import urllib.request, urllib.error
 from datetime import datetime
@@ -384,24 +383,25 @@ def render_result_table(factors, job_title):
     st.markdown(html, unsafe_allow_html=True)
 
 def call_gemini(api_key, system_prompt, user_content, max_tokens=8192):
-    client = genai.Client(api_key=api_key)
+    genai_old.configure(api_key=api_key)
+    model = genai_old.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        system_instruction=system_prompt,
+        generation_config=genai_old.GenerationConfig(
+            max_output_tokens=max_tokens,
+            temperature=0.2,
+            response_mime_type="application/json",
+        )
+    )
     last_err = None
     for attempt in range(3):
         try:
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=user_content,
-                config=types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                    max_output_tokens=max_tokens,
-                    temperature=0.2,
-                    response_mime_type="application/json",
-                ),
-            )
+            response = model.generate_content(user_content)
             return response.text
         except Exception as e:
             last_err = e
-            if "503" in str(e) or "UNAVAILABLE" in str(e):
+            err_str = str(e)
+            if "503" in err_str or "UNAVAILABLE" in err_str:
                 wait = (attempt+1) * 5
                 st.toast(f"Server bận, thử lại sau {wait}s... ({attempt+1}/3)")
                 time.sleep(wait)
