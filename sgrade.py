@@ -504,6 +504,9 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False)
     </div>""", unsafe_allow_html=True)
 
     # Adjustment section (only in evaluate tab, not in history view)
+    if not show_adjust:
+        return None
+
     if show_adjust:
         st.markdown("<div style='margin-top:1rem'>", unsafe_allow_html=True)
         st.markdown("**Điều chỉnh mức chấm** — chọn lại mức nếu cần thiết, điểm sẽ tự động cập nhật:")
@@ -547,7 +550,7 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False)
 
         return new_adjustments
 
-    return adjustments
+    return None
 
 
 def call_gemini(api_key, system_prompt, user_content, max_tokens=8192):
