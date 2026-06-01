@@ -461,7 +461,7 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False)
         score_str = f"{adj_score:.1f}" if fi >= 0 and FACTOR_TYPES[fi] == "multiplier" else f"{adj_score:.0f}"
         reason = str(f.get("reason",""))
         evidence = str(f.get("evidence",""))
-        bg_row = "#fafafa" if i % 2 == 0 else "white"
+        bg_row = "white"
         adj_note = f' <span style="font-size:10px;background:#fef3c7;color:#92400e;padding:1px 4px;border-radius:3px">↑chỉnh</span>' if is_adjusted else ""
 
         c1,c2,c3,c4,c5,c6 = st.columns([2,3,4,1,2.5,1])
