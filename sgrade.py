@@ -512,11 +512,15 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
 
     df_rows = []
     col_configs = {}
+    all_options = set()
     for fname, orig_name, ai_grade, adj_grade, available in row_data:
-        df_rows.append({"Tiêu chí": orig_name[:30], "Mức AI": ai_grade, "Điều chỉnh": adj_grade})
-        col_configs["Điều chỉnh"] = st.column_config.SelectboxColumn(
-            "Điều chỉnh", options=available if available else [ai_grade], required=True
-        )
+        cur_adj = current_adj.get(fname, "")  # empty = no adjustment yet
+        df_rows.append({"Tiêu chí": orig_name[:30], "Mức AI": ai_grade, "Điều chỉnh": cur_adj if cur_adj else ""})
+        for g in (available or [ai_grade]):
+            all_options.add(g)
+    col_configs["Điều chỉnh"] = st.column_config.SelectboxColumn(
+        "Điều chỉnh", options=[""] + sorted(all_options), required=False
+    )
 
     df = pd.DataFrame(df_rows)
     edited = st.data_editor(
@@ -537,8 +541,11 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
     for i, (fname, orig_name, ai_grade, adj_grade, available) in enumerate(row_data):
         if i < len(edited):
             new_val = edited.iloc[i]["Điều chỉnh"]
-            if new_val and str(new_val) in (available or [ai_grade]):
-                new_adjustments[fname] = str(new_val)
+            if new_val and str(new_val).strip():
+                new_adjustments[fname] = str(new_val).strip()
+            elif not new_val or str(new_val).strip() == "":
+                # User cleared — revert to AI grade
+                new_adjustments[fname] = ai_grade
 
     st.session_state[sk] = new_adjustments
 
@@ -715,6 +722,16 @@ if main_page == "evaluate":
                                 "jd": jd_content[:2000],
                                 "result": result,
                             }
+                            # Lưu kết quả vào session để hiển thị sau rerun
+                            st.session_state.last_eval = {
+                                "title": job_title,
+                                "factors": factors,
+                                "summary": result.get("summary",""),
+                                "similar": result.get("similar_jobs",[]),
+                            }
+                            # Reset adjustments cho vị trí mới
+                            st.session_state[f"adj_{job_title}"] = {}
+                            st.session_state[f"adj_state_eval_{job_title[:20]}"] = {}
                             if github_enabled():
                                 merged, new_sha, push_err = push_history_item(new_item)
                                 if merged is not None:
@@ -730,30 +747,7 @@ if main_page == "evaluate":
                                 st.session_state.history.append(new_item)
                                 st.session_state.save_status = ("not_configured", "")
     
-                            # ── Render bảng kết quả ────────────────────────────────
-                            adj_key = f"adj_{job_title}"
-                            if adj_key not in st.session_state:
-                                st.session_state[adj_key] = {}
-                            new_adj = render_result_table(
-                                factors, job_title,
-                                adjustments=st.session_state[adj_key],
-                                show_adjust=True,
-                                key_prefix=f"eval_{job_title[:20]}"
-                            )
-                            if new_adj != st.session_state.get(adj_key, {}):
-                                st.session_state[adj_key] = new_adj
-    
-                            if summary:
-                                st.markdown(f"""<div class="summary-box" style="margin-top:1rem">
-                                  <h4>Nhận xét tổng quan</h4><p>{summary}</p></div>""", unsafe_allow_html=True)
-    
-                            if similar:
-                                st.markdown("#### Các JD có phạm vi tương đồng")
-                                for j in similar:
-                                    st.markdown(f"""<div class="similar-item">
-                                      <span class="sim-pct">{j.get("similarity",0)}%</span>
-                                      <span><strong>{j.get("title","")}</strong> — {j.get("reason","")}</span>
-                                    </div>""", unsafe_allow_html=True)
+                            # Render sẽ hiện bên ngoài if eval_btn — xem bên dưới
     
                             # ── Export ─────────────────────────────────────────────
                             st.markdown("<br>", unsafe_allow_html=True)
@@ -803,7 +797,40 @@ if main_page == "evaluate":
                                 st.text(raw)
                         except Exception as e:
                             st.error(f"🔴 Lỗi: {str(e)}")
-    
+
+        # ── Hiển thị kết quả ngoài if eval_btn — persist qua rerun ──────────
+        if "last_eval" in st.session_state:
+            ev = st.session_state.last_eval
+            ev_title = ev["title"]
+            ev_factors = ev["factors"]
+            adj_key = f"adj_{ev_title}"
+            adj_sk = f"adj_state_eval_{ev_title[:20]}"
+            if adj_key not in st.session_state:
+                st.session_state[adj_key] = {}
+            if adj_sk not in st.session_state:
+                st.session_state[adj_sk] = {}
+
+            new_adj = render_result_table(
+                ev_factors, ev_title,
+                adjustments=st.session_state[adj_sk],
+                show_adjust=True,
+                key_prefix=f"eval_{ev_title[:20]}"
+            )
+            if new_adj is not None:
+                st.session_state[adj_sk] = new_adj
+
+            if ev.get("summary"):
+                st.markdown(f"""<div class="summary-box" style="margin-top:1rem">
+                  <h4>Nhận xét tổng quan</h4><p>{ev["summary"]}</p></div>""", unsafe_allow_html=True)
+
+            if ev.get("similar"):
+                st.markdown("#### Các JD có phạm vi tương đồng")
+                for j in ev["similar"]:
+                    st.markdown(f"""<div class="similar-item">
+                      <span class="sim-pct">{j.get("similarity",0)}%</span>
+                      <span><strong>{j.get("title","")}</strong> — {j.get("reason","")}</span>
+                    </div>""", unsafe_allow_html=True)
+
     # ════════════════════════════════════════════════════════════════════════════════
     # TAB 2: LỊCH SỬ & SO SÁNH
     # ════════════════════════════════════════════════════════════════════════════════
@@ -887,7 +914,10 @@ Lịch sử cần được lưu phía server thì mới còn nguyên khi tải l
     
                     # ── Chi tiết ──────────────────────────────────────────────────
                     with detail_tab:
-                        render_result_table(factors, item["title"], adjustments=item.get("adjustments",{}), show_adjust=False)
+                        render_result_table(factors, item["title"],
+                            adjustments=item.get("adjustments",{}),
+                            show_adjust=False,
+                            key_prefix=f"hist_{sel}")
                         summary = result.get("summary", "")
                         if summary:
                             st.markdown(f"""<div class="summary-box" style="margin-top:1rem">
