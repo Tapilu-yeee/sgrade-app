@@ -473,7 +473,7 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
         tc, bg   = grade_color(ai_grade)
         adj_tc, adj_bg = grade_color(adj_grade)
         desc     = get_grade_desc(fname, adj_grade)
-        short_d  = html.escape((desc[:90]+"...") if len(desc)>90 else desc)
+        short_d  = html.escape(desc)
         score_s  = str(round(score))
         reason   = html.escape(str(f.get("reason",""))[:260])
         evidence = html.escape(str(f.get("evidence",""))[:260])
@@ -484,11 +484,11 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
         adj_span = f'<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{adj_bg};color:{adj_tc};font-weight:700;font-size:11px">{html.escape(adj_grade)}</span>' if is_adj else ""
 
         rows += f"""<tr style="border-bottom:1px solid #f0f0f0;background:white">
-<td style="padding:9px 11px;font-size:12px;font-weight:600;color:#1f2937;vertical-align:top;width:13%">{i+1}. {html.escape(f.get("name",""))}</td>
+<td style="padding:9px 11px;font-size:12px;font-weight:600;color:#1f2937;vertical-align:top;width:16%">{html.escape(f.get("name",""))}</td>
 <td style="padding:9px 11px;font-size:12px;color:#374151;vertical-align:top;width:23%;line-height:1.5">{reason}</td>
 <td style="padding:9px 11px;font-size:12px;font-style:italic;color:#4b5563;vertical-align:top;width:27%;line-height:1.5">{evidence}</td>
 <td style="padding:9px 11px;text-align:center;vertical-align:top;width:7%"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:11px">{html.escape(ai_grade)}</span>{badge}</td>
-<td style="padding:9px 11px;font-size:11px;color:#6b7280;vertical-align:top;width:17%;line-height:1.4">{short_d}</td>
+<td style="padding:9px 11px;font-size:11px;color:#6b7280;vertical-align:top;width:20%;line-height:1.4;word-wrap:break-word;white-space:normal">{short_d}</td>
 <td style="padding:9px 11px;text-align:center;font-weight:700;font-size:13px;color:#F26522;vertical-align:top;width:6%">{score_s}</td>
 {"<td style='padding:9px 11px;text-align:center;vertical-align:top;width:7%'>" + adj_span + "</td>" if show_adjust else ""}
 </tr>"""
@@ -498,7 +498,7 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
     st.markdown(f"""<div style="background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid #e8e8e8;border-top:none">
 <table style="width:100%;border-collapse:collapse;background:white;table-layout:fixed">
 <thead><tr style="background:#f3f4f6;border-bottom:2px solid #e5e7eb">
-<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:13%">Yếu tố</th>
+<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:16%">Yếu tố</th>
 <th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:23%">Lý do</th>
 <th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:27%">Dẫn chứng</th>
 <th style="padding:8px 11px;text-align:center;font-size:11px;font-weight:600;color:#374151;width:7%">Mức AI</th>
@@ -510,63 +510,54 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
     if not show_adjust:
         return None
 
-    # Điều chỉnh — 1 data_editor với SelectboxColumn riêng từng tiêu chí
+    # Điều chỉnh — selectbox riêng từng tiêu chí (tránh flicker của data_editor)
     st.markdown("<div style='margin-top:1rem;font-size:13px;font-weight:600;color:#374151;margin-bottom:4px'>⚙️ Điều chỉnh mức chấm</div>", unsafe_allow_html=True)
 
-    import pandas as pd
+    new_adjustments = dict(current_adj)
 
-    df_rows = []
     for fname, orig_name, ai_grade, adj_grade, available in row_data:
-        # Chỉ hiện giá trị điều chỉnh nếu user đã từng chỉnh (khác AI)
-        cur_adj = current_adj.get(fname, "")
-        display_adj = cur_adj if (cur_adj and cur_adj != ai_grade) else ""
-        df_rows.append({
-            "STT": row_data.index((fname, orig_name, ai_grade, adj_grade, available)) + 1,
-            "Tiêu chí": orig_name[:35],
-            "Mức AI": ai_grade,
-            "Điều chỉnh": display_adj,
-        })
+        cur_val = current_adj.get(fname, ai_grade) or ai_grade
+        # Tạo options với label đầy đủ định nghĩa
+        def _opt_label(g, fn):
+            data = SCORING_LOOKUP.get(fn, {}).get(g, {})
+            if not data: return g
+            if "desc" in data:
+                return f"{g} — {data['desc'][:80]}"
+            elif "desc_row" in data:
+                return f"{g} — {data['desc_row'][:50]} / {data.get('desc_col','')[:40]}"
+            return g
 
-    df = pd.DataFrame(df_rows)
+        options_keys = available  # list mức chấm hợp lệ
+        options_labels = [_opt_label(g, fname) for g in options_keys]
 
-    # Tạo column_config với options đúng theo từng tiêu chí
-    # data_editor SelectboxColumn dùng chung options — cần dùng options đủ tất cả
-    all_grades_sorted = []
-    seen = set()
-    for fname, _, _, _, available in row_data:
-        for g in available:
-            if g not in seen:
-                seen.add(g)
-                all_grades_sorted.append(g)
+        # Tìm index hiện tại
+        try:
+            cur_idx = options_keys.index(cur_val)
+        except ValueError:
+            cur_idx = 0
 
-    edited = st.data_editor(
-        df,
-        column_config={
-            "STT": st.column_config.NumberColumn("STT", disabled=True, width="small"),
-            "Tiêu chí": st.column_config.TextColumn("Tiêu chí", disabled=True),
-            "Mức AI": st.column_config.TextColumn("Mức AI", disabled=True, width="small"),
-            "Điều chỉnh": st.column_config.SelectboxColumn(
-                "Điều chỉnh",
-                options=[""] + all_grades_sorted,
-                required=False,
-                width="small",
-            ),
-        },
-        hide_index=True,
-        use_container_width=True,
-        key=f"de_{key_prefix}",
-        height=480,
-    )
+        with st.expander(f"**{orig_name}** — Mức AI: `{ai_grade}`" + (" ✏️" if cur_val != ai_grade else ""), expanded=False):
+            # Hiện định nghĩa mức AI để tham chiếu
+            ai_desc = get_grade_desc(fname, ai_grade)
+            if ai_desc:
+                st.caption(f"📌 Định nghĩa mức AI ({ai_grade}): {ai_desc}")
 
-    # Cập nhật adjustments từ data_editor
-    new_adjustments = {}
-    for i, (fname, orig_name, ai_grade, adj_grade, available) in enumerate(row_data):
-        if i < len(edited):
-            new_val = str(edited.iloc[i]["Điều chỉnh"] or "").strip()
-            if new_val and new_val != ai_grade and new_val in available:
-                new_adjustments[fname] = new_val
+            chosen_label = st.selectbox(
+                "Chọn mức điều chỉnh",
+                options=options_labels,
+                index=cur_idx,
+                key=f"sel_{key_prefix}_{fname}",
+                label_visibility="collapsed",
+            )
+            chosen_grade = options_keys[options_labels.index(chosen_label)]
+
+            if chosen_grade != ai_grade:
+                new_adjustments[fname] = chosen_grade
+                new_desc = get_grade_desc(fname, chosen_grade)
+                if new_desc:
+                    st.info(f"✅ Mức đã chọn ({chosen_grade}): {new_desc}")
             else:
-                new_adjustments[fname] = ai_grade  # revert to AI if cleared
+                new_adjustments[fname] = ai_grade
 
     st.session_state[sk] = new_adjustments
 
