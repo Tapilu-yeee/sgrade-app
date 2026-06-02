@@ -777,49 +777,18 @@ if main_page == "evaluate":
                                 st.session_state.history.append(new_item)
                                 st.session_state.save_status = ("not_configured", "")
     
-                            # Render sẽ hiện bên ngoài if eval_btn — xem bên dưới
-    
-                            # ── Export ─────────────────────────────────────────────
-                            st.markdown("<br>", unsafe_allow_html=True)
-                            e1, e2 = st.columns(2)
+                            # Lưu export data vào session để render sau rerun
                             csv_buf = io.StringIO()
                             writer = csv.writer(csv_buf)
                             writer.writerow(["Vị trí","Yếu tố","Mức","Lý do","Dẫn chứng"])
                             for f in factors:
                                 writer.writerow([job_title, f["name"], f["grade"], f["reason"], f["evidence"]])
-                            with e1:
-                                st.download_button("📥 Xuất CSV", "\ufeff"+csv_buf.getvalue(),
-                                    f"sgrade_{job_title.replace(' ','_')}.csv", "text/csv", use_container_width=True)
-                            with e2:
-                                st.download_button("📄 Xuất JSON", json.dumps(result, ensure_ascii=False, indent=2),
-                                    f"sgrade_{job_title.replace(' ','_')}.json", "application/json", use_container_width=True)
-    
-                            _status, _detail = st.session_state.get("save_status", ("ok", ""))
-                            if _status == "ok":
-                                st.success("✅ Đã lưu vào lịch sử và đồng bộ GitHub! Kết quả sẽ còn nguyên khi tải lại trang hoặc mở ở trình duyệt khác. Xem tại tab **Lịch sử & So sánh**.")
-
-                                # Lưu điều chỉnh
-                                adj_key2 = f"adj_{job_title}"
-                                if adj_key2 in st.session_state and st.session_state[adj_key2]:
-                                    if st.button("💾 Lưu điều chỉnh lên GitHub", key="save_adj_btn"):
-                                        if st.session_state.history:
-                                            st.session_state.history[-1]["adjustments"] = st.session_state[adj_key2]
-                                            adj_total = compute_total_score(st.session_state[adj_key2])
-                                            st.session_state.history[-1]["adjusted_total"] = adj_total
-                                            st.session_state.history[-1]["adjusted_sgrade"] = score_to_sgrade(adj_total)
-                                            _sha = save_history_to_github(
-                                                st.session_state.history,
-                                                st.session_state.get("history_sha","")
-                                            )
-                                            if _sha:
-                                                st.session_state.history_sha = _sha
-                                                st.success("✅ Đã lưu điều chỉnh lên GitHub!")
-                                            else:
-                                                st.warning("⚠️ Không lưu được GitHub, kiểm tra token.")
-                            elif _status == "not_configured":
-                                st.warning("⚠️ Đã đánh giá xong nhưng **chưa cấu hình GITHUB_REPO / GITHUB_TOKEN**, nên kết quả chỉ lưu **tạm trong phiên này** và sẽ mất khi tải lại trang. Xem hướng dẫn cấu hình ở tab **Lịch sử & So sánh**.")
-                            else:
-                                st.warning(f"⚠️ Đã đánh giá xong nhưng **không lưu được lên GitHub** ({_detail}). Kết quả chỉ lưu tạm trong phiên này. Vui lòng kiểm tra GITHUB_TOKEN còn hiệu lực và có quyền ghi repo.")
+                            st.session_state["last_export"] = {
+                                "csv": "\ufeff" + csv_buf.getvalue(),
+                                "json": json.dumps(result, ensure_ascii=False, indent=2),
+                                "title": job_title,
+                            }
+                            st.rerun()
     
                         except json.JSONDecodeError:
                             st.error("AI trả về định dạng không hợp lệ. Vui lòng thử lại.")
@@ -829,7 +798,7 @@ if main_page == "evaluate":
                             st.error(f"🔴 Lỗi: {str(e)}")
 
         # ── Hiển thị kết quả ngoài if eval_btn — persist qua rerun ──────────
-        if "last_eval" in st.session_state and not st.session_state.pop("_just_evaled", False):
+        if "last_eval" in st.session_state:
             ev = st.session_state.last_eval
             ev_title = ev["title"]
             ev_factors = ev["factors"]
@@ -860,6 +829,43 @@ if main_page == "evaluate":
                       <span class="sim-pct">{j.get("similarity",0)}%</span>
                       <span><strong>{j.get("title","")}</strong> — {j.get("reason","")}</span>
                     </div>""", unsafe_allow_html=True)
+
+            # ── Export & Save status (render sau rerun) ─────────────────────────
+            exp = st.session_state.get("last_export", {})
+            if exp and exp.get("title") == ev_title:
+                st.markdown("<br>", unsafe_allow_html=True)
+                e1, e2 = st.columns(2)
+                with e1:
+                    st.download_button("📥 Xuất CSV", exp["csv"],
+                        f"sgrade_{ev_title.replace(' ','_')}.csv", "text/csv", use_container_width=True)
+                with e2:
+                    st.download_button("📄 Xuất JSON", exp["json"],
+                        f"sgrade_{ev_title.replace(' ','_')}.json", "application/json", use_container_width=True)
+
+            _status, _detail = st.session_state.get("save_status", ("ok", ""))
+            if _status == "ok":
+                st.success("✅ Đã lưu vào lịch sử và đồng bộ GitHub! Kết quả sẽ còn nguyên khi tải lại trang hoặc mở ở trình duyệt khác. Xem tại tab **Lịch sử & So sánh**.")
+                adj_key2 = f"adj_{ev_title}"
+                if adj_key2 in st.session_state and st.session_state[adj_key2]:
+                    if st.button("💾 Lưu điều chỉnh lên GitHub", key="save_adj_btn"):
+                        if st.session_state.history:
+                            st.session_state.history[-1]["adjustments"] = st.session_state[adj_key2]
+                            adj_total = compute_total_score(st.session_state[adj_key2])
+                            st.session_state.history[-1]["adjusted_total"] = adj_total
+                            st.session_state.history[-1]["adjusted_sgrade"] = score_to_sgrade(adj_total)
+                            _sha = save_history_to_github(
+                                st.session_state.history,
+                                st.session_state.get("history_sha","")
+                            )
+                            if _sha:
+                                st.session_state.history_sha = _sha
+                                st.success("✅ Đã lưu điều chỉnh lên GitHub!")
+                            else:
+                                st.warning("⚠️ Không lưu được GitHub, kiểm tra token.")
+            elif _status == "not_configured":
+                st.warning("⚠️ Đã đánh giá xong nhưng **chưa cấu hình GITHUB_REPO / GITHUB_TOKEN**, nên kết quả chỉ lưu **tạm trong phiên này** và sẽ mất khi tải lại trang. Xem hướng dẫn cấu hình ở tab **Lịch sử & So sánh**.")
+            elif _status == "error":
+                st.warning(f"⚠️ Đã đánh giá xong nhưng **không lưu được lên GitHub** ({_detail}). Kết quả chỉ lưu tạm trong phiên này. Vui lòng kiểm tra GITHUB_TOKEN còn hiệu lực và có quyền ghi repo.")
 
     # ════════════════════════════════════════════════════════════════════════════════
     # TAB 2: LỊCH SỬ & SO SÁNH
