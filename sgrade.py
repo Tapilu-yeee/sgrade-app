@@ -761,6 +761,7 @@ if main_page == "evaluate":
                             # Reset adjustments cho vị trí mới
                             st.session_state[f"adj_{job_title}"] = {}
                             st.session_state[f"adj_state_eval_{job_title[:20]}"] = {}
+                            st.session_state["_just_evaled"] = True
                             if github_enabled():
                                 merged, new_sha, push_err = push_history_item(new_item)
                                 if merged is not None:
@@ -828,7 +829,7 @@ if main_page == "evaluate":
                             st.error(f"🔴 Lỗi: {str(e)}")
 
         # ── Hiển thị kết quả ngoài if eval_btn — persist qua rerun ──────────
-        if "last_eval" in st.session_state:
+        if "last_eval" in st.session_state and not st.session_state.pop("_just_evaled", False):
             ev = st.session_state.last_eval
             ev_title = ev["title"]
             ev_factors = ev["factors"]
