@@ -542,11 +542,12 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
             if ai_desc:
                 st.caption(f"📌 Định nghĩa mức AI ({ai_grade}): {ai_desc}")
 
+            safe_fname = re.sub(r'[^a-zA-Z0-9]', '_', fname)
             chosen_label = st.selectbox(
                 "Chọn mức điều chỉnh",
                 options=options_labels,
                 index=cur_idx,
-                key=f"sel_{key_prefix}_{fname}",
+                key=f"sel_{key_prefix}_{safe_fname}",
                 label_visibility="collapsed",
             )
             chosen_grade = options_keys[options_labels.index(chosen_label)]
