@@ -429,6 +429,7 @@ def _normalize_factor_name(name):
     return name
 
 def render_result_table(factors, job_title, adjustments=None, show_adjust=False, key_prefix=""):
+    import pandas as pd
     if adjustments is None:
         adjustments = {}
 
@@ -438,7 +439,6 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
         nf["_norm"] = _normalize_factor_name(f.get("name",""))
         normalized_factors.append(nf)
 
-    # Lấy adjustments từ session_state nếu có (ưu tiên session_state)
     sk = f"adj_state_{key_prefix}"
     if sk not in st.session_state:
         st.session_state[sk] = {f["_norm"]: adjustments.get(f["_norm"], f.get("grade","")) for f in normalized_factors}
@@ -450,16 +450,6 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
     total_score = round(compute_total_score(grades_dict))
     computed_sgrade = score_to_sgrade(total_score)
 
-    # CSS: xóa gap và background tối giữa columns
-    st.markdown("""<style>
-.stColumns, [data-testid="stHorizontalBlock"] {
-    gap: 0 !important; background: white !important;
-}
-[data-testid="column"] {
-    padding: 0 !important; background: white !important;
-}
-</style>""", unsafe_allow_html=True)
-
     # Header
     st.markdown(f"""<div style="background:#1f2937;border-radius:12px 12px 0 0;padding:0.875rem 1.5rem;
       display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem">
@@ -468,90 +458,109 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
         &rarr; <strong style="color:#F26522">{computed_sgrade}</strong></span>
     </div>""", unsafe_allow_html=True)
 
-    if show_adjust:
-        COL = [1.4, 2.2, 2.7, 0.85, 1.6, 0.65, 1.4]
-        HDRS = ["Yếu tố","Lý do","Dẫn chứng","Mức AI","Định nghĩa","Điểm","Điều chỉnh"]
-    else:
-        COL = [1.4, 2.5, 3.2, 0.9, 1.9, 0.7]
-        HDRS = ["Yếu tố","Lý do","Dẫn chứng","Mức","Định nghĩa","Điểm"]
-
-    # Header row
-    HC = "background:#f3f4f6;padding:8px 10px;font-size:11px;font-weight:600;color:#374151;border-bottom:2px solid #e5e7eb;border-right:1px solid #ececec"
-    hcols = st.columns(COL)
-    for hc, ht in zip(hcols, HDRS):
-        with hc: st.markdown(f'<div style="{HC}">{ht}</div>', unsafe_allow_html=True)
-
-    new_adjustments = dict(current_adj)
-
+    # Build display table as HTML (read-only part)
+    rows = ""
+    row_data = []
     for i, f in enumerate(normalized_factors):
         fname    = f["_norm"]
         ai_grade = f.get("grade","")
         adj_grade= current_adj.get(fname, ai_grade)
-        is_adj   = adj_grade != ai_grade
         disp_gr  = adj_grade
         score    = get_grade_score(fname, disp_gr, f1, f2)
-        tc, bg   = grade_color(disp_gr)
-        ai_tc, ai_bg = grade_color(ai_grade)
-        desc     = get_grade_desc(fname, disp_gr)
-        short_d  = html.escape((desc[:85]+"...") if len(desc)>85 else desc)
+        tc, bg   = grade_color(ai_grade)
+        adj_tc, adj_bg = grade_color(adj_grade)
+        desc     = get_grade_desc(fname, adj_grade)
+        short_d  = html.escape((desc[:90]+"...") if len(desc)>90 else desc)
         score_s  = str(round(score))
         reason   = html.escape(str(f.get("reason",""))[:260])
         evidence = html.escape(str(f.get("evidence",""))[:260])
+        is_adj   = adj_grade != ai_grade
         badge    = '<span style="font-size:9px;background:#fef3c7;color:#92400e;padding:1px 3px;border-radius:2px;margin-left:2px">↑</span>' if is_adj else ""
         available= list(SCORING_LOOKUP.get(fname, {}).keys())
 
-        # Cell style — white background, no gap
-        CS = "background:white;padding:8px 10px;font-size:12px;border-bottom:1px solid #f0f0f0;border-right:1px solid #f5f5f5;min-height:50px;line-height:1.4"
+        adj_span = f'<span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{adj_bg};color:{adj_tc};font-weight:700;font-size:11px">{html.escape(adj_grade)}</span>' if is_adj else ""
 
-        rcols = st.columns(COL)
-        with rcols[0]: st.markdown(f'<div style="{CS};font-weight:600;color:#1f2937">{i+1}. {html.escape(f.get("name",""))}</div>', unsafe_allow_html=True)
-        with rcols[1]: st.markdown(f'<div style="{CS};color:#374151">{reason}</div>', unsafe_allow_html=True)
-        with rcols[2]: st.markdown(f'<div style="{CS};font-style:italic;color:#4b5563">{evidence}</div>', unsafe_allow_html=True)
-        with rcols[3]: st.markdown(f'<div style="{CS};text-align:center"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{ai_bg};color:{ai_tc};font-weight:700;font-size:11px">{html.escape(ai_grade)}</span>{badge}</div>', unsafe_allow_html=True)
-        with rcols[4]: st.markdown(f'<div style="{CS};font-size:10px;color:#6b7280">{short_d}</div>', unsafe_allow_html=True)
-        with rcols[5]: st.markdown(f'<div style="{CS};text-align:center;font-weight:700;color:#F26522">{score_s}</div>', unsafe_allow_html=True)
+        rows += f"""<tr style="border-bottom:1px solid #f0f0f0;background:white">
+<td style="padding:9px 11px;font-size:12px;font-weight:600;color:#1f2937;vertical-align:top;width:13%">{i+1}. {html.escape(f.get("name",""))}</td>
+<td style="padding:9px 11px;font-size:12px;color:#374151;vertical-align:top;width:23%;line-height:1.5">{reason}</td>
+<td style="padding:9px 11px;font-size:12px;font-style:italic;color:#4b5563;vertical-align:top;width:27%;line-height:1.5">{evidence}</td>
+<td style="padding:9px 11px;text-align:center;vertical-align:top;width:7%"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:{bg};color:{tc};font-weight:700;font-size:11px">{html.escape(ai_grade)}</span>{badge}</td>
+<td style="padding:9px 11px;font-size:11px;color:#6b7280;vertical-align:top;width:17%;line-height:1.4">{short_d}</td>
+<td style="padding:9px 11px;text-align:center;font-weight:700;font-size:13px;color:#F26522;vertical-align:top;width:6%">{score_s}</td>
+{"<td style='padding:9px 11px;text-align:center;vertical-align:top;width:7%'>" + adj_span + "</td>" if show_adjust else ""}
+</tr>"""
+        row_data.append((fname, f.get("name",""), ai_grade, adj_grade, available))
 
-        if show_adjust:
-            with rcols[6]:
-                if available:
-                    cur_idx = available.index(adj_grade) if adj_grade in available else 0
-                    new_grade = st.selectbox(
-                        "_", available, index=cur_idx,
-                        key=f"f_{key_prefix}_{i}",
-                        label_visibility="collapsed",
-                        on_change=None
-                    )
-                    new_adjustments[fname] = new_grade
-                else:
-                    st.markdown(f'<div style="{CS};color:#9ca3af">—</div>', unsafe_allow_html=True)
+    adj_col = "<th style='padding:8px 11px;text-align:center;font-size:11px;font-weight:600;color:#374151;width:7%'>Điều chỉnh</th>" if show_adjust else ""
+    st.markdown(f"""<div style="background:white;border-radius:0 0 12px 12px;overflow:hidden;border:1px solid #e8e8e8;border-top:none">
+<table style="width:100%;border-collapse:collapse;background:white;table-layout:fixed">
+<thead><tr style="background:#f3f4f6;border-bottom:2px solid #e5e7eb">
+<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:13%">Yếu tố</th>
+<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:23%">Lý do</th>
+<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:27%">Dẫn chứng</th>
+<th style="padding:8px 11px;text-align:center;font-size:11px;font-weight:600;color:#374151;width:7%">Mức AI</th>
+<th style="padding:8px 11px;text-align:left;font-size:11px;font-weight:600;color:#374151;width:17%">Định nghĩa</th>
+<th style="padding:8px 11px;text-align:center;font-size:11px;font-weight:600;color:#374151;width:6%">Điểm</th>
+{adj_col}
+</tr></thead><tbody>{rows}</tbody></table></div>""", unsafe_allow_html=True)
 
-    st.markdown('<div style="background:white;border:1px solid #e8e8e8;border-top:none;border-radius:0 0 12px 12px;height:4px"></div>', unsafe_allow_html=True)
+    if not show_adjust:
+        return None
 
-    if show_adjust:
-        # Cập nhật session_state ngay — điểm tự động nhảy theo
-        st.session_state[sk] = new_adjustments
+    # Dùng st.data_editor cho phần điều chỉnh — 1 bảng riêng bên dưới
+    st.markdown("<div style='margin-top:1rem;font-size:13px;font-weight:600;color:#374151;margin-bottom:4px'>⚙️ Điều chỉnh mức chấm — chỉnh xong bấm Enter hoặc click ra ngoài:</div>", unsafe_allow_html=True)
 
-        # Tính lại với adjustments mới
-        new_grades = {f["_norm"]: new_adjustments.get(f["_norm"], f.get("grade","")) for f in normalized_factors}
-        new_f1 = get_grade_score("Trình độ học vấn", new_grades.get("Trình độ học vấn",""))
-        new_f2 = get_grade_score("Kinh nghiệm", new_grades.get("Kinh nghiệm",""))
-        new_total = round(compute_total_score(new_grades))
-        new_sg = score_to_sgrade(new_total)
+    df_rows = []
+    col_configs = {}
+    for fname, orig_name, ai_grade, adj_grade, available in row_data:
+        df_rows.append({"Tiêu chí": orig_name[:30], "Mức AI": ai_grade, "Điều chỉnh": adj_grade})
+        col_configs["Điều chỉnh"] = st.column_config.SelectboxColumn(
+            "Điều chỉnh", options=available if available else [ai_grade], required=True
+        )
 
-        if new_total != total_score or any(new_adjustments.get(f["_norm"]) != f.get("grade","") for f in normalized_factors):
-            label_c = "#F26522" if new_total != total_score else "#1a7a4a"
-            st.markdown(f"""<div style="background:#fff8f0;border:1px solid #fcd4b8;border-radius:8px;
-              padding:0.75rem 1.5rem;margin-top:0.5rem;display:flex;gap:1.5rem;align-items:center">
-              <span style="font-size:13px;color:#854f0b">Điểm sau điều chỉnh:</span>
-              <strong style="font-size:22px;color:{label_c}">{new_total}</strong>
-              <span style="color:#9ca3af">&rarr;</span>
-              <strong style="font-size:22px;color:{label_c}">{new_sg}</strong>
-              {"<span style='font-size:12px;color:#9ca3af'>(gốc: " + str(total_score) + " → " + computed_sgrade + ")</span>" if new_total != total_score else ""}
-            </div>""", unsafe_allow_html=True)
+    df = pd.DataFrame(df_rows)
+    edited = st.data_editor(
+        df,
+        column_config={
+            "Tiêu chí": st.column_config.TextColumn("Tiêu chí", disabled=True),
+            "Mức AI": st.column_config.TextColumn("Mức AI", disabled=True),
+            **col_configs
+        },
+        hide_index=True,
+        use_container_width=True,
+        key=f"de_{key_prefix}",
+        height=462
+    )
 
-        return new_adjustments
+    # Cập nhật adjustments từ data_editor
+    new_adjustments = dict(current_adj)
+    for i, (fname, orig_name, ai_grade, adj_grade, available) in enumerate(row_data):
+        if i < len(edited):
+            new_val = edited.iloc[i]["Điều chỉnh"]
+            if new_val and str(new_val) in (available or [ai_grade]):
+                new_adjustments[fname] = str(new_val)
 
-    return None
+    st.session_state[sk] = new_adjustments
+
+    # Tính lại điểm
+    new_grades = {f["_norm"]: new_adjustments.get(f["_norm"], f.get("grade","")) for f in normalized_factors}
+    new_f1 = get_grade_score("Trình độ học vấn", new_grades.get("Trình độ học vấn",""))
+    new_f2 = get_grade_score("Kinh nghiệm", new_grades.get("Kinh nghiệm",""))
+    new_total = round(compute_total_score(new_grades))
+    new_sg = score_to_sgrade(new_total)
+
+    label_c = "#F26522" if new_total != total_score else "#1a7a4a"
+    change_note = f"(gốc: {total_score} → {computed_sgrade})" if new_total != total_score else "✓ Chưa điều chỉnh"
+    st.markdown(f"""<div style="background:#fff8f0;border:1px solid #fcd4b8;border-radius:8px;
+      padding:0.75rem 1.5rem;margin-top:0.5rem;display:flex;gap:1.5rem;align-items:center">
+      <span style="font-size:13px;color:#6b7280">Điểm sau điều chỉnh:</span>
+      <strong style="font-size:22px;color:{label_c}">{new_total}</strong>
+      <span style="color:#9ca3af">&rarr;</span>
+      <strong style="font-size:22px;color:{label_c}">{new_sg}</strong>
+      <span style="font-size:12px;color:#9ca3af">{change_note}</span>
+    </div>""", unsafe_allow_html=True)
+
+    return new_adjustments
 
 
 def call_gemini(api_key, system_prompt, user_content, max_tokens=8192):
