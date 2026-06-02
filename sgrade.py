@@ -543,11 +543,12 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
                 st.caption(f"📌 Định nghĩa mức AI ({ai_grade}): {ai_desc}")
 
             safe_fname = re.sub(r'[^a-zA-Z0-9]', '_', fname)
+            row_idx = [r[0] for r in row_data].index(fname)
             chosen_label = st.selectbox(
                 "Chọn mức điều chỉnh",
                 options=options_labels,
                 index=cur_idx,
-                key=f"sel_{key_prefix}_{safe_fname}",
+                key=f"sel_{key_prefix}_{row_idx}_{safe_fname[:10]}",
                 label_visibility="collapsed",
             )
             chosen_grade = options_keys[options_labels.index(chosen_label)]
@@ -1107,7 +1108,7 @@ Lịch sử cần được lưu phía server thì mới còn nguyên khi tải l
                           </div>
                         </div>""", unsafe_allow_html=True)
     
-                        render_result_table(sel_item.get("factors", []), sel_item["title"], show_adjust=False)
+                        render_result_table(sel_item.get("factors", []), sel_item["title"], show_adjust=False, key_prefix=f"cmp_{sel_item['title'][:15]}")
     
 
 # ── PAGE: TRA CỨU S-GRADE ───────────────────────────────────────────────────────
