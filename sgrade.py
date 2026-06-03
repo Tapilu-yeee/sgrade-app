@@ -510,58 +510,56 @@ def render_result_table(factors, job_title, adjustments=None, show_adjust=False,
     if not show_adjust:
         return None
 
-    # Điều chỉnh — selectbox riêng từng tiêu chí (tránh flicker của data_editor)
     st.markdown("<div style='margin-top:1rem;font-size:13px;font-weight:600;color:#374151;margin-bottom:4px'>⚙️ Điều chỉnh mức chấm</div>", unsafe_allow_html=True)
 
-    new_adjustments = dict(current_adj)
+    # Dùng st.form để tránh rerun mỗi lần chọn, tránh duplicate key
+    form_key = f"adj_form_{key_prefix}"
+    with st.form(key=form_key):
+        new_adjustments = dict(current_adj)
+        select_results = {}
 
-    for fname, orig_name, ai_grade, adj_grade, available in row_data:
-        cur_val = current_adj.get(fname, ai_grade) or ai_grade
-        # Tạo options với label đầy đủ định nghĩa
-        def _opt_label(g, fn):
-            data = SCORING_LOOKUP.get(fn, {}).get(g, {})
-            if not data: return g
-            if "desc" in data:
-                return f"{g} — {data['desc'][:80]}"
-            elif "desc_row" in data:
-                return f"{g} — {data['desc_row'][:50]} / {data.get('desc_col','')[:40]}"
-            return g
+        for i, (fname, orig_name, ai_grade, adj_grade, available) in enumerate(row_data):
+            cur_val = current_adj.get(fname, ai_grade) or ai_grade
+            try:
+                cur_idx = available.index(cur_val)
+            except ValueError:
+                cur_idx = 0
 
-        options_keys = available  # list mức chấm hợp lệ
-        options_labels = [_opt_label(g, fname) for g in options_keys]
+            # Build labels with definitions
+            labels = []
+            for g in available:
+                data = SCORING_LOOKUP.get(fname, {}).get(g, {})
+                if "desc" in data:
+                    labels.append(f"{g} — {data['desc'][:80]}")
+                elif "desc_row" in data:
+                    labels.append(f"{g} — {data['desc_row'][:60]} / {data.get('desc_col','')[:40]}")
+                else:
+                    labels.append(g)
 
-        # Tìm index hiện tại
-        try:
-            cur_idx = options_keys.index(cur_val)
-        except ValueError:
-            cur_idx = 0
-
-        with st.expander(f"**{orig_name}** — Mức AI: `{ai_grade}`" + (" ✏️" if cur_val != ai_grade else ""), expanded=False):
-            # Hiện định nghĩa mức AI để tham chiếu
             ai_desc = get_grade_desc(fname, ai_grade)
-            if ai_desc:
-                st.caption(f"📌 Định nghĩa mức AI ({ai_grade}): {ai_desc}")
-
-            safe_fname = re.sub(r'[^a-zA-Z0-9]', '_', fname)
-            row_idx = [r[0] for r in row_data].index(fname)
+            is_changed = cur_val != ai_grade
+            caption = f"📌 AI: **{ai_grade}** — {ai_desc[:100]}" if ai_desc else f"Mức AI: {ai_grade}"
+            st.caption(caption)
             chosen_label = st.selectbox(
-                "Chọn mức điều chỉnh",
-                options=options_labels,
+                orig_name + (" ✏️" if is_changed else ""),
+                options=labels,
                 index=cur_idx,
-                key=f"sel_{key_prefix}_{row_idx}_{safe_fname[:10]}",
-                label_visibility="collapsed",
+                key=f"form_sel_{key_prefix}_{i}",
             )
-            chosen_grade = options_keys[options_labels.index(chosen_label)]
+            chosen_grade = available[labels.index(chosen_label)]
+            select_results[fname] = chosen_grade
 
-            if chosen_grade != ai_grade:
-                new_adjustments[fname] = chosen_grade
-                new_desc = get_grade_desc(fname, chosen_grade)
-                if new_desc:
-                    st.info(f"✅ Mức đã chọn ({chosen_grade}): {new_desc}")
-            else:
-                new_adjustments[fname] = ai_grade
+        submitted = st.form_submit_button("✅ Áp dụng điều chỉnh", use_container_width=True)
+        if submitted:
+            for fname, grade in select_results.items():
+                new_adjustments[fname] = grade
+            st.session_state[sk] = new_adjustments
+        else:
+            # Đọc giá trị hiện tại từ form state (trước submit)
+            pass
 
-    st.session_state[sk] = new_adjustments
+    # Dùng giá trị từ session (đã submit) hoặc giữ nguyên
+    new_adjustments = st.session_state[sk]
 
     # Tính lại điểm ngay sau khi data_editor cập nhật
     new_grades = {f["_norm"]: new_adjustments.get(f["_norm"], f.get("grade","")) for f in normalized_factors}
