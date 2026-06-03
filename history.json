@@ -1671,5 +1671,104 @@
       ],
       "summary": "Vị trí Senior Corporate Strategy & CEO Office Manager đòi hỏi trình độ học vấn cao, kinh nghiệm dày dặn trong lĩnh vực chiến lược và tư vấn. Công việc có độ phức tạp và phạm vi ảnh hưởng lớn, liên quan đến việc xây dựng chiến lược dài hạn và hỗ trợ ra quyết định cho CEO. Mức độ liên lạc và giải quyết vấn đề ở cấp cao, đòi hỏi kỹ năng phân tích và giao tiếp xuất sắc. Không có yêu cầu về quản lý nhân sự trực tiếp hoặc yêu cầu thể chất đặc biệt."
     }
+  },
+  {
+    "title": "Bussiness Data Analyst",
+    "date": "03/06/2026 06:39",
+    "jd": "MÔ TẢ CÔNG VIỆC\n\nCƠ CẤU TỔ CHỨC\nThông tin chi tiết về cơ cấu báo cáo, phạm vi liên quan đến công việc của vị trí tại phòng ban.\n\na\n\nMỤC ĐÍCH VÀ TRÁCH NHIỆM\nMỤC ĐÍCH CÔNG VIỆC\nĐóng vai trò hỗ trợ phòng ban B2B Business Development trong việc ra quyết định dựa trên dữ liệu thông qua phân tích, báo cáo và xây dựng mô hình kinh doanh, nhằm thúc đẩy tăng trưởng doanh thu, nâng cao hiệu quả bán hàng và tối ưu chiến lược giá.\nTRÁCH NHIỆM CÔNG VIỆC CHÍNH\nNêu chi tiết danh sách những nhiệm vụ cần phải thực hiện của vị trí (mảng công việc chủ đạo, các nhiệm vụ chính) để hỗ trợ cho mục đích của công việc. Với mỗi công việc chủ đạo, cần nêu chi tiết các kết quả mong đợi của công việc đó.\n\nYÊU CẦU CÔNG VIỆC\nLiệt kê các yêu cầu cần thiết tối thiểu cho vị trí công việc này.\nKIẾN THỨC\nTốt nghiệp Đại học các chuyên ngành: Kinh tế, Tài chính, Thống kê, Toán ứng dụng, Hệ thống thông tin, Khoa học dữ liệu, hoặc các ngành liên quan\n\n\nKINH NGHIỆM\nTối thiểu 2 năm kinh nghiệm trong lĩnh vực Data Analytics, Business Analytics hoặc Commercial Analytics\nCó kinh nghiệm làm việc với team Kinh doanh / Business Development là lợi thế\nƯu tiên ứng viên có kinh nghiệm trong lĩnh vực logistics, e-commerce hoặc B2B\n\nKỸ NĂNG\nThành thạo SQL (ưu tiên BigQuery), Excel/Google Sheets nâng cao\nCó kinh nghiệm sử dụng các công cụ trực quan hóa dữ liệu (Looker Studio, Tableau, Power BI,…)\nCó khả năng ứng dụng các công cụ AI (ChatGPT, Copilot,…) để hỗ trợ phân tích dữ liệu, tự động hóa báo cáo và tạo insight, đồng thời đảm bảo tính chính xác và kiểm chứng thông tin\nTHÁI ĐỘ\nTrung thực\nLiêm chính\nKhả năng làm việc dưới áp lực cao\nChủ động\nĐIỀU KIỆN LÀM VIỆC\nMÔI TRƯỜNG LÀM VIỆC\nLàm việc trong môi trường điều kiện bình thường trong văn phòng\nYÊU CẦU VỀ THỂ LỰC\nKhông có yêu cầu đặc biệt",
+    "result": {
+      "factors": [
+        {
+          "name": "Trình độ học vấn",
+          "grade": "H2",
+          "reason": "Yêu cầu tốt nghiệp Đại học các chuyên ngành liên quan đến kinh tế, tài chính, thống kê, toán ứng dụng, hệ thống thông tin, khoa học dữ liệu.",
+          "evidence": "Tốt nghiệp Đại học các chuyên ngành: Kinh tế, Tài chính, Thống kê, Toán ứng dụng, Hệ thống thông tin, Khoa học dữ liệu, hoặc các ngành liên quan"
+        },
+        {
+          "name": "Kinh nghiệm",
+          "grade": "F",
+          "reason": "Yêu cầu tối thiểu 2 năm kinh nghiệm trong lĩnh vực Data Analytics, Business Analytics hoặc Commercial Analytics, có kinh nghiệm làm việc với team Kinh doanh là lợi thế.",
+          "evidence": "Tối thiểu 2 năm kinh nghiệm trong lĩnh vực Data Analytics, Business Analytics hoặc Commercial Analytics. Có kinh nghiệm làm việc với team Kinh doanh / Business Development là lợi thế."
+        },
+        {
+          "name": "Mức độ phức tạp của công việc",
+          "grade": "D2",
+          "reason": "Công việc yêu cầu phân tích dữ liệu, xây dựng mô hình kinh doanh để thúc đẩy tăng trưởng, nâng cao hiệu quả và tối ưu chiến lược, đòi hỏi khả năng xử lý vấn đề đa dạng và ứng dụng kiến thức chuyên môn.",
+          "evidence": "Phân tích, báo cáo và xây dựng mô hình kinh doanh, nhằm thúc đẩy tăng trưởng doanh thu, nâng cao hiệu quả bán hàng và tối ưu chiến lược giá."
+        },
+        {
+          "name": "Phạm vi công việc",
+          "grade": "D",
+          "reason": "Quản lý một phần hoạt động của chức năng phân tích dữ liệu và hỗ trợ phòng ban B2B Business Development, ra quyết định dựa trên dữ liệu.",
+          "evidence": "Đóng vai trò hỗ trợ phòng ban B2B Business Development trong việc ra quyết định dựa trên dữ liệu thông qua phân tích, báo cáo và xây dựng mô hình kinh doanh."
+        },
+        {
+          "name": "Mức độ giải quyết vấn đề",
+          "grade": "D2",
+          "reason": "Cần phân tích dữ liệu, xây dựng mô hình kinh doanh và đưa ra insight để giải quyết các vấn đề kinh doanh, đòi hỏi sự sáng tạo và phán đoán.",
+          "evidence": "Phân tích, báo cáo và xây dựng mô hình kinh doanh, nhằm thúc đẩy tăng trưởng doanh thu, nâng cao hiệu quả bán hàng và tối ưu chiến lược giá."
+        },
+        {
+          "name": "Mức độ cần được chỉ dẫn/giám sát",
+          "grade": "D2",
+          "reason": "Mục tiêu công việc rõ ràng là hỗ trợ phòng ban B2B, cần phân tích dữ liệu để ra quyết định, không có yêu cầu kiểm tra thường xuyên.",
+          "evidence": "Đóng vai trò hỗ trợ phòng ban B2B Business Development trong việc ra quyết định dựa trên dữ liệu thông qua phân tích, báo cáo và xây dựng mô hình kinh doanh."
+        },
+        {
+          "name": "Mức độ liên lạc khi thực hiện công việc",
+          "grade": "C3",
+          "reason": "Cần cộng tác chặt chẽ với phòng ban B2B Business Development để cung cấp dữ liệu và insight, cũng như làm việc với các công cụ phân tích và báo cáo.",
+          "evidence": "Đóng vai trò hỗ trợ phòng ban B2B Business Development... Thành thạo SQL, Excel, công cụ trực quan hóa dữ liệu, công cụ AI."
+        },
+        {
+          "name": "Trách nhiệm giám sát và quản lý",
+          "grade": "A",
+          "reason": "Vị trí này không có trách nhiệm quản lý hay giám sát nhân viên khác.",
+          "evidence": "Không có thông tin về việc quản lý nhân sự trong JD."
+        },
+        {
+          "name": "Ảnh hưởng của các quyết định",
+          "grade": "D2",
+          "reason": "Các quyết định dựa trên phân tích dữ liệu có thể ảnh hưởng đến chiến lược kinh doanh, doanh thu và hiệu quả bán hàng, tiềm ẩn nguy cơ tổn thất tài chính nếu phân tích sai.",
+          "evidence": "Nhằm thúc đẩy tăng trưởng doanh thu, nâng cao hiệu quả bán hàng và tối ưu chiến lược giá."
+        },
+        {
+          "name": "Quyền hạn",
+          "grade": "A0",
+          "reason": "JD không đề cập đến quyền hạn phê duyệt tài chính hay ngân sách cho vị trí này.",
+          "evidence": "Không có thông tin về quyền hạn tài chính trong JD."
+        },
+        {
+          "name": "Môi trường làm việc",
+          "grade": "A1",
+          "reason": "Môi trường làm việc được mô tả là điều kiện bình thường trong văn phòng.",
+          "evidence": "Làm việc trong môi trường điều kiện bình thường trong văn phòng"
+        },
+        {
+          "name": "Yêu cầu thể chất",
+          "grade": "A1",
+          "reason": "Vị trí này chủ yếu làm việc tại văn phòng, yêu cầu thể chất không đặc biệt, thường ở tư thế ngồi.",
+          "evidence": "Không có yêu cầu đặc biệt về thể lực. Làm việc trong môi trường điều kiện bình thường trong văn phòng."
+        }
+      ],
+      "similar_jobs": [
+        {
+          "title": "Data Analyst",
+          "similarity": 90,
+          "reason": "Cả hai vị trí đều tập trung vào phân tích dữ liệu, sử dụng SQL, Excel và các công cụ trực quan hóa để đưa ra insight kinh doanh."
+        },
+        {
+          "title": "Business Analyst",
+          "similarity": 85,
+          "reason": "Vị trí này có yếu tố phân tích kinh doanh, hiểu nhu cầu của phòng ban kinh doanh và đưa ra giải pháp dựa trên dữ liệu, tương tự Business Analyst."
+        },
+        {
+          "title": "Commercial Analyst",
+          "similarity": 88,
+          "reason": "Tập trung vào phân tích dữ liệu thương mại, hỗ trợ quyết định kinh doanh, tối ưu hóa chiến lược giá và hiệu quả bán hàng."
+        }
+      ],
+      "summary": "Vị trí Bussiness Data Analyst đòi hỏi trình độ Đại học, kinh nghiệm phân tích dữ liệu từ 2 năm. Công việc có độ phức tạp trung bình, yêu cầu phân tích, xây dựng mô hình và đưa ra insight để hỗ trợ phòng ban kinh doanh. Phạm vi công việc là quản lý một phần hoạt động phân tích dữ liệu. Quyết định có ảnh hưởng đến chiến lược kinh doanh và hiệu quả tài chính. Môi trường làm việc văn phòng, không yêu cầu thể chất đặc biệt."
+    }
   }
 ]
