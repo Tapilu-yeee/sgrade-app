@@ -1770,5 +1770,104 @@
       ],
       "summary": "Vị trí Bussiness Data Analyst đòi hỏi trình độ Đại học, kinh nghiệm phân tích dữ liệu từ 2 năm. Công việc có độ phức tạp trung bình, yêu cầu phân tích, xây dựng mô hình và đưa ra insight để hỗ trợ phòng ban kinh doanh. Phạm vi công việc là quản lý một phần hoạt động phân tích dữ liệu. Quyết định có ảnh hưởng đến chiến lược kinh doanh và hiệu quả tài chính. Môi trường làm việc văn phòng, không yêu cầu thể chất đặc biệt."
     }
+  },
+  {
+    "title": "Project Manager - Growth",
+    "date": "19/06/2026 08:02",
+    "jd": " MÔ TẢ CÔNG VIỆC\n\nCƠ CẤU TỔ CHỨC\n\nProject Manager báo cáo trực tiếp cho Head of Growth. Vị trí làm việc cross-functional với toàn bộ Growth Team (Telesales, CS, Growth, ChotdonAI) và các phòng ban liên quan các dự án mà phòng Growth đang triển khai hoặc phòng Growth có tham gia dự án.\nMỤC ĐÍCH VÀ TRÁCH NHIỆM\nMỤC ĐÍCH CÔNG VIỆC\nProject Manager là người thay mặt Head of Growth điều phối và ra các quyết định vận hành trên toàn bộ danh mục dự án của Growth Team – đảm bảo các sáng kiến chiến lược được triển khai đúng tiến độ, đúng chất lượng và đo lường được kết quả kinh doanh thực tế.\nVị trí này tập trung vào 3 mục tiêu chính:\n● Quản trị danh mục dự án: follow tiến độ, ra quyết định vận hành, unblock bottleneck để Head of Growth không bị kéo vào chi tiết hàng ngày.\n● Product Ownership AI-First: định nghĩa yêu cầu, viết spec, dẫn dắt phát triển sản phẩm nội bộ quy mô platform/SaaS với tư duy \"AI trước tiên\" từ ngày đầu thiết kế.\n● Đo lường hiệu quả bằng dữ liệu: mỗi dự án có KPI rõ ràng, được theo dõi liên tục và báo cáo dựa trên kết quả thực tế.\nThành công được đo bằng: dự án hoàn thành đúng hạn, kết quả business cải thiện rõ rệt, và Head of Growth có thể tập trung hoàn toàn vào quyết định chiến lược.\nTRÁCH NHIỆM CÔNG VIỆC CHÍNH\n\nYÊU CẦU CÔNG VIỆC\nKIẾN THỨC\nTốt nghiệp đại học các ngành Công nghệ thông tin, Kỹ thuật phần mềm, Hệ thống thông tin, hoặc tương đương.\nƯu tiên các chứng chỉ:\n● CSPO – Certified Scrum Product Owner\n● PMP hoặc tương đương\nKINH NGHIỆM\nTối thiểu 5 năm kinh nghiệm trong phát triển sản phẩm hoặc quản lý dự án công nghệ.\nTối thiểu 2 năm làm Product Owner hoặc PM trên sản phẩm quy mô lớn (platform, SaaS, B2B/B2C với 50,000+ người dùng).\nCó nền tảng lập trình (Developer background); có khả năng đọc hiểu code, review PR, viết script đơn giản.\nThành thạo Vibe Coding – sử dụng AI tools (Cursor, GitHub Copilot, Claude…) để tự viết hoặc hỗ trợ code, tạo prototype nhanh.\nCó kinh nghiệm thực tế triển khai hoặc tích hợp AI vào sản phẩm: LLM API, Chatbot, RAG pi",
+    "result": {
+      "factors": [
+        {
+          "name": "Trình độ học vấn",
+          "grade": "H2",
+          "reason": "Yêu cầu tốt nghiệp đại học các ngành Công nghệ thông tin, Kỹ thuật phần mềm, Hệ thống thông tin, hoặc tương đương. Ưu tiên chứng chỉ PMP hoặc CSPO.",
+          "evidence": "Tốt nghiệp đại học các ngành Công nghệ thông tin, Kỹ thuật phần mềm, Hệ thống thông tin, hoặc tương đương. Ưu tiên các chứng chỉ: CSPO – Certified Scrum Product Owner, PMP hoặc tương đương."
+        },
+        {
+          "name": "Kinh nghiệm",
+          "grade": "H1",
+          "reason": "Yêu cầu tối thiểu 5 năm kinh nghiệm phát triển sản phẩm/quản lý dự án công nghệ, trong đó có ít nhất 2 năm làm PO/PM trên sản phẩm lớn.",
+          "evidence": "Tối thiểu 5 năm kinh nghiệm trong phát triển sản phẩm hoặc quản lý dự án công nghệ. Tối thiểu 2 năm làm Product Owner hoặc PM trên sản phẩm quy mô lớn."
+        },
+        {
+          "name": "Mức độ phức tạp của công việc",
+          "grade": "E3",
+          "reason": "Quản lý danh mục dự án, Product Ownership AI-First, đo lường hiệu quả bằng dữ liệu, yêu cầu tư duy sáng tạo và thích nghi với công nghệ AI.",
+          "evidence": "Quản trị danh mục dự án, Product Ownership AI-First, định nghĩa yêu cầu, viết spec, dẫn dắt phát triển sản phẩm nội bộ quy mô platform/SaaS. Đo lường hiệu quả bằng dữ liệu, mỗi dự án có KPI rõ ràng."
+        },
+        {
+          "name": "Phạm vi công việc",
+          "grade": "E",
+          "reason": "Quản lý toàn bộ danh mục dự án của Growth Team, Product Ownership cho sản phẩm nội bộ, đảm bảo các sáng kiến chiến lược được triển khai.",
+          "evidence": "Project Manager là người thay mặt Head of Growth điều phối và ra các quyết định vận hành trên toàn bộ danh mục dự án của Growth Team."
+        },
+        {
+          "name": "Mức độ giải quyết vấn đề",
+          "grade": "E1",
+          "reason": "Giải quyết các vấn đề phức tạp trong quản lý dự án, phát triển sản phẩm AI, phân tích dữ liệu để cải thiện kết quả kinh doanh.",
+          "evidence": "Unblock bottleneck, định nghĩa yêu cầu, viết spec, dẫn dắt phát triển sản phẩm, phân tích dữ liệu thành insight hành động, triển khai AI vào sản phẩm."
+        },
+        {
+          "name": "Mức độ cần được chỉ dẫn/giám sát",
+          "grade": "D3",
+          "reason": "Mục tiêu dự án rõ ràng, được chỉ dẫn chung về chiến lược, tự lên kế hoạch và ra quyết định vận hành, không bị kiểm tra chi tiết hàng ngày.",
+          "evidence": "Đảm bảo các sáng kiến chiến lược được triển khai đúng tiến độ, đúng chất lượng. Ra quyết định vận hành, unblock bottleneck để Head of Growth không bị kéo vào chi tiết hàng ngày."
+        },
+        {
+          "name": "Mức độ liên lạc khi thực hiện công việc",
+          "grade": "E3",
+          "reason": "Liên lạc rộng với Growth Team, các phòng ban liên quan, lãnh đạo cấp cao để điều phối dự án và truyền đạt thông tin kỹ thuật phức tạp.",
+          "evidence": "Làm việc cross-functional với toàn bộ Growth Team và các phòng ban liên quan. Truyền đạt thông tin kỹ thuật phức tạp một cách súc tích cho stakeholder phi kỹ thuật."
+        },
+        {
+          "name": "Trách nhiệm giám sát và quản lý",
+          "grade": "A",
+          "reason": "Vị trí này không trực tiếp quản lý nhân sự, mà tập trung vào quản lý dự án và sản phẩm.",
+          "evidence": "Project Manager là người thay mặt Head of Growth điều phối và ra các quyết định vận hành trên toàn bộ danh mục dự án của Growth Team."
+        },
+        {
+          "name": "Ảnh hưởng của các quyết định",
+          "grade": "E1",
+          "reason": "Quyết định vận hành dự án ảnh hưởng trực tiếp đến tiến độ, chất lượng và kết quả kinh doanh của các sáng kiến chiến lược.",
+          "evidence": "Đảm bảo các sáng kiến chiến lược được triển khai đúng tiến độ, đúng chất lượng và đo lường được kết quả kinh doanh thực tế. Thành công được đo bằng: dự án hoàn thành đúng hạn, kết quả business cải thiện rõ rệt."
+        },
+        {
+          "name": "Quyền hạn",
+          "grade": "B3",
+          "reason": "Có quyền ra các quyết định vận hành trên danh mục dự án, unblock bottleneck, định nghĩa yêu cầu và spec sản phẩm.",
+          "evidence": "Ra các quyết định vận hành trên toàn bộ danh mục dự án của Growth Team. Định nghĩa yêu cầu, viết spec, dẫn dắt phát triển sản phẩm nội bộ."
+        },
+        {
+          "name": "Môi trường làm việc",
+          "grade": "A1",
+          "reason": "Công việc chủ yếu thực hiện trong môi trường văn phòng, làm việc với máy tính và các công cụ số.",
+          "evidence": "Làm việc cross-functional với toàn bộ Growth Team và các phòng ban liên quan. Sử dụng Jira, Notion, Linear hoặc công cụ tương đương. Sử dụng AI tools."
+        },
+        {
+          "name": "Yêu cầu thể chất",
+          "grade": "A1",
+          "reason": "Công việc chủ yếu yêu cầu ngồi làm việc với máy tính, không đòi hỏi hoạt động thể chất nặng.",
+          "evidence": "Công việc chủ yếu thực hiện tại văn phòng, tập trung vào quản lý, phân tích và giao tiếp."
+        }
+      ],
+      "similar_jobs": [
+        {
+          "title": "Product Manager",
+          "similarity": 90,
+          "reason": "Cả hai vị trí đều tập trung vào phát triển sản phẩm, định nghĩa yêu cầu, quản lý dự án và làm việc với các bên liên quan để đạt mục tiêu kinh doanh."
+        },
+        {
+          "title": "Technical Program Manager",
+          "similarity": 85,
+          "reason": "Vị trí này yêu cầu kinh nghiệm quản lý dự án công nghệ, làm việc với các đội kỹ thuật và đảm bảo tiến độ, chất lượng dự án."
+        },
+        {
+          "title": "AI Product Manager",
+          "similarity": 95,
+          "reason": "Vị trí này có yêu cầu cao về kinh nghiệm và kiến thức về AI, LLM, RAG, tương tự như yêu cầu của Project Manager - Growth."
+        }
+      ],
+      "summary": "Vị trí Project Manager - Growth đòi hỏi trình độ đại học chuyên ngành CNTT, kinh nghiệm dày dặn trong quản lý dự án công nghệ và phát triển sản phẩm, đặc biệt là sản phẩm AI. Công việc có độ phức tạp cao, phạm vi quản lý toàn bộ danh mục dự án của Growth Team, yêu cầu giải quyết vấn đề sáng tạo và liên lạc đa chiều. Quyết định có ảnh hưởng lớn đến kết quả kinh doanh, quyền hạn ra quyết định vận hành. Môi trường làm việc văn phòng, ít yêu cầu thể chất."
+    }
   }
 ]
