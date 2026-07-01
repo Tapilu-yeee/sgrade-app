@@ -1968,5 +1968,104 @@
       ],
       "summary": "Vị trí People Data Team Leader đòi hỏi trình độ đại học, kinh nghiệm chuyên môn sâu về dữ liệu và lương thưởng, có khả năng phân tích dữ liệu lớn, quản lý đội nhóm và giải quyết vấn đề phức tạp. Quyết định có ảnh hưởng đến chi phí và lợi nhuận, làm việc trong môi trường văn phòng."
     }
+  },
+  {
+    "title": "People Data Analyst",
+    "date": "01/07/2026 08:13",
+    "jd": "MÔ TẢ CÔNG VIỆC\n\nCƠ CẤU TỔ CHỨC\nThông tin chi tiết về cơ cấu báo cáo, phạm vi liên quan đến công việc của vị trí tại phòng ban.\nMỤC ĐÍCH VÀ TRÁCH NHIỆM\nMỤC ĐÍCH CÔNG VIỆC\nTheo dõi, kiểm soát hệ thống Lương hoa hồng và hệ thống thưởng khác của nhóm nhân sự phụ trách, giám sát và phân tích toàn diện dữ liệu về nguồn nhân lực, hiệu suất làm việc, và tác động của nhân lực đến hoạt động kinh doanh và vận hành của công ty.\nĐưa ra những phân tích chuyên sâu, dự báo xu hướng, và cảnh báo sớm nhằm tối ưu hóa hiệu quả quản lý nhân lực, đảm bảo vận hành ổn định, và thúc đẩy tăng trưởng kinh doanh.\nTRÁCH NHIỆM CÔNG VIỆC CHÍNH\nYÊU CẦU CÔNG VIỆC\nKIẾN THỨC\nTốt nghiệp Đại học trở lên chuyên ngành Kinh tế, Tài chính, Toán Tin, Công nghệ thông tin, Quản trị nhân sự, hoặc các ngành liên quan.\nCó kiến thức chuyên môn về phân tích dữ liệu, thống kê, và các phương pháp nghiên cứu.\nHiểu biết các chỉ số đo lường hiệu suất nhân sự và các xu hướng quản lý nhân sự hiện đại.\nKINH NGHIỆM\nCó ít nhất 3 năm kinh nghiệm trong ngành Thương mại điện tử, Dịch vụ vận chuyển đầu cuối, hoặc Công nghệ.\nCó ít nhất 3 năm kinh nghiệm trong lĩnh vực phân tích dữ liệu, báo cáo.\nCó kinh nghiệm sử dụng các công cụ phân tích dữ liệu như Excel, SQL, Python, hoặc các phần mềm chuyên dụng khác.\nKỸ NĂNG\nKỹ năng công việc\nThành thạo SQL để khai thác và phân tích dữ liệu.\nThành thạo Excel nâng cao.\nCó kinh nghiệm sử dụng Looker Studio, Power BI, Tableau hoặc công cụ tương đương.\nCó khả năng phân tích nguyên nhân, xác định vấn đề và đề xuất giải pháp.\nCó khả năng xây dựng dashboard phục vụ quản trị.\nCó khả năng viết tài liệu yêu cầu nghiệp vụ (Business Requirement).\nBiết sử dụng AI hoặc Automation để nâng cao năng suất làm việc là lợi thế.\nKỹ năng mềm\nTư duy phân tích và phản biện.\nKỹ năng trình bày dữ liệu và storytelling.\nKỹ năng làm việc với nhiều phòng ban.\nKỹ năng quản lý công việc và ưu tiên nhiệm vụ.\nChủ động đề xuất cải tiến.\n\nTHÁI ĐỘ\nTư duy cải tiến liên tục.\nCó tinh thần ownership đối với phạm vi phụ trách.\nCh",
+    "result": {
+      "factors": [
+        {
+          "name": "Trình độ học vấn",
+          "grade": "H2",
+          "reason": "Yêu cầu tốt nghiệp Đại học trở lên chuyên ngành Kinh tế, Tài chính, Toán Tin, Công nghệ thông tin, Quản trị nhân sự hoặc các ngành liên quan, có kiến thức chuyên môn về phân tích dữ liệu, thống kê.",
+          "evidence": "Tốt nghiệp Đại học trở lên chuyên ngành Kinh tế, Tài chính, Toán Tin, Công nghệ thông tin, Quản trị nhân sự, hoặc các ngành liên quan. Có kiến thức chuyên môn về phân tích dữ liệu, thống kê, và các phương pháp nghiên cứu."
+        },
+        {
+          "name": "Kinh nghiệm",
+          "grade": "F",
+          "reason": "Yêu cầu ít nhất 3 năm kinh nghiệm trong lĩnh vực phân tích dữ liệu, báo cáo và sử dụng các công cụ phân tích dữ liệu như Excel, SQL, Python.",
+          "evidence": "Có ít nhất 3 năm kinh nghiệm trong ngành Thương mại điện tử, Dịch vụ vận chuyển đầu cuối, hoặc Công nghệ. Có ít nhất 3 năm kinh nghiệm trong lĩnh vực phân tích dữ liệu, báo cáo. Có kinh nghiệm sử dụng các công cụ phân tích dữ liệu như Excel, SQL, Python, hoặc các phần mềm chuyên dụng khác."
+        },
+        {
+          "name": "Mức độ phức tạp của công việc",
+          "grade": "E1",
+          "reason": "Công việc đòi hỏi phân tích chuyên sâu, dự báo xu hướng, cảnh báo sớm, tối ưu hóa hiệu quả quản lý nhân lực và tác động đến kinh doanh.",
+          "evidence": "Giám sát và phân tích toàn diện dữ liệu về nguồn nhân lực, hiệu suất làm việc, và tác động của nhân lực đến hoạt động kinh doanh và vận hành của công ty. Đưa ra những phân tích chuyên sâu, dự báo xu hướng, và cảnh báo sớm nhằm tối ưu hóa hiệu quả quản lý nhân lực."
+        },
+        {
+          "name": "Phạm vi công việc",
+          "grade": "D",
+          "reason": "Quản lý và phân tích dữ liệu nhân sự, lương thưởng, hiệu suất làm việc, có ảnh hưởng đến hoạt động kinh doanh và vận hành.",
+          "evidence": "Theo dõi, kiểm soát hệ thống Lương hoa hồng và hệ thống thưởng khác của nhóm nhân sự phụ trách, giám sát và phân tích toàn diện dữ liệu về nguồn nhân lực, hiệu suất làm việc, và tác động của nhân lực đến hoạt động kinh doanh và vận hành của công ty."
+        },
+        {
+          "name": "Mức độ giải quyết vấn đề",
+          "grade": "D1",
+          "reason": "Cần phân tích nguyên nhân, xác định vấn đề và đề xuất giải pháp dựa trên dữ liệu nhân sự và hiệu suất.",
+          "evidence": "Có khả năng phân tích nguyên nhân, xác định vấn đề và đề xuất giải pháp. Hướng tới giải quyết vấn đề dựa trên dữ liệu."
+        },
+        {
+          "name": "Mức độ cần được chỉ dẫn/giám sát",
+          "grade": "D1",
+          "reason": "Công việc có mục tiêu rõ ràng về phân tích dữ liệu nhân sự và hiệu suất, cần tự chủ trong việc đề xuất cải tiến và giải pháp.",
+          "evidence": "Chủ động đề xuất cải tiến. Tư duy cải tiến liên tục. Có tinh thần ownership đối với phạm vi phụ trách. Chủ động học hỏi công nghệ và phương pháp mới."
+        },
+        {
+          "name": "Mức độ liên lạc khi thực hiện công việc",
+          "grade": "C3",
+          "reason": "Cần làm việc và phối hợp với nhiều phòng ban để thu thập, phân tích và trình bày dữ liệu nhân sự.",
+          "evidence": "Kỹ năng làm việc với nhiều phòng ban. Trình bày dữ liệu và storytelling."
+        },
+        {
+          "name": "Trách nhiệm giám sát và quản lý",
+          "grade": "A",
+          "reason": "Vị trí này không có trách nhiệm quản lý nhân sự trực tiếp, tập trung vào phân tích dữ liệu.",
+          "evidence": "Mô tả công việc không đề cập đến việc quản lý nhân viên."
+        },
+        {
+          "name": "Ảnh hưởng của các quyết định",
+          "grade": "D1",
+          "reason": "Các phân tích và đề xuất có thể ảnh hưởng đến việc tối ưu hóa quản lý nhân lực, tác động đến hiệu quả kinh doanh và vận hành.",
+          "evidence": "Đưa ra những phân tích chuyên sâu, dự báo xu hướng, và cảnh báo sớm nhằm tối ưu hóa hiệu quả quản lý nhân lực, đảm bảo vận hành ổn định, và thúc đẩy tăng trưởng kinh doanh."
+        },
+        {
+          "name": "Quyền hạn",
+          "grade": "A0",
+          "reason": "JD không đề cập đến quyền hạn phê duyệt tài chính hoặc ngân sách.",
+          "evidence": "Mô tả công việc không đề cập đến quyền hạn tài chính hoặc phê duyệt ngân sách."
+        },
+        {
+          "name": "Môi trường làm việc",
+          "grade": "A1",
+          "reason": "Môi trường làm việc tại văn phòng, điều kiện làm việc tiêu chuẩn.",
+          "evidence": "Văn Phòng: Tòa nhà Rivera Park, 7/28 Thành Thái, Phường 14, Quận 10. Thời gian làm việc: 05 ngày/tuần."
+        },
+        {
+          "name": "Yêu cầu thể chất",
+          "grade": "A1",
+          "reason": "Công việc chủ yếu thực hiện tại văn phòng, không yêu cầu thể chất đặc biệt.",
+          "evidence": "Không yêu cầu đặc biệt về thể lực."
+        }
+      ],
+      "similar_jobs": [
+        {
+          "title": "HR Data Analyst",
+          "similarity": 90,
+          "reason": "Cả hai vị trí đều tập trung vào phân tích dữ liệu nhân sự, sử dụng các công cụ phân tích tương tự và yêu cầu kỹ năng phân tích, báo cáo."
+        },
+        {
+          "title": "Business Intelligence Analyst",
+          "similarity": 80,
+          "reason": "Vị trí này có sự tương đồng về kỹ năng phân tích dữ liệu, xây dựng dashboard và sử dụng các công cụ BI, mặc dù phạm vi có thể rộng hơn."
+        },
+        {
+          "title": "Data Scientist (Junior)",
+          "similarity": 75,
+          "reason": "Có sự tương đồng về kỹ năng phân tích dữ liệu, sử dụng Python và SQL, nhưng vị trí này có thể yêu cầu kiến thức sâu hơn về mô hình hóa và học máy."
+        }
+      ],
+      "summary": "Vị trí People Data Analyst đòi hỏi trình độ đại học chuyên ngành liên quan, kinh nghiệm phân tích dữ liệu từ 3 năm, với công việc phức tạp, phạm vi quản lý dữ liệu nhân sự và hiệu suất. Quyết định có ảnh hưởng đến hiệu quả kinh doanh, làm việc trong môi trường văn phòng tiêu chuẩn và không yêu cầu thể chất đặc biệt."
+    }
   }
 ]
